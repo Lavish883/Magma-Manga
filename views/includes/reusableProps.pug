@@ -1,0 +1,39 @@
+// Admin Recomaddation maker
+mixin adminRecd(recd)
+    a(href="manga.html?manga=" + recd.IndexName)
+        img#Admin_Img(src= "https://cover.nep.li/cover/" + recd.IndexName + ".jpg")
+    div.admin_text
+        a#Admin_Title(href="manga.html?manga=" + recd.IndexName, class="admin_hover_text")
+            span #{recd.SeriesName}
+        div
+            span Year:
+                a.admin_hover_text(href="search.html?year=" + recd.Year) &nbsp;#{recd.Year}
+
+        div    
+            span Status:
+                a.admin_hover_text(href="search.html?scan=" + recd.ScanStatus) &nbsp;#{recd.ScanStatus} (Scan)
+                span ,
+                a.admin_hover_text(href="search.html?pub=" + recd.PublishStatus) &nbsp;#{recd.PublishStatus} (Publish)
+        div(style="max-width:570px")
+            span Genres:
+            each genre, indx in recd.Genres
+                a.admin_hover_text(href="search.html?genre=" + genre) &nbsp;#{genre}
+                if indx != recd.Genres.length - 1
+                    span ,
+
+// Hot Update 
+mixin hotUpdate(allMangas)
+    - var i = 0;
+    while i < 12
+        - var manga = allMangas[i]
+        div.hot_update_item
+            a(href="read.html?read="+ manga.ChapterLink, title="" + manga.SeriesName + "&nbsp;Chapter&nbsp;" + manga.Chapter)
+                div.hot_update_item_name #{manga.SeriesName}
+                img(src = "https://cover.nep.li/cover/" + manga.IndexName + ".jpg", style="max-width:145px;")
+        - i++;
+
+mixin hotMangaOfMonth(mangas)
+    - var i = 0;
+    while i < 6
+
+        - i++

@@ -135,6 +135,22 @@ async function getSimilarManga(genres){
                                
 }
 
+function scrapeAdminRecd(html) {
+    let admin_Recom = html.split(`vm.TopTenJSON = `);
+    let admin_Recom2 = admin_Recom[1].split(`vm.RecommendationJSON = `);
+    let admin_Recom3 = admin_Recom2[1].split(`;`)
+    let admin_Recom_Arry = JSON.parse(admin_Recom3[0]);
+
+    return admin_Recom_Arry[Math.floor(Math.random() * admin_Recom_Arry.length)];
+}
+
+function scrapeHotMangaThisMonth(html) {
+    let hotMonth = html.split(`vm.TopTenJSON = `);
+    let hotMonth1 = hotMonth[1].split(`;`)
+    let hotMonth2 = JSON.parse(hotMonth1[0]);
+
+    return hotMonth2 
+}
 
 
-module.exports = {scrapeHotManga, scrapeLatestManga, scrapeManga, getGenres, getSimilarManga}
+module.exports = { scrapeHotManga, scrapeHotMangaThisMonth ,scrapeAdminRecd, scrapeLatestManga, scrapeManga, getGenres, getSimilarManga}

@@ -1,7 +1,10 @@
 const pug = require('pug') // html template
 const express = require('express');
 const fetch = require('node-fetch');
-const mainFunctions = require ('./mainFunctions')
+const mainFunctions = require('./mainFunctions')
+const path = require('path');
+
+const serverName = process.env.SERVERNAME || 'http://localhost:5832/';
 
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
 // Generate human like headers so site doesn't detect us
@@ -22,21 +25,33 @@ const headersGenerator = new HeaderGenerator({
 
 // run express at port 8190
 const app = express()
-const port = process.env.PORT || 8190;
+const port = process.env.PORT || 5832;
 app.set('view engine', 'pug')
+app.use(express.static(path.join(__dirname, 'public')));
+app.locals.basedir = path.join(__dirname, 'views');
 
 
-app.get('/', (req, res) => {
-  const options = {
-    title: 'Hey', 
-    message: 'Hello there!',
-    p1:"<p1>Heyyyyy</p1>"
-  }
-  res.render('index', options)
+app.get('/manga', async (req, res) => {
+    let fetchAllData = await fetch(serverName + 'api/manga/all')
+    let resp = await fetchAllData.json();
+    res.render('index', resp)
 })
 
+// get all the stuff needed for the main page of the site
+app.get('/api/manga/all', async (req, res) => {
+    let headers = headersGenerator.getHeaders();
+    let fetchAll = await fetch(breakCloudFlare, headers);
+    let resp = await fetchAll.text();
+    var allData = {
+        'adminRecd': mainFunctions.scrapeAdminRecd(resp),
+        'hotMangaUpdated': mainFunctions.scrapeHotManga(resp),
+        'hotMangaThisMonth': mainFunctions.scrapeHotMangaThisMonth(resp),
+        'latestManga': mainFunctions.scrapeLatestManga(resp),
+    }
+    res.send(allData)
+})
 // given => mangaName?One-Piece
-app.get('/mangaName?', async (req, res) => {
+app.get('/api/mangaName?', async (req, res) => {
   let headers = headersGenerator.getHeaders();
   let mangaName =  req.query.manga;
 
@@ -50,9 +65,8 @@ app.get('/mangaName?', async (req, res) => {
   
   return res.send(mainFunctions.scrapeManga(resp))
 })
-
 // given => type as hot (popular) and latest
-app.get('/manga/main/:type', async (req, res) => {
+app.get('/api/manga/main/:type', async (req, res) => {
   let headers = headersGenerator.getHeaders();
   let fetchHot = await fetch(breakCloudFlare, headers);
   let resp = await fetchHot.text();
@@ -65,8 +79,8 @@ app.get('/manga/main/:type', async (req, res) => {
   
   return res.send('not valid')
 })
-
-app.get('/manga/recommend', async (req,res) => {
+// given 2 manga get there genres and then recommned a manga based on those genres
+app.get('/api/manga/recommend', async (req,res) => {
   let headers = headersGenerator.getHeaders();
 
   let manga1 = req.query.manga1;

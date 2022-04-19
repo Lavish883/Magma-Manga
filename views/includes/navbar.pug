@@ -1,3 +1,41 @@
-h1 poop
-h2 bryh
-p1 okay
+header
+    div.headerSearhConta
+        a.logoContainer(href='/manga')
+            img(src='/images/navbar.brand.png',width='250',style='margin-top:10px')
+        div.search_container
+            div.search_bar
+                input#Search_input(placeholder='Quick Search...')
+                div.search_icon_container
+                    i(class="fas fa-search",style="font-size:20px;cursor:pointer;")
+                ul#search_results(style="z-index:90", class="search_results")
+    div.navInfo
+        div(style="flex-direction:row;display:flex;height:100%;")
+            a#Home_nav.small_nav(href='index.html')
+                i.fas.fa-home
+                span &nbsp;Home
+            a#Bookmark_nav.small_nav(href='Bookmarks.html')
+                i.fas.fa-bookmark
+                span &nbsp;Bookmarks
+            a#Directory_nav.small_nav(href='directory.html')
+                i.far.fa-folder-open
+                span &nbsp;Directory
+            a#Search_nav.small_nav(href='search.html' style='')
+                i.fas.fa-search
+                span &nbsp;Search
+            a#Darkmode.small_nav(onclick='handleDarkModeToggle()' style='cursor:pointer;')
+                i.fas.fa-sun
+                span &nbsp;Dark Mode off
+            div(style="margin-left:auto;position:relative;")
+                div#Login_nav(class="small_nav",style="cursor:pointer;height:100%;box-sizing:border-box")
+                    i(class="fas fa-sign-in-alt")
+                    span &nbsp;Login
+                div#dropdown_box(class="dropdown_box")
+                    a(href="settings.html",class="small_nav")
+                        i(class="fas fa-cog") Settings
+                    a(onclick="")
+                        i(class="fas fa-sign-out-alt") Logout
+div#scroll_to_top
+    i(class="fas fa-angle-up")
+div#dark_mode
+    i
+       

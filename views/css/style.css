@@ -1,0 +1,229 @@
+.latest_chapters_item {
+    background-color: #ededed;
+    display: -webkit-box;
+    height: 90px;
+    width: 335px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 10px;
+}
+
+.hot_update {
+    background-color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    padding-bottom: 0px;
+}
+
+.hot_update_item {
+    margin-right: 15px;
+    margin-bottom: 15px;
+    position: relative;
+    max-height: 190px;
+    overflow: hidden;
+    border-radius: 8px;
+}
+
+.hot_update_item_name {
+    position: absolute;
+    bottom: 0px;
+    background: linear-gradient(rgba(0,0,0,.65),rgba(0,0,0,.65));
+    text-align: center;
+    width: 100%;
+    padding: 8px 0px;
+}
+
+.hot_update_item a {
+    color: white;
+}
+
+    .hot_update_item a:hover {
+        color: gold;
+    }
+
+a {
+    text-decoration-color: none;
+    text-decoration: none;
+}
+
+body {
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji"
+}
+
+.image_center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%);
+}
+
+.white {
+    color: black;
+}
+
+.none {
+    display: none;
+}
+
+.solid {
+    border: solid red 1px
+}
+
+.dashed {
+    border: dashed black 1px
+}
+
+.admin_card {
+    width: 65%;
+}
+
+.admin_top {
+    padding: 10px 15px;
+    background-color: #247D8F;
+    font-size: 18px;
+    color: white;
+}
+
+.admin_text {
+    margin-left: 20px;
+}
+
+#Admin_Title{
+    font-size:20px; 
+    font-weight:600; 
+    margin-top:0px;
+    width:570px;
+}
+
+.admin_hover_text {
+    color: #007bff;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+    .admin_hover_text:hover {
+        color: #0453a8
+    }
+
+#main {
+    padding: 0px 205px 0px 205px;
+}
+
+#bookmark_button {
+    background-color: #ffc119;
+    cursor: pointer;
+    font-size: 20px;
+    z-index: 99;
+    left: 10px;
+    bottom: 10px;
+    position: fixed;
+    padding: 12px;
+    border-radius: 8px;
+    color: black;
+}
+
+body {
+    margin: 0px;
+    background-color: #ededed;
+}
+
+.darkModeBody {
+    background-color: black;
+    opacity: 0.9;
+}
+
+.adminCardParent {
+    padding: 20px 0px 0px 0px;
+    display: flex;
+    justify-content: space-between
+}
+
+.admin_back{
+    background-color:white; 
+    padding:10px 15px; 
+    display:-webkit-box
+}
+
+#hotMonth{
+    margin-top:25px;
+    background-color:white;
+    padding:10px 35px;
+}
+
+#viewMoreChapters {
+    background-color:#ededed;
+    padding:10px;
+    text-align:center;
+    font-size:18px;
+    font-weight:600;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+#Admin_Img{
+    max-width:100px;
+    max-height:145px;
+}
+
+@media only screen and (max-width: 600px) {
+    #main {
+        padding: 0px 10px;
+    }
+}
+
+@media only screen and (max-width: 600px) {
+    /*For Main stuff*/
+    #main {
+        padding: 0px 20px;
+    }
+
+    .adminCardParent {
+        display: none;
+    }
+
+    #hotMonth {
+        overflow: scroll;
+        white-space: nowrap;
+    }
+
+    .hot_update_item {
+        margin-right: 0px;
+    }
+
+    .hot_update {
+        padding: 15px 5px;
+        justify-content: space-around;
+    }
+}
+
+@media only screen and (max-width: 350px) {
+    #main {
+        padding: 0px 15px;
+    }
+
+    .hot_update {
+        padding: 15px 2px;
+    }
+}
+
+@media only screen and (max-width:335px) {
+    #main {
+        padding: 0px 10px;
+    }
+}
+
+@media only screen and (max-width: 325px) {
+    #main {
+        padding: 0px;
+    }
+}
+
+@media only screen and (max-width: 305px) {
+    .hot_update_item img {
+        width: 130px;
+    }
+}

@@ -1,8 +1,52 @@
 // !{variable name} this for using the passed in data
 html
   head
-    | !{p1}
-    title !{title}
-  body
+    //| !{p1}
+    title Read Manga
+    style 
+        include /css/navbar.css
+    style
+        include /css/style.css
+    script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+  body(style="margin:0px")
     include includes/navbar.pug
-    h1 !{message}
+    include includes/reusableProps.pug
+    div#main
+        div.adminCardParent
+            div.admin_card
+                div.admin_top
+                    i(class="far fa-thumbs-up")
+                    span &nbsp;Admin Recommendation
+                div.admin_back
+                    +adminRecd(adminRecd)
+            img(src="https://i.imgur.com/boAVE0y.jpg", width="347")
+        div(style="margin-top:25px")
+            div.admin_top
+                a(href="#",style="font-size:18px; color:white;")
+                    i(class="fas fa-fire-alt")
+                    span &nbsp;Hot Update
+            div#hot_update(class="hot_update")
+                +hotUpdate(hotMangaUpdated)
+        div#hotMonth(class="admin_top")
+            a.admin_hover_text(style="font-weight: 600;color:#007bff") Hot Manga This Month
+            +hotMangaOfMonth(hotMangaThisMonth)
+        div(style="margin-top:25px;")
+            div.admin_top
+                a(href="#",style="font-size:18px; color:white;")
+                    i(class="fas fa-address-book")
+                    span &nbsp;Recommended for you
+            div#recdForYou(class="hot_update")
+                // item recommned for the reader
+        div(style="margin-bottom:100px;")
+            div.admin_top(style="margin-top:25px;")
+                a(style="font-size:18px; color:white;")
+                    i(class="fas fa-book")
+                    span &nbsp;Latest Chapters
+            div#latestChapters(class="hot_update")
+                // All the recent chapters data
+            div(style="background-color:white;padding:20px;")
+                div#viewMoreChapters
+                    span &nbsp;View More Chapters
+            
+
+    //h1 !{message}
