@@ -27,13 +27,38 @@ mixin hotUpdate(allMangas)
     while i < 12
         - var manga = allMangas[i]
         div.hot_update_item
-            a(href="read.html?read="+ manga.ChapterLink, title="" + manga.SeriesName + "&nbsp;Chapter&nbsp;" + manga.Chapter)
-                div.hot_update_item_name #{manga.SeriesName}
+            a(href="read.html?read="+ manga.ChapterLink, title="" + manga.SeriesName + " Chapter " + manga.Chapter)
+                div.hot_update_item_name 
+                    if manga.SeriesName.length > 18
+                        span #{manga.SeriesName.substr(0,18) + '... ' + manga.Chapter}
+                    else
+                        span #{manga.SeriesName + ' ' + manga.Chapter }
+                #{manga.SeriesName}
                 img(src = "https://cover.nep.li/cover/" + manga.IndexName + ".jpg", style="max-width:145px;")
         - i++;
 
 mixin hotMangaOfMonth(mangas)
     - var i = 0;
     while i < 6
+        - var manga = mangas[i]
+        a.admin_hover_text(style="color:black;font-size:20px;margin:0px 5px") /
+        a.admin_hover_text(style="font-size:17px;",href="manga.html?manga=" + manga.IndexName) #{manga.SeriesName}
+        - i++
 
+mixin LatestChapters(latestChapters, hotChapters)
+    - var i = 0;
+    while i < 60
+        - var manga = latestChapters[i]
+        div.latest_chapters_item
+            a(href="manga.html?manga=" + manga.IndexName, title="" + manga.SeriesName)
+                img(src="https://cover.nep.li/cover/" + manga.IndexName + ".jpg",width="90")
+            a(style="display:contents;", href="read.html?read=" + manga.ChapterLink + '-page-1', title="" + manga.SeriesName + " Chapter " + manga.Chapter)
+                div(style="margin-left:15px; margin-top:8px;")
+                    div.latest_chapters_info #{manga.SeriesName}
+                    div(style="margin-top:0px;")
+                        i(class="far fa-file", style="font-size:15px;color:black;")
+                        span(style="font-size:14px;font-weight:500;color:black;") &nbsp;Chapter #{manga.Chapter}
+                    div(style="margin-top:1px;")
+                        i(class="far fa-clock", style="font-size:15px;color:black;")
+                        span(style="font-size:14px;font-weight:500;color:black;") &nbsp;#{manga.Date}
         - i++

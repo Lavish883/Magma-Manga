@@ -43,6 +43,16 @@
         color: gold;
     }
 
+.latest_chapters_info {
+    font-size:18px;
+    color:#007bff;
+    font-weight:600;
+    white-space:nowrap;
+    text-overflow:ellipsis;
+    width:230px;
+    overflow:hidden;
+}
+
 a {
     text-decoration-color: none;
     text-decoration: none;
