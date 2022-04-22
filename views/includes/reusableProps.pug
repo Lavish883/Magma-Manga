@@ -33,7 +33,6 @@ mixin hotUpdate(allMangas)
                         span #{manga.SeriesName.substr(0,18) + '... ' + manga.Chapter}
                     else
                         span #{manga.SeriesName + ' ' + manga.Chapter }
-                #{manga.SeriesName}
                 img(src = "https://cover.nep.li/cover/" + manga.IndexName + ".jpg", style="max-width:145px;")
         - i++;
 
@@ -49,12 +48,27 @@ mixin LatestChapters(latestChapters, hotChapters)
     - var i = 0;
     while i < 60
         - var manga = latestChapters[i]
+        - var isCompleted = manga.ScanStatus == 'Complete' ? true : false
+        - var isPopular = false
+        - var h = 0;
+
+        while h < hotChapters.length
+            if hotChapters[h].SeriesID == manga.SeriesID
+                - isPopular = true
+                - h+= 2000
+            - h++
+
         div.latest_chapters_item
             a(href="manga.html?manga=" + manga.IndexName, title="" + manga.SeriesName)
                 img(src="https://cover.nep.li/cover/" + manga.IndexName + ".jpg",width="90")
             a(style="display:contents;", href="read.html?read=" + manga.ChapterLink + '-page-1', title="" + manga.SeriesName + " Chapter " + manga.Chapter)
                 div(style="margin-left:15px; margin-top:8px;")
-                    div.latest_chapters_info #{manga.SeriesName}
+                    div.latest_chapters_info
+                        if isPopular
+                            i(class="fas fa-fire-alt",style="color:red;") &nbsp;
+                        if isCompleted
+                            i(style="color:darkorange",class="fas fa-check-circle") &nbsp;
+                        span #{manga.SeriesName}
                     div(style="margin-top:0px;")
                         i(class="far fa-file", style="font-size:15px;color:black;")
                         span(style="font-size:14px;font-weight:500;color:black;") &nbsp;Chapter #{manga.Chapter}

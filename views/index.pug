@@ -45,9 +45,14 @@ html
                     span &nbsp;Latest Chapters
             div#latestChapters(class="hot_update")
                 +LatestChapters(latestManga,hotMangaUpdated)
-            div(style="background-color:white;padding:20px;")
+            div(style="background-color:white;padding:20px;",onclick="viewMoreChapters()")
                 div#viewMoreChapters
                     span &nbsp;View More Chapters
-            
-
+    script
+        include /js/index.js
+    // arrys needed to update 
+    script. 
+        var latestChapters = !{JSON.stringify(latestManga).replace(/<\//g, '<\\/')}
+        var hotManga = !{JSON.stringify(hotMangaUpdated).replace(/<\//g, '<\\/')}
+    script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
     //h1 !{message}
