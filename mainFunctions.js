@@ -152,5 +152,13 @@ function scrapeHotMangaThisMonth(html) {
     return hotMonth2 
 }
 
+function fixChaptersArry(chapters) {
+    chapters = JSON.parse(chapters);
+    for (var i = 0; i < chapters.length; i++) {
+        chapters[i].Chapter = calcChapter(chapters[i].Chapter);
+        chapters[i].Date = calcDate(chapters[i].Date);
+    }
+    return chapters
+}
 
-module.exports = { scrapeHotManga, scrapeHotMangaThisMonth ,scrapeAdminRecd, scrapeLatestManga, scrapeManga, getGenres, getSimilarManga}
+module.exports = { scrapeHotManga, fixChaptersArry, scrapeHotMangaThisMonth ,scrapeAdminRecd, scrapeLatestManga, scrapeManga, getGenres, getSimilarManga}

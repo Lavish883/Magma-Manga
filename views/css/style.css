@@ -179,6 +179,14 @@ body {
     max-height:145px;
 }
 
+.thin_navabr {
+    display: flex;
+    flex-direction: row;
+    height: 50px;
+    background-color: #2B2B2B;
+    padding: 0px 130px 0px 150px
+}
+
 @media only screen and (max-width: 600px) {
     #main {
         padding: 0px 10px;

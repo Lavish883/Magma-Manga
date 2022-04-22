@@ -1,3 +1,4 @@
+// Generate hmtl 
 function makeLatestChapterHTML(manga, isPopular, isCompleted) {
     return `
     <div class="latest_chapters_item">
@@ -35,25 +36,25 @@ function viewMoreChapters() {
         let isPopular = false;
         try {
             var isCompleted = latestChapters[i].ScanStatus == 'Complete' ? true : false
-        } catch (err) {
-            console.log(err , latestChapters[i], latestChapters)
-        }
-        for (var h = 0; h < hotManga.length; h++) {
-            if (hotManga[h].SeriesID === latestChapters[i].SeriesID) {
-                isPopular = true;
-                break;
+            for (var h = 0; h < hotManga.length; h++) {
+                if (hotManga[h].SeriesID === latestChapters[i].SeriesID) {
+                    isPopular = true;
+                    break;
+                }
             }
-        }
-        chaptersHTMLArry.push(makeLatestChapterHTML(latestChapters[i], isPopular, isCompleted))
-        // Get rid of view more chapters button
-        if (latestChapters.length - 1 === i) {
-            document.getElementById('viewMoreChapters').classList.add('none');
+            chaptersHTMLArry.push(makeLatestChapterHTML(latestChapters[i], isPopular, isCompleted))
+            // Get rid of view more chapters button
+            if (latestChapters.length - 1 === i) {
+                document.getElementById('viewMoreChapters').classList.add('none');
+            }
+        } catch (err) {
+            console.log(err)
         }
     }
     $('#latestChapters')[0].innerHTML += chaptersHTMLArry.join('')
 }
 
-// Set 
+// Set what nav_option is active
 if (window.location.pathname.includes('/index.html') || window.location.pathname === '/manga/') {
     document.getElementById('Home_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('/directory.html')) {
@@ -64,10 +65,34 @@ if (window.location.pathname.includes('/index.html') || window.location.pathname
     document.getElementById('Bookmark_nav').classList.add('small_nav_active')
 }
 
+// Dark Mode
+const isDarkModeOn = window.localStorage.getItem('darkMode');
+
+if (isDarkModeOn === null || isDarkModeOn === 'false') {
+    console.log('Dark Mode is off')
+    document.getElementById('Darkmode').innerHTML = `<i class="fas fa-sun"></i> <span>Dark Mode off</span>`
+} else {
+    document.body.classList.add('darkModeBody')
+    document.getElementById('Darkmode').innerHTML = `<i class="fas fa-moon"></i> <span>Dark Mode on</span>`
+}
+
+function handleDarkModeToggle() {
+    if (window.localStorage.getItem('darkMode') === 'true') {
+        window.localStorage.setItem('darkMode', 'false')
+        document.body.classList.remove('darkModeBody')
+        document.getElementById('Darkmode').innerHTML = `<i class="fas fa-sun"></i> <span>Dark Mode off</span>`
+    } else {
+        window.localStorage.setItem('darkMode', 'true')
+        document.body.classList.add('darkModeBody')
+        document.getElementById('Darkmode').innerHTML = `<i class="fas fa-moon"></i> <span>Dark Mode on</span>`
+    }
+}
+
 // Scroll To top
 document.getElementById('scroll_to_top').addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 })
+
 // show Scroll to top button or not
 window.addEventListener('scroll', function () {
     if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {

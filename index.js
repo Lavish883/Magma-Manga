@@ -3,6 +3,7 @@ const express = require('express');
 const fetch = require('node-fetch');
 const mainFunctions = require('./mainFunctions')
 const path = require('path');
+var isPupServerLoaded = false;
 
 const serverName = process.env.SERVERNAME || 'http://localhost:5832/';
 
@@ -30,11 +31,21 @@ app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'public')));
 app.locals.basedir = path.join(__dirname, 'views');
 
-
-app.get('/manga', async (req, res) => {
-    let fetchAllData = await fetch(serverName + 'api/manga/all')
-    let resp = await fetchAllData.json();
-    res.render('index', resp)
+// index.html
+app.get('/manga/', async (req, res) => {
+    if (isPupServerLoaded) {
+        let fetchAllData = await fetch(serverName + 'api/manga/all')
+        let resp = await fetchAllData.json();
+        res.render('index', resp)
+    } else {
+        res.render('loading')
+        isPupServerLoaded = true;
+    }
+})
+// read.html
+app.get('/manga/read/:mangaChapter', async (req, res) => {
+    res.render('read')
+    //return res.send(req.params.mangaChapter);
 })
 
 // get all the stuff needed for the main page of the site
@@ -96,7 +107,22 @@ app.get('/api/manga/recommend', async (req,res) => {
   return res.send(similarManga)
   
 })
+// given a chapter of a manga return all the pages adn info of that manga
+app.get('/api/manga/read/:chapter', async (req, res) => {
+    let headers = headersGenerator.getHeaders();
+    let fetchManga = await fetch(breakCloudFlare + /read-online/ + req.params.chapter)
+    let resp = await fetchManga.text();
 
+    var allData = {
+        'chapters': mainFunctions.fixChaptersArry(resp.split(`vm.CHAPTERS = `)[1].split(`;`)[0]),
+        'currentChapter': 'as',
+        'urls': 'as'
+
+    }
+    return res.send(allData)
+
+    return res.send(req.params.chapter)
+})
 
 
 app.listen(port)

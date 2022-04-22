@@ -1,0 +1,18 @@
+// For when the server that fetchs manga is turning on
+html
+  head
+    //| !{p1}
+    title Read Manga
+    meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0, shrink-to-fit=no, user-scalable=no")
+    style 
+        include /css/navbar.css
+    style
+        include /css/style.css
+    script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+  body(style="margin:0px")
+    include includes/navbar.pug
+    img#loading(class="image_center", src="/images/loading.svg",width="80")
+    script
+        include /js/index.js
+    script.
+        setTimeout(function(){window.location.reload()},5000)
