@@ -9,7 +9,12 @@ html
     script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
     body(style="margin:0px")
         include includes/thin_navbar.pug
-
+        div#imgs
+            - var i = 0;
+            while i < imageURlS.length
+                - var imageLOL = imageURlS[i]
+                image(src="" + imageLOL,class="manga_page")
+                - i++
 
         script
             include /js/index.js

@@ -27,7 +27,7 @@ mixin hotUpdate(allMangas)
     while i < 12
         - var manga = allMangas[i]
         div.hot_update_item
-            a(href="/manga/read/"+ manga.ChapterLink, title="" + manga.SeriesName + " Chapter " + manga.Chapter)
+            a(href="/manga/read/"+ manga.ChapterLink + "-page-1", title="" + manga.SeriesName + " Chapter " + manga.Chapter)
                 div.hot_update_item_name 
                     if manga.SeriesName.length > 18
                         span #{manga.SeriesName.substr(0,18) + '... ' + manga.Chapter}

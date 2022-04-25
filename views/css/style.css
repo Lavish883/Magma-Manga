@@ -187,6 +187,24 @@ body {
     padding: 0px 130px 0px 150px
 }
 
+#imgs {
+    padding: 50px;
+    padding-top: 10px;
+    cursor: pointer;
+}
+
+#imgs img {
+    user-select: none;
+    -webkit-user-select: none;
+}
+.manga_page {
+    margin: auto;
+    max-width: 100%;
+    display: none;
+    margin-bottom: 20px;
+}
+
+
 @media only screen and (max-width: 600px) {
     #main {
         padding: 0px 10px;

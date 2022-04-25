@@ -44,8 +44,10 @@ app.get('/manga/', async (req, res) => {
 })
 // read.html
 app.get('/manga/read/:mangaChapter', async (req, res) => {
-    res.render('read')
-    //return res.send(req.params.mangaChapter);
+    let fetchAllData = await fetch(serverName + 'api/manga/read/' + req.params.mangaChapter)
+    let resp = await fetchAllData.json();
+    res.render('read', resp)
+    
 })
 
 // get all the stuff needed for the main page of the site
@@ -110,18 +112,26 @@ app.get('/api/manga/recommend', async (req,res) => {
 // given a chapter of a manga return all the pages adn info of that manga
 app.get('/api/manga/read/:chapter', async (req, res) => {
     let headers = headersGenerator.getHeaders();
-    let fetchManga = await fetch(breakCloudFlare + /read-online/ + req.params.chapter)
+    let fetchManga = await fetch(breakCloudFlare + /read-online/ + req.params.chapter, headers)
     let resp = await fetchManga.text();
 
-    var allData = {
-        'chapters': mainFunctions.fixChaptersArry(resp.split(`vm.CHAPTERS = `)[1].split(`;`)[0]),
-        'currentChapter': 'as',
-        'urls': 'as'
+    var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
+    var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
 
+    var chapters = mainFunctions.fixChaptersArry(resp.split(`vm.CHAPTERS = `)[1].split(`;`)[0]);
+    var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0]);
+
+    var imageDirectoryURL = resp.split(`vm.CurPathName = "`)[1].split(`";`)[0];
+    var imageURlS = mainFunctions.chapterImgURLS(currentChapter, imageDirectoryURL, indexName);
+
+    var allData = {
+        'chapters': chapters,
+        'currentChapter': currentChapter,
+        'imageURlS': imageURlS,
+        'seriesName': seriesName,
+        'indexName': indexName
     }
     return res.send(allData)
-
-    return res.send(req.params.chapter)
 })
 
 

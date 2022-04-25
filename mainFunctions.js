@@ -4,8 +4,19 @@ const fetch = require('node-fetch');
 
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
 
+// used for latest chapters index.html
 function calcDate(date){
   return moment(date).subtract(1, 'hour').fromNow();   
+}
+// used for manga.html screen
+function calcDateForMangaChapters(Date) {
+    var daysPassed = moment().diff(Date, "d");
+    if (daysPassed === 0) {
+        return moment(Date).fromNow()
+    } else {
+        return moment(Date).calendar()
+    }
+    return moment().diff(Date, "d");
 }
 
 function calcChapter(Chapter){
@@ -76,6 +87,7 @@ function scrapeManga(page){
 
   
 }
+
 async function getGenres(manga, headers) {
   let fetchManga = await fetch(breakCloudFlare + '/manga/' + manga, headers);
   let resp = await fetchManga.text();
@@ -156,9 +168,58 @@ function fixChaptersArry(chapters) {
     chapters = JSON.parse(chapters);
     for (var i = 0; i < chapters.length; i++) {
         chapters[i].Chapter = calcChapter(chapters[i].Chapter);
-        chapters[i].Date = calcDate(chapters[i].Date);
+        chapters[i].Date = calcDateForMangaChapters(chapters[i].Date);
     }
-    return chapters
+    return chapters.reverse();
 }
 
-module.exports = { scrapeHotManga, fixChaptersArry, scrapeHotMangaThisMonth ,scrapeAdminRecd, scrapeLatestManga, scrapeManga, getGenres, getSimilarManga}
+function fixCurrentChapter(chapter) {
+    chapter = JSON.parse(chapter);
+    chapter.Chapter = calcChapter(chapter.Chapter);
+    chapter.Date = calcDateForMangaChapters(chapter.Date);
+    return chapter
+}
+// for the image url it calcs the chapter 
+    // for ex.) => if given 160 => 0160, 15 => 0015
+function ChapterImage(ImageChapterToString) {
+    if (ImageChapterToString.includes('.')) {
+        if (ImageChapterToString.length === 5) {
+            ImageChapterToString = '0' + ImageChapterToString
+        } else if (ImageChapterToString.length === 4) {
+            ImageChapterToString = '00' + ImageChapterToString
+        } else if (ImageChapterToString.length === 3) {
+            ImageChapterToString = '000' + ImageChapterToString
+        }
+    } else {
+        if (ImageChapterToString.length === 3) {
+            ImageChapterToString = '0' + ImageChapterToString
+        } else if (ImageChapterToString.length === 2) {
+            ImageChapterToString = '00' + ImageChapterToString
+        } else if (ImageChapterToString.length === 1) {
+            ImageChapterToString = '000' + ImageChapterToString
+        }
+    }
+    return ImageChapterToString
+}
+// for the image url calcs the corresponding page
+    // for ex.) => if 5 => 005, 15 => 015
+function PageImage(PageString) {
+    var s = "000" + PageString;
+    return s.substr(s.length - 3);
+}
+
+function chapterImgURLS(currentChapter, imageDirectoryURL, indexName) {
+    var imgURLS = [];
+    var chapterNumber = ChapterImage(currentChapter.Chapter.toString());
+    var directory = currentChapter.Directory === '' ? '/' : '/' + currentChapter.Directory + '/'
+
+    console.log(imageDirectoryURL)
+    for (var i = 1; i < parseInt(currentChapter.Page) + 1; i++) {
+        let imagePage = PageImage(i.toString());
+        imgURLS.push('https://' + imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png');
+    }
+
+    return imgURLS;
+}
+
+module.exports = { chapterImgURLS, fixCurrentChapter, scrapeHotManga, fixChaptersArry, scrapeHotMangaThisMonth, scrapeAdminRecd, scrapeLatestManga, scrapeManga, getGenres, getSimilarManga}
