@@ -204,6 +204,34 @@ body {
     margin-bottom: 20px;
 }
 
+#read_options {
+    justify-content:space-evenly;
+    background-color:white;
+    max-width:1150px;
+    margin:auto;
+    margin-top:10px;
+    height:30px;
+    display:flex;
+    border-radius:8px;
+    flex-direction:row;
+    padding:8px 10px;
+}
+
+#read_options .option:hover{
+    background-color:#6c757d;
+    border-color:#6c757d;
+    color:white;
+}
+
+#read_options .option {
+    border:solid 1px black;
+    max-width: 13.666667%;
+    border-radius:3.5px;
+    text-align:center;
+    padding:2.5px 10px;
+    cursor:pointer;
+    color:rgba(0, 0, 0, .6);
+}
 
 @media only screen and (max-width: 600px) {
     #main {

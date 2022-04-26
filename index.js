@@ -3,7 +3,7 @@ const express = require('express');
 const fetch = require('node-fetch');
 const mainFunctions = require('./mainFunctions')
 const path = require('path');
-var isPupServerLoaded = false;
+var isPupServerLoaded = true;
 
 const serverName = process.env.SERVERNAME || 'http://localhost:5832/';
 
