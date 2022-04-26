@@ -5,7 +5,7 @@ function makeLatestChapterHTML(manga, isPopular, isCompleted) {
         <a href="manga.html?manga=${manga.IndexName}" title="${manga.SeriesName}">
             <img src="${"https://cover.nep.li/cover/" + manga.IndexName + '.jpg'}" width="90" />
         </a>
-        <a style="display:contents;" href="${"read.html?read=" + manga.IndexName + manga.ChapterLink + '-page-1'}" title="${manga.SeriesName + "&nbsp;Chapter&nbsp;" + manga.Chapter}">
+        <a style="display:contents;" href="${"/manga/read/" + manga.ChapterLink + '-page-1'}" title="${manga.SeriesName + "&nbsp;Chapter&nbsp;" + manga.Chapter}">
             <div style="margin-left:15px; margin-top:8px;">
                 <div class="latest_chapters_info">
                     ${isPopular ? `<i style="color:red" class="fas fa-fire-alt"></i>` : ''}

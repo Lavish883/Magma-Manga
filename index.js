@@ -5,7 +5,7 @@ const mainFunctions = require('./mainFunctions')
 const path = require('path');
 var isPupServerLoaded = true;
 
-const serverName = process.env.SERVERNAME || 'http://localhost:5832/';
+const serverName = process.env.SERVERNAME || 'https://mangaapi.lavishkumar1.repl.co/';
 
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
 // Generate human like headers so site doesn't detect us
