@@ -1,7 +1,11 @@
 const pug = require('pug') // html template
-const express = require('express');
-const fetch = require('node-fetch');
-const mainFunctions = require('./mainFunctions')
+const express = require('express'); // server 
+const fetch = require('node-fetch'); // fetchs html
+const mainFunctions = require('./mainFunctions') // functions needed for important stuff
+const cookieParser = require('cookie-parser') //parses cookies recived from the user
+// note -
+  // use cokies fro prefs, and login
+  // while local storage for recentRead and BookMarks
 const path = require('path');
 var isPupServerLoaded = true;
 
@@ -29,8 +33,24 @@ const app = express()
 const port = process.env.PORT || 5832;
 app.set('view engine', 'pug')
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(cookieParser())
 app.locals.basedir = path.join(__dirname, 'views');
 
+// set intial cookies fro user when they comes to the website for the first time
+app.use(function (req,res, next){
+  var cookie = req.cookies.cookieName;
+  console.log(cookie)
+  if (cookie == undefined){
+    var intialCookies = {
+      'longStrip': false,
+      'pageGap': false,
+      'darkMode': false,
+      
+    }
+    res.cookie('')
+  }
+  next();
+})
 // index.html
 app.get('/manga/', async (req, res) => {
     if (isPupServerLoaded) {
