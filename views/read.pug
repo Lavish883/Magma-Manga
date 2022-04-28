@@ -1,6 +1,6 @@
 html
     head
-    title Placeholder // replace it manga title
+    title !{title}
     meta(name="viewport",content="width=device-width, initial-scale=1")
     style
         include /css/style.css
@@ -25,7 +25,7 @@ html
             a.option
                 i(class="fas fa-thumbtack") &nbsp;
                 span Bookmark
-            a.option(href="#")
+            a.option(href="/manga/download/" + chapterLink)
                 i(class="fas fa-arrow-down") &nbsp;
                 span Download Chapter
         div#imgs

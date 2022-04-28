@@ -4,7 +4,7 @@ const fetch = require('node-fetch'); // fetchs html
 const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const cookieParser = require('cookie-parser') //parses cookies recived from the user
 // note -
-  // use cokies fro prefs, and login
+  // use cookies for prefs, and login
   // while local storage for recentRead and BookMarks
 const path = require('path');
 var isPupServerLoaded = true;
@@ -32,25 +32,32 @@ const headersGenerator = new HeaderGenerator({
 const app = express()
 const port = process.env.PORT || 5832;
 app.set('view engine', 'pug')
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(cookieParser())
 app.locals.basedir = path.join(__dirname, 'views');
 
 // set intial cookies fro user when they comes to the website for the first time
 app.use(function (req,res, next){
-  var cookie = req.cookies.cookieName;
+  var cookie = req.cookies.user;
   console.log(cookie)
   if (cookie == undefined){
     var intialCookies = {
-      'longStrip': false,
-      'pageGap': false,
-      'darkMode': false,
-      
+      'loggedIn': false,
+      'accessToken': false,
+      'refreshToken': false,
     }
-    res.cookie('')
+    res.cookie('user',JSON.stringify(intialCookies), {
+      maxAge: 2592 * 10^6,
+      secure: true,
+      httpOnly: true,
+      sameSite: 'lax'
+    });
+    console.log('sent the cookie')
+  } else {
+    console.log('we already have it')
   }
   next();
 })
+
 // index.html
 app.get('/manga/', async (req, res) => {
     if (isPupServerLoaded) {
@@ -66,6 +73,12 @@ app.get('/manga/', async (req, res) => {
 app.get('/manga/read/:mangaChapter', async (req, res) => {
     let fetchAllData = await fetch(serverName + 'api/manga/read/' + req.params.mangaChapter)
     let resp = await fetchAllData.json();
+    // still got do the spefic page 
+    if(req.params.mangaChapter.includes('-page-')){
+      resp.title = resp.seriesName + ' Chapter ' + resp.currentChapter.Chapter + ' Page ' + '1'
+    } else {
+      resp.title = resp.seriesName + ' Chapter ' + resp.currentChapter.Chapter 
+    }
     res.render('read', resp)
     
 })
@@ -149,10 +162,14 @@ app.get('/api/manga/read/:chapter', async (req, res) => {
         'currentChapter': currentChapter,
         'imageURlS': imageURlS,
         'seriesName': seriesName,
-        'indexName': indexName
+        'indexName': indexName, 
+        'chapterLink': req.params.chapter
     }
     return res.send(allData)
 })
-
-
+// let user download that chpater manga
+app.get('/manga/download/:chapter', async(req,res) => {
+  res.send(req.params.chapter)
+})
+app.use(express.static(path.join(__dirname, 'public')));
 app.listen(port)
