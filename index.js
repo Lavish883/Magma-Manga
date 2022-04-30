@@ -9,7 +9,7 @@ const cookieParser = require('cookie-parser') //parses cookies recived from the 
 const path = require('path');
 var isPupServerLoaded = true;
 
-const serverName = process.env.SERVERNAME || 'https://mangaapi.lavishkumar1.repl.co/';
+const serverName = process.env.SERVERNAME || 'http://localhost:5832/';
 
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
 // Generate human like headers so site doesn't detect us

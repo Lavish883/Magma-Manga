@@ -19,7 +19,7 @@ html
             a.option    
                 i(class="far fa-file") &nbsp;
                 span Page 1
-            a.option(onclick="(changeReadingStyle(this))")
+            a.option(onclick="longStrip = !longStrip,changeReadingStyle(this)",id="readingStyle")
                 i(class="fas fa-arrows-alt-v") &nbsp;
                 span Long Strip
             a.option
@@ -40,7 +40,8 @@ html
         script 
             include /js/readHtml.js
         script.
-          alert(win)
-          var longStrip = !window.location.includes("-page-")
-          alert(longStrip)
+          var longStrip = !window.location.href.includes("-page-")
+          changeReadingStyle(document.getElementById("readingStyle"))
+          var currentlyOnPage = window.location.href.split(`-page-`)[1]
+          showImages(currentlyOnPage)
         script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
