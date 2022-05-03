@@ -164,9 +164,10 @@ function scrapeHotMangaThisMonth(html) {
     return hotMonth2 
 }
 
-function fixChaptersArry(chapters) {
+function fixChaptersArry(chapters, indexName) {
     chapters = JSON.parse(chapters);
     for (var i = 0; i < chapters.length; i++) {
+        chapters[i].ChapterLink = indexName + calcChapterUrl(chapters[i].Chapter)
         chapters[i].Chapter = calcChapter(chapters[i].Chapter);
         chapters[i].Date = calcDateForMangaChapters(chapters[i].Date);
     }

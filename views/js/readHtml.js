@@ -1,5 +1,9 @@
-function changeReadingStyle(obj) {
-  console.log('clciked')
+var longStrip = !window.location.href.includes("-page-")
+var currentlyOnPage = window.location.href.split(`-page-`)[1]
+
+
+
+function changeReadingStyle(obj, userClicked = true) {
   // check if either longstrip is actived or not
   if (longStrip == true){
       obj.children[0].classList.remove("fa-arrows-alt-v");
@@ -12,8 +16,10 @@ function changeReadingStyle(obj) {
       obj.children[0].classList.add("fa-arrows-alt-v");
       obj.children[0].classList.remove("fa-columns");
       obj.children[1].innerText = "Long Strip"
-      currentlyOnPage = 1;
-      showImages(currentlyOnPage);
+      if (userClicked) {
+          currentlyOnPage = 1;
+          showImages(currentlyOnPage);
+      }
   }
 }
 // show Images in single Page mode
@@ -30,6 +36,7 @@ function showImages(page) {
     }
     if (!isNaN(page)) {
         allImgs.children[page - 1].style.display = 'block';
+        document.getElementById("pageNumber").innerText =  'Page ' + page
         window.scrollTo(0, 0);
     }
 }
@@ -57,5 +64,31 @@ function movePage(event) {
         })
     }
 }
+// go to the next chapter
+// direction meaning either next chapter or previous chapter
+function moveChapter(direction) {
+    var chapterToLook = direction == 'next' ? currentChapter.Chapter + 1 : currentChapter.Chapter - 1;
 
+    for (var i = 0; i < chapters.length; i++) {
+        if (chapters[i].Chapter == chapterToLook) {
+            if (longStrip) {
+                window.location.href = window.location.origin + '/manga/read/' + chapters[i].ChapterLink;
+            } else {
+                let chapterPageToStart = direction == 'next' ? '-page-1' : '-page-' + chapters[i].Page;
+                window.location.href = window.location.origin + '/manga/read/' + chapters[i].ChapterLink + chapterPageToStart;
+            }
+            return;
+        }
+    }
+    alert('No more next chapters. You are all caught up')
+}
+// updtae url accordingly
+
+
+// event listeners 
+    // listen for page clicks
 document.getElementById('imgs').addEventListener("click", movePage);
+
+// function calls
+changeReadingStyle(document.getElementById("readingStyle"), false)
+showImages(parseInt(currentlyOnPage))

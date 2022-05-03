@@ -18,7 +18,7 @@ html
                 span !{currentChapter.Type + ' ' + currentChapter.Chapter}
             a.option    
                 i(class="far fa-file") &nbsp;
-                span Page 1
+                span#pageNumber Page 1
             a.option(onclick="longStrip = !longStrip,changeReadingStyle(this)",id="readingStyle")
                 i(class="fas fa-arrows-alt-v") &nbsp;
                 span Long Strip
@@ -40,8 +40,6 @@ html
         script 
             include /js/readHtml.js
         script.
-          var longStrip = !window.location.href.includes("-page-")
-          changeReadingStyle(document.getElementById("readingStyle"))
-          var currentlyOnPage = window.location.href.split(`-page-`)[1]
-          showImages(currentlyOnPage)
+          var chapters = !{JSON.stringify(chapters).replace(/<\//g, '<\\/')} 
+          var currentChapter = !{JSON.stringify(currentChapter).replace(/<\//g, '<\\/')}
         script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")

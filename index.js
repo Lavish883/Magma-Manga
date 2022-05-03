@@ -38,7 +38,7 @@ app.locals.basedir = path.join(__dirname, 'views');
 // set intial cookies fro user when they comes to the website for the first time
 app.use(function (req,res, next){
   var cookie = req.cookies.user;
-  console.log(cookie)
+  //console.log(cookie)
   if (cookie == undefined){
     var intialCookies = {
       'loggedIn': false,
@@ -51,9 +51,9 @@ app.use(function (req,res, next){
       httpOnly: true,
       sameSite: 'lax'
     });
-    console.log('sent the cookie')
+//    console.log('sent the cookie')
   } else {
-    console.log('we already have it')
+  //  console.log('we already have it')
   }
   next();
 })
@@ -147,18 +147,18 @@ app.get('/api/manga/read/:chapter', async (req, res) => {
     let headers = headersGenerator.getHeaders();
     let fetchManga = await fetch(breakCloudFlare + /read-online/ + req.params.chapter, headers)
     let resp = await fetchManga.text();
-
+    console.log(req.params.chapter)
     var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
     var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
 
-    var chapters = mainFunctions.fixChaptersArry(resp.split(`vm.CHAPTERS = `)[1].split(`;`)[0]);
+    var chapters = mainFunctions.fixChaptersArry(resp.split(`vm.CHAPTERS = `)[1].split(`;`)[0], indexName);
     var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0]);
 
     var imageDirectoryURL = resp.split(`vm.CurPathName = "`)[1].split(`";`)[0];
     var imageURlS = mainFunctions.chapterImgURLS(currentChapter, imageDirectoryURL, indexName);
 
     var allData = {
-        'chapters': chapters,
+        'chapters':  chapters,
         'currentChapter': currentChapter,
         'imageURlS': imageURlS,
         'seriesName': seriesName,
