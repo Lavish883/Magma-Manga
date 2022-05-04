@@ -3,13 +3,14 @@ const express = require('express'); // server
 const fetch = require('node-fetch'); // fetchs html
 const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const cookieParser = require('cookie-parser') //parses cookies recived from the user
+const pathFunctions = require('./pathFunctions')
 // note -
   // use cookies for prefs, and login
   // while local storage for recentRead and BookMarks
 const path = require('path');
-var isPupServerLoaded = true;
+var isPupServerLoaded = false;
 
-const serverName = process.env.SERVERNAME || 'http://localhost:5832/';
+const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
 
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
 // Generate human like headers so site doesn't detect us
@@ -36,7 +37,9 @@ app.use(cookieParser())
 app.locals.basedir = path.join(__dirname, 'views');
 
 // set intial cookies fro user when they comes to the website for the first time
-app.use(function (req,res, next){
+app.use(setup)
+
+function setup(req,res,next){
   var cookie = req.cookies.user;
   //console.log(cookie)
   if (cookie == undefined){
@@ -51,24 +54,19 @@ app.use(function (req,res, next){
       httpOnly: true,
       sameSite: 'lax'
     });
-//    console.log('sent the cookie')
+    // console.log('sent the cookie')
   } else {
-  //  console.log('we already have it')
+    console.log('we already have it')
   }
   next();
+}
+
+app.get('/', (req, res) => {
+  res.redirect('/manga')
 })
 
 // index.html
-app.get('/manga/', async (req, res) => {
-    if (isPupServerLoaded) {
-        let fetchAllData = await fetch(serverName + 'api/manga/all')
-        let resp = await fetchAllData.json();
-        res.render('index', resp)
-    } else {
-        res.render('loading')
-        isPupServerLoaded = true;
-    }
-})
+app.get('/manga/', pathFunctions.indexHtml())
 // read.html
 app.get('/manga/read/:mangaChapter', async (req, res) => {
     let fetchAllData = await fetch(serverName + 'api/manga/read/' + req.params.mangaChapter)

@@ -43,27 +43,38 @@ function showImages(page) {
 
 // listen to page clicks either it is left or right
 function movePage(event) {
-    let pWidth = $(this).innerWidth();
-    let pOffset = $(this).offset();
-    var x = event.pageX - pOffset.left;
-    if (pWidth / 2 > x) {
-        currentlyOnPage--;
-    } else {
-        currentlyOnPage++;
-    }
-    if (longStrip == false) {
-        showImages(currentlyOnPage)
-    } else {
-        var ScrollToPlease = window.pageYOffset + 700 || document.documentElement.scrollTop + 700
-        console.log('Scroll T please')
-        console.log(ScrollToPlease)
-        window.scroll({
-            top: ScrollToPlease,
-            left: 0,
-            behavior: 'smooth'
-        })
-    }
+  // varibles to check of the page clikc is lef tor right
+  let pWidth = $(this).innerWidth();
+  let pOffset = $(this).offset();
+  var x = event.pageX - pOffset.left;
+
+  if (pWidth / 2 > x) {
+    currentlyOnPage--; // Left side of page is clicked
+  } else {
+    currentlyOnPage++; // Right Side of the page is clicked
+  }
+  
+  if (currentlyOnPage > currentChapter.Page){
+    moveChapter('next')
+    return;
+  } else if (currentlyOnPage < 1){
+    moveChapter('prev')
+    return;
+  }
+  
+  
+  if (longStrip == false) {
+      showImages(currentlyOnPage)
+  } else {
+      var ScrollToPlease = window.pageYOffset + 700 || document.documentElement.scrollTop + 700
+      window.scroll({
+          top: ScrollToPlease,
+          left: 0,
+          behavior: 'smooth'
+      })
+  }
 }
+
 // go to the next chapter
 // direction meaning either next chapter or previous chapter
 function moveChapter(direction) {
