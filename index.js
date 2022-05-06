@@ -1,35 +1,24 @@
 const pug = require('pug') // html template
 const express = require('express'); // server 
 const fetch = require('node-fetch'); // fetchs html
-const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const cookieParser = require('cookie-parser') //parses cookies recived from the user
-const pathFunctions = require('./pathFunctions')
-// note -
-  // use cookies for prefs, and login
-  // while local storage for recentRead and BookMarks
 const path = require('path');
+
+const mainFunctions = require('./mainFunctions') // functions needed for important stuff
+const pathFunctions = require('./pathFunctions') // functions that handle use requests
+const apiFunctions = require('./apiFunctions') // function that handle all api requests
+
+// note to self -
+  // use cookies for prefs, and login
+  // while local storage for recentRead and BookMarks, easier to handle client side
+
 var isPupServerLoaded = false;
-
 const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
-
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
-// Generate human like headers so site doesn't detect us
-const HeaderGenerator = require('header-generator');
-const headersGenerator = new HeaderGenerator({
-  browsers: [
-    {name: "firefox", minVersion: 80},
-    {name: "chrome", minVersion: 87},
-      "safari"
-    ],
-    devices: [
-      "desktop"
-    ],
-    operatingSystems: [
-      "windows"
-    ]
-});
 
-// run express at port 8190
+
+
+// run express at port 5832
 const app = express()
 const port = process.env.PORT || 5832;
 app.set('view engine', 'pug')
@@ -66,49 +55,15 @@ app.get('/', (req, res) => {
 })
 
 // index.html
-app.get('/manga/', pathFunctions.indexHtml())
+app.get('/manga/', pathFunctions.indexHtml)
 // read.html
-app.get('/manga/read/:mangaChapter', async (req, res) => {
-    let fetchAllData = await fetch(serverName + 'api/manga/read/' + req.params.mangaChapter)
-    let resp = await fetchAllData.json();
-    // still got do the spefic page 
-    if(req.params.mangaChapter.includes('-page-')){
-      resp.title = resp.seriesName + ' Chapter ' + resp.currentChapter.Chapter + ' Page ' + '1'
-    } else {
-      resp.title = resp.seriesName + ' Chapter ' + resp.currentChapter.Chapter 
-    }
-    res.render('read', resp)
-    
-})
-
+app.get('/manga/read/:mangaChapter', pathFunctions.readHtml)
+// quick search data
+app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)
 // get all the stuff needed for the main page of the site
-app.get('/api/manga/all', async (req, res) => {
-    let headers = headersGenerator.getHeaders();
-    let fetchAll = await fetch(breakCloudFlare, headers);
-    let resp = await fetchAll.text();
-    var allData = {
-        'adminRecd': mainFunctions.scrapeAdminRecd(resp),
-        'hotMangaUpdated': mainFunctions.scrapeHotManga(resp),
-        'hotMangaThisMonth': mainFunctions.scrapeHotMangaThisMonth(resp),
-        'latestManga': mainFunctions.scrapeLatestManga(resp),
-    }
-    res.send(allData)
-})
+app.get('/api/manga/all', apiFunctions.getMainPageStuff)
 // given => mangaName?One-Piece
-app.get('/api/mangaName?', async (req, res) => {
-  let headers = headersGenerator.getHeaders();
-  let mangaName =  req.query.manga;
-
-  if (typeof mangaName === 'undefined'){
-    return res.send('not valid')
-  }
-
-  let link = breakCloudFlare + '/manga/' + mangaName;  
-  let fetchManga = await fetch(link, headers);
-  let resp = await fetchManga.text();
-  
-  return res.send(mainFunctions.scrapeManga(resp))
-})
+app.get('/api/mangaName?', apiFunctions.getMangaPage)
 // given => type as hot (popular) and latest
 app.get('/api/manga/main/:type', async (req, res) => {
   let headers = headersGenerator.getHeaders();
@@ -141,30 +96,7 @@ app.get('/api/manga/recommend', async (req,res) => {
   
 })
 // given a chapter of a manga return all the pages adn info of that manga
-app.get('/api/manga/read/:chapter', async (req, res) => {
-    let headers = headersGenerator.getHeaders();
-    let fetchManga = await fetch(breakCloudFlare + /read-online/ + req.params.chapter, headers)
-    let resp = await fetchManga.text();
-    console.log(req.params.chapter)
-    var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
-    var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
-
-    var chapters = mainFunctions.fixChaptersArry(resp.split(`vm.CHAPTERS = `)[1].split(`;`)[0], indexName);
-    var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0]);
-
-    var imageDirectoryURL = resp.split(`vm.CurPathName = "`)[1].split(`";`)[0];
-    var imageURlS = mainFunctions.chapterImgURLS(currentChapter, imageDirectoryURL, indexName);
-
-    var allData = {
-        'chapters':  chapters,
-        'currentChapter': currentChapter,
-        'imageURlS': imageURlS,
-        'seriesName': seriesName,
-        'indexName': indexName, 
-        'chapterLink': req.params.chapter
-    }
-    return res.send(allData)
-})
+app.get('/api/manga/read/:chapter', apiFunctions.getMangaChapterPage)
 // let user download that chpater manga
 app.get('/manga/download/:chapter', async(req,res) => {
   res.send(req.params.chapter)
