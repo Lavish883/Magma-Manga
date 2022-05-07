@@ -1,20 +1,24 @@
-var mangaDirectory;
+const searchResults = document.getElementById("search_results");
+const searchInput = document.getElementById("Search_input");
 
-function handleQuickSearchInput(event) {
+var mangaDirectory;
+var filteredResults = [];
+
+function filterResults(event) {
   
 }
-
+// fwtch data that allows for searching
 async function getQuickSearchData (){
-  alert(window.location.origin + '/api/manga/quickSearch')
   let link = window.location.origin + '/api/manga/quickSearch'
   
-  let fetchQuickSearch = fetch(link)
-  
+  let fetchQuickSearch = await fetch(link);
+  let resp = await fetchQuickSearch.json();
+
+  mangaDirectory = resp;
 }
 
 
-
-
+getQuickSearchData()
 
 
 document.getElementById("Search_input").addEventListener('keyup', handleQuickSearchInput)
