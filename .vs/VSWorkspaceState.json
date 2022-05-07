@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\views",
+    "\\views\\includes",
     "\\views\\js"
   ],
-  "SelectedNode": "\\views\\js\\readHtml.js",
+  "SelectedNode": "\\mainFunctions.js",
   "PreviewInSolutionExplorer": false
 }

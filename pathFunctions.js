@@ -1,6 +1,6 @@
 const fetch = require('node-fetch'); // fetchs html
 const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
-var isPupServerLoaded = false;
+var isPupServerLoaded = true;
 
 async function indexHtml(req, res){
   

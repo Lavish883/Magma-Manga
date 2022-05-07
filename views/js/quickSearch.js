@@ -2,12 +2,62 @@ const searchResults = document.getElementById("search_results");
 const searchInput = document.getElementById("Search_input");
 
 var mangaDirectory;
-var filteredResults = [];
+
+function showResults(arry) {
+
+    if (arry.length == 0) {
+        searchResults.innerHTML = `<li style="height:35px;"><a style="justify-content:center;"><span>No Search Results :(</span></a></li>`
+        return;
+    }
+
+    var resultsHTML = [];
+    // to limit the results to 8, getting rid of it now becuase it reduces lag rather than using .length method
+    var toGoThrough = arry.length > 7 ? 7 : arry.length;
+    
+    for (var i = 0; i < toGoThrough; i++) {
+        resultsHTML.push(
+            `
+                <li>
+                    <a href="${arry[i].i}">
+                        <img src="${"//cover.nep.li/cover/" + arry[i].i + '.jpg'}" >
+                        <span>${arry[i].s}</span>
+                </li>
+            `
+        )
+    }
+    searchResults.innerHTML = resultsHTML.join('');
+}
 
 function filterResults(event) {
-  
+
+    let filteredResults = [];
+    let userSearch = event.target.value;
+
+    if (userSearch == '') {
+        searchResults.innerHTML = "";
+        return;
+    }
+
+    for (var i = 0; i < mangaDirectory.length; i++) {
+        let manga = mangaDirectory[i];
+        // Check if what the user typed 
+        if (manga.s.toLowerCase().includes(userSearch.toLowerCase())) {
+            filteredResults.push(manga)
+            continue;
+        }
+
+        for (var k = 0; k < manga.a.length; k++) {
+            if (manga.a[k].toLowerCase().includes(userSearch.toLowerCase())) {
+                filteredResults.push(manga)
+                break;
+            }
+        }
+    }
+
+
+    showResults(filteredResults)
 }
-// fwtch data that allows for searching
+// fetch data that allows for searching
 async function getQuickSearchData (){
   let link = window.location.origin + '/api/manga/quickSearch'
   
@@ -21,5 +71,5 @@ async function getQuickSearchData (){
 getQuickSearchData()
 
 
-document.getElementById("Search_input").addEventListener('keyup', handleQuickSearchInput)
+document.getElementById("Search_input").addEventListener('keyup', filterResults)
 document.getElementById("Search_input").addEventListener('click', getQuickSearchData)

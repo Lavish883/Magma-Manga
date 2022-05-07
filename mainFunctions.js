@@ -217,9 +217,9 @@ function chapterImgURLS(currentChapter, imageDirectoryURL, indexName) {
     console.log(imageDirectoryURL)
     for (var i = 1; i < parseInt(currentChapter.Page) + 1; i++) {
         let imagePage = PageImage(i.toString());
-        let imageURLSer =  '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ( imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png').replaceAll('/', ' ')
+        //let imageURLSer =  '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ( imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png').replaceAll('/', ' ')
         let imageURL = '//' + imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png'
-        imgURLS.push(imageURLSer);
+        imgURLS.push(imageURL);
     }
 
     return imgURLS;
