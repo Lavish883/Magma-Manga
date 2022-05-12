@@ -35,10 +35,13 @@ async function readHtml (req,res){
   return res.render('read', resp)
 }
 
+async function bookmarksHtml(req, res){
+  return res.render('bookmarks')
+}
 
 
 module.exports = {
   indexHtml,
-  readHtml
-  
+  readHtml,
+  bookmarksHtml
 }

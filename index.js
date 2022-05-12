@@ -10,7 +10,7 @@ const apiFunctions = require('./apiFunctions') // function that handle all api r
 
 // note to self -
   // use cookies for prefs, and login
-  // while local storage for recentRead and BookMarks, easier to handle client side
+  // while local storage for recentRead and bookmarks, easier to handle client side
 
 var isPupServerLoaded = false;
 const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
@@ -58,6 +58,9 @@ app.get('/', (req, res) => {
 app.get('/manga/', pathFunctions.indexHtml)
 // read.html
 app.get('/manga/read/:mangaChapter', pathFunctions.readHtml)
+// bookmarks.html
+app.get('/manga/bookmarks', pathFunctions.bookmarksHtml)
+  
 // quick search data
 app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)
 // get all the stuff needed for the main page of the site

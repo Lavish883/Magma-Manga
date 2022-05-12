@@ -2,6 +2,30 @@ var longStrip = !window.location.href.includes("-page-")
 var currentlyOnPage = window.location.href.split(`-page-`)[1]
 
 
+// bookmark the manga or unbookmark
+function checkIfBookmarked(){
+  let bookMarks = JSON.parse(window.localStorage.getItem('bookmarks'));
+  for (var i = 0; i < bookMarks.length; i++){
+    let manga = bookMarks[i];
+    if (manga.seriesName == currentChapter.seriesName && manga.indexName == currentChapter.indexName){
+      alert('already bookmarked')
+      return true
+    }
+  }
+  return false
+  alert(JSON.stringify(currentChapter))
+}
+
+function bookMark(obj){
+  var bookMarks = JSON.parse(window.localStorage.getItem('bookmarks')); 
+  
+  if (!checkIfBookmarked()) {
+    bookMarks.push({'seriesName': currentChapter.seriesName, 'indexName': currentChapter.indexName})
+    window.localStorage.setItem(JSON.stringify(bookMarks))
+  }
+  
+  
+}
 
 function changeReadingStyle(obj, userClicked = true) {
   // check if either longstrip is actived or not
@@ -103,3 +127,4 @@ document.getElementById('imgs').addEventListener("click", movePage);
 // function calls
 changeReadingStyle(document.getElementById("readingStyle"), false)
 showImages(parseInt(currentlyOnPage))
+document.body.addEventListener('click', checkIfBookmarked)

@@ -64,6 +64,9 @@ async function getMangaChapterPage(req, res){
   var imageDirectoryURL = resp.split(`vm.CurPathName = "`)[1].split(`";`)[0];
   var imageURlS = mainFunctions.chapterImgURLS(currentChapter, imageDirectoryURL, indexName);
 
+  currentChapter.seriesName = seriesName;
+  currentChapter.indexName = indexName;
+  
   var allData = {
       'chapters':  chapters,
       'currentChapter': currentChapter,
