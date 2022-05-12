@@ -2,29 +2,53 @@ var longStrip = !window.location.href.includes("-page-")
 var currentlyOnPage = window.location.href.split(`-page-`)[1]
 
 
-// bookmark the manga or unbookmark
+// check if manga is bookmarked or not
 function checkIfBookmarked(){
-  let bookMarks = JSON.parse(window.localStorage.getItem('bookmarks'));
+  var bookMarks = JSON.parse(window.localStorage.getItem('bookmarks'));
+    if (bookMarks == null) {
+        bookMarks = [];
+    }
   for (var i = 0; i < bookMarks.length; i++){
     let manga = bookMarks[i];
     if (manga.seriesName == currentChapter.seriesName && manga.indexName == currentChapter.indexName){
-      alert('already bookmarked')
       return true
     }
   }
   return false
-  alert(JSON.stringify(currentChapter))
 }
+// bookmark and change the user webpage
+function bookMark(obj, userClicked = true){
+    var bookMarks = JSON.parse(window.localStorage.getItem('bookmarks'));
+    var bookMarked = checkIfBookmarked()
 
-function bookMark(obj){
-  var bookMarks = JSON.parse(window.localStorage.getItem('bookmarks')); 
-  
-  if (!checkIfBookmarked()) {
-    bookMarks.push({'seriesName': currentChapter.seriesName, 'indexName': currentChapter.indexName})
-    window.localStorage.setItem(JSON.stringify(bookMarks))
-  }
-  
-  
+    if (bookMarks == null) {
+        bookMarks = [];
+    }
+
+    if (!bookMarked) {
+        obj.children[0].classList.remove('fa-thumbtack');
+        obj.children[0].classList.add('fa-eraser');
+        obj.children[1].innerText = 'Bookmarked'
+        if (!userClicked) return;
+        bookMarks.push({ 'seriesName': currentChapter.seriesName, 'indexName': currentChapter.indexName });
+    } else {
+        // remove the manga
+        obj.children[0].classList.add('fa-thumbtack');
+        obj.children[0].classList.remove('fa-eraser');
+        obj.children[1].innerText = 'Bookmark'
+        if (!userClicked) return;
+
+        for (var i = bookMarks.length - 1; i >= 0; i--) {
+            let manga = bookMarks[i];
+            if (manga.seriesName == currentChapter.seriesName && manga.indexName == currentChapter.indexName) {
+                bookMarks.splice(i, 1);
+                console.log('removed')
+                break;
+            }
+        }
+
+    }
+    window.localStorage.setItem('bookmarks', JSON.stringify(bookMarks))
 }
 
 function changeReadingStyle(obj, userClicked = true) {
