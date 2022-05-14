@@ -42,5 +42,5 @@ html
         script.
           var chapters = !{JSON.stringify(chapters).replace(/<\//g, '<\\/')} 
           var currentChapter = !{JSON.stringify(currentChapter).replace(/<\//g, '<\\/')}    
-          bookMark(document.getElementById("bookMark"), false)
+          changeBookMarkStatus(document.getElementById("bookMark"))
         script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")

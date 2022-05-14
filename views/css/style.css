@@ -236,6 +236,43 @@ body {
     text-overflow:ellipsis;
 }
 
+img {
+    -webkit-user-drag: none;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+
+.BookMark_Container {
+    max-width: 250px;
+    max-height: 330px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    position: relative;
+}
+
+.BookMark_Container a {
+    color: white;
+}
+
+.BookMark_Container a:hover {
+    color: gold;
+}
+
+#BookMarksContainer {
+    padding: 20px 100px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.BookMark_Container a img {
+    max-width: 250px;
+}
+
 @media only screen and (max-width: 600px) {
     #main {
         padding: 0px 10px;
@@ -292,5 +329,20 @@ body {
 @media only screen and (max-width: 305px) {
     .hot_update_item img {
         width: 130px;
+    }
+}
+/*Bookmarks.html*/
+@media only screen and (max-width: 600px) {
+    #BookMarksContainer {
+        padding: 20px 10px;
+    }
+
+    .BookMark_Container a img {
+        max-width: 155px;
+    }
+
+    .BookMark_Container {
+        max-width: 155px;
+        max-height: 204.6px;
     }
 }

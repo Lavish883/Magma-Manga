@@ -16,28 +16,31 @@ function checkIfBookmarked(){
   }
   return false
 }
+// change the staus of bookmark that is displated to the user
+function changeBookMarkStatus(obj) {
+    if (checkIfBookmarked()) {
+        obj.children[0].classList.remove('fa-thumbtack');
+        obj.children[0].classList.add('fa-eraser');
+        obj.children[1].innerText = 'Bookmarked'
+    } else {
+        obj.children[0].classList.add('fa-thumbtack');
+        obj.children[0].classList.remove('fa-eraser');
+        obj.children[1].innerText = 'Bookmark'
+    }
+}
 // bookmark and change the user webpage
-function bookMark(obj, userClicked = true){
+function bookMark(obj){
     var bookMarks = JSON.parse(window.localStorage.getItem('bookmarks'));
     var bookMarked = checkIfBookmarked()
 
     if (bookMarks == null) {
         bookMarks = [];
     }
-    alert(bookMarked)
+
     if (!bookMarked) {
-        obj.children[0].classList.add('fa-thumbtack');
-        obj.children[0].classList.remove('fa-eraser');
-        obj.children[1].innerText = 'Bookmark'
-        if (!userClicked) return;
         bookMarks.push({ 'seriesName': currentChapter.seriesName, 'indexName': currentChapter.indexName });
     } else {
         // remove the manga
-        obj.children[0].classList.remove('fa-thumbtack');
-        obj.children[0].classList.add('fa-eraser');
-        obj.children[1].innerText = 'Bookmarked'
-        if (!userClicked) return;
-
         for (var i = bookMarks.length - 1; i >= 0; i--) {
             let manga = bookMarks[i];
             if (manga.seriesName == currentChapter.seriesName && manga.indexName == currentChapter.indexName) {
@@ -48,7 +51,8 @@ function bookMark(obj, userClicked = true){
         }
 
     }
-    window.localStorage.setItem('bookmarks', JSON.stringify(bookMarks))
+    window.localStorage.setItem('bookmarks', JSON.stringify(bookMarks));
+    changeBookMarkStatus(obj)
 }
 
 function changeReadingStyle(obj, userClicked = true) {

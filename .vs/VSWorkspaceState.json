@@ -3,9 +3,8 @@
     "",
     "\\views",
     "\\views\\css",
-    "\\views\\includes",
     "\\views\\js"
   ],
-  "SelectedNode": "\\views\\js\\readHtml.js",
+  "SelectedNode": "\\views\\js\\bookMarks.js",
   "PreviewInSolutionExplorer": false
 }
