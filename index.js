@@ -51,7 +51,7 @@ function setup(req,res,next){
 }
 
 app.get('/', (req, res) => {
-  res.redirect('/manga')
+  res.redirect('/manga/')
 })
 
 // index.html

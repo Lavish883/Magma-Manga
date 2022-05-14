@@ -61,7 +61,7 @@ if (window.location.pathname.includes('/index.html') || window.location.pathname
     document.getElementById('Directory_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('/search.html')) {
     document.getElementById('Search_nav').classList.add('small_nav_active')
-} else if (window.location.pathname.includes('/Bookmarks.html')) {
+} else if (window.location.pathname.includes('manga/bookmarks')) {
     document.getElementById('Bookmark_nav').classList.add('small_nav_active')
 }
 
