@@ -35,13 +35,26 @@ async function readHtml (req,res){
   return res.render('read', resp)
 }
 
-async function bookmarksHtml(req, res){
+function bookmarksHtml(req, res){
   return res.render('bookmarks')
 }
 
+async function mangaHtml(req , res){
+  if (!isPupServerLoaded){
+    isPupServerLoaded = true;
+    return res.render('loading')
+  }
+
+  // get the manga details
+  let fetchAllData = await fetch(serverName + 'api/mangaName?manga=' + req.params.mangaName);
+  let resp = await fetchAllData.json();
+
+  return res.render('manga', resp)
+}
 
 module.exports = {
   indexHtml,
   readHtml,
-  bookmarksHtml
+  bookmarksHtml,
+  mangaHtml
 }

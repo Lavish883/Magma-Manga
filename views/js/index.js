@@ -1,9 +1,16 @@
 // Generate hmtl 
 function makeLatestChapterHTML(manga, isPopular, isCompleted) {
+    
+    if (window.location.href.includes("mangaapi")){
+      var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li/cover/' + manga.IndexName + '.jpg').replaceAll('/', ' ')
+    } else {
+      var image = 'https://cover.nep.li/cover/' + manga.IndexName + '.jpg';
+    }
+  
     return `
     <div class="latest_chapters_item">
         <a href="manga.html?manga=${manga.IndexName}" title="${manga.SeriesName}">
-            <img src="${"https://cover.nep.li/cover/" + manga.IndexName + '.jpg'}" width="90" />
+            <img src="${image}" width="90" />
         </a>
         <a style="display:contents;" href="${"/manga/read/" + manga.ChapterLink + '-page-1'}" title="${manga.SeriesName + "&nbsp;Chapter&nbsp;" + manga.Chapter}">
             <div style="margin-left:15px; margin-top:8px;">

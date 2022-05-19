@@ -45,8 +45,14 @@ async function getMangaPage(req, res){
   let link = breakCloudFlare + '/manga/' + mangaName;  
   let fetchManga = await fetch(link, headers);
   let resp = await fetchManga.text();
+
+  var allData = mainFunctions.scrapeMangaInfo(resp)
+  let chapters = resp.split(`vm.Chapters = `)[1].split(`;`)[0];
+
+  allData.IndexName = req.query.manga;
+  allData.Chapters = mainFunctions.fixChaptersArry(chapters, allData.IndexName);
   
-  return res.send(mainFunctions.scrapeManga(resp))
+  return res.send(allData)
 }
 
 async function getMangaChapterPage(req, res){

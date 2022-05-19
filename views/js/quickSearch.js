@@ -13,13 +13,18 @@ function showResults(arry) {
     var resultsHTML = [];
     // to limit the results to 8, getting rid of it now becuase it reduces lag rather than using .length method
     var toGoThrough = arry.length > 7 ? 7 : arry.length;
-    
     for (var i = 0; i < toGoThrough; i++) {
+      if (window.location.href.includes("mangaapi")){
+        var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li/cover/' + arry[i].i + '.jpg').replaceAll('/', ' ')
+      } else {
+        var image = 'https://cover.nep.li/cover/' + arry[i].i + '.jpg';
+      }
+      
         resultsHTML.push(
             `
                 <li>
                     <a href="${arry[i].i}">
-                        <img src="${"//cover.nep.li/cover/" + arry[i].i + '.jpg'}" >
+                        <img src="${image}" >
                         <span>${arry[i].s}</span>
                 </li>
             `

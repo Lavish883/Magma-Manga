@@ -18,6 +18,7 @@ const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mang
 
 
 
+
 // run express at port 5832
 const app = express()
 const port = process.env.PORT || 5832;
@@ -60,7 +61,8 @@ app.get('/manga/', pathFunctions.indexHtml)
 app.get('/manga/read/:mangaChapter', pathFunctions.readHtml)
 // bookmarks.html
 app.get('/manga/bookmarks', pathFunctions.bookmarksHtml)
-  
+//manga.html
+app.get('/manga/manga/:mangaName', pathFunctions.mangaHtml)
 // quick search data
 app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)
 // get all the stuff needed for the main page of the site

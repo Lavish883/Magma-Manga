@@ -4,6 +4,8 @@ const fetch = require('node-fetch');
 
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
 
+
+
 // used for latest chapters index.html
 function calcDate(date){
   return moment(date).subtract(1, 'hour').fromNow();   
@@ -29,6 +31,7 @@ function calcChapter(Chapter){
   }
 }
 
+// comments go here
 function calcChapterUrl(ChapterString) {
   var Index = "";
   var IndexString = ChapterString.substring(0, 1);
@@ -72,18 +75,37 @@ function scrapeHotManga(page){
   return HotUpdateJSON;
 }
 
-function scrapeManga(page){
+function scrapeMangaInfo(page){
   const $ = cheerio.load(page)
-  var mangaDetails = [];
   // list conatiner
   let mainUL = $(`ul.list-group , ul.list-group-flush`);
   
-  let title =  $(mainUL).children("li").children("h1")
+  let SeriesName =  $(mainUL).children("li").children("h1")
   
   
-  mangaDetails.push({'title': title.html()});
+  var mangaDetails = {
+    'SeriesName': SeriesName.html(),
+    'Info': []
+  }
+
   
-  return $(`ul.list-group , ul.list-group-flush`).last().last().html();
+  $(mainUL).children("li").each(function(indx, element){
+    if (indx != 0 && indx != 1 ) {
+      let type = $(element).text().split(`:`)[0]
+      let info = $(element).text().split(`:`)[1]
+      
+      mangaDetails.Info.push({
+        'type':type.replaceAll(/\r?\n|\r|\t/g, ""),
+        'info':info.replaceAll(/\r?\n|\r|\t/g, "")
+      })
+      
+      console.log(type, info)
+    }
+  })
+  
+  return mangaDetails;
+  
+  return $(`ul.list-group , ul.list-group-flush`).html();
 
   
 }
@@ -217,12 +239,12 @@ function chapterImgURLS(currentChapter, imageDirectoryURL, indexName) {
     console.log(imageDirectoryURL)
     for (var i = 1; i < parseInt(currentChapter.Page) + 1; i++) {
         let imagePage = PageImage(i.toString());
-        //let imageURLSer =  '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ( imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png').replaceAll('/', ' ')
-        let imageURL = '//' + imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png'
-        imgURLS.push(imageURL);
+        let imageURLSer =  '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ( imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png').replaceAll('/', ' ')
+        //let imageURL = '//' + imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png'
+        imgURLS.push(imageURLSer);
     }
 
     return imgURLS;
 }
 
-module.exports = { chapterImgURLS, fixCurrentChapter, scrapeHotManga, fixChaptersArry, scrapeHotMangaThisMonth, scrapeAdminRecd, scrapeLatestManga, scrapeManga, getGenres, getSimilarManga}
+module.exports = { chapterImgURLS, fixCurrentChapter, scrapeHotManga, fixChaptersArry, scrapeHotMangaThisMonth, scrapeAdminRecd, scrapeLatestManga, scrapeMangaInfo, getGenres, getSimilarManga}
