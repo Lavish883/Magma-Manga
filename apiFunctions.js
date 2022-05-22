@@ -6,43 +6,43 @@ const HeaderGenerator = require('header-generator');
 // Generate human like headers so site doesn't detect us
 const headersGenerator = new HeaderGenerator({
   browsers: [
-    {name: "firefox", minVersion: 80},
-    {name: "chrome", minVersion: 87},
-      "safari"
-    ],
-    devices: [
-      "desktop"
-    ],
-    operatingSystems: [
-      "windows"
-    ]
+    { name: "firefox", minVersion: 80 },
+    { name: "chrome", minVersion: 87 },
+    "safari"
+  ],
+  devices: [
+    "desktop"
+  ],
+  operatingSystems: [
+    "windows"
+  ]
 });
 
-async function getMainPageStuff(req, res){
+async function getMainPageStuff(req, res) {
   let headers = headersGenerator.getHeaders();
-  
+
   let fetchAll = await fetch(breakCloudFlare, headers);
   let resp = await fetchAll.text();
-  
+
   var allData = {
-      'adminRecd': mainFunctions.scrapeAdminRecd(resp),
-      'hotMangaUpdated': mainFunctions.scrapeHotManga(resp),
-      'hotMangaThisMonth': mainFunctions.scrapeHotMangaThisMonth(resp),
-      'latestManga': mainFunctions.scrapeLatestManga(resp),
+    'adminRecd': mainFunctions.scrapeAdminRecd(resp),
+    'hotMangaUpdated': mainFunctions.scrapeHotManga(resp),
+    'hotMangaThisMonth': mainFunctions.scrapeHotMangaThisMonth(resp),
+    'latestManga': mainFunctions.scrapeLatestManga(resp),
   }
-  
+
   res.send(allData)
 }
 
-async function getMangaPage(req, res){
+async function getMangaPage(req, res) {
   let headers = headersGenerator.getHeaders();
-  let mangaName =  req.query.manga;
+  let mangaName = req.query.manga;
 
-  if (typeof mangaName === 'undefined'){
+  if (typeof mangaName === 'undefined') {
     return res.send('not valid')
   }
 
-  let link = breakCloudFlare + '/manga/' + mangaName;  
+  let link = breakCloudFlare + '/manga/' + mangaName;
   let fetchManga = await fetch(link, headers);
   let resp = await fetchManga.text();
 
@@ -51,11 +51,11 @@ async function getMangaPage(req, res){
 
   allData.IndexName = req.query.manga;
   allData.Chapters = mainFunctions.fixChaptersArry(chapters, allData.IndexName);
-  
+
   return res.send(allData)
 }
 
-async function getMangaChapterPage(req, res){
+async function getMangaChapterPage(req, res) {
   let headers = headersGenerator.getHeaders();
   // Fetch page that we need to scrape
   let fetchManga = await fetch(breakCloudFlare + /read-online/ + req.params.chapter, headers)
@@ -72,25 +72,25 @@ async function getMangaChapterPage(req, res){
 
   currentChapter.seriesName = seriesName;
   currentChapter.indexName = indexName;
-  
+
   var allData = {
-      'chapters':  chapters,
-      'currentChapter': currentChapter,
-      'imageURlS': imageURlS,
-      'seriesName': seriesName,
-      'indexName': indexName, 
-      'chapterLink': req.params.chapter
+    'chapters': chapters,
+    'currentChapter': currentChapter,
+    'imageURlS': imageURlS,
+    'seriesName': seriesName,
+    'indexName': indexName,
+    'chapterLink': req.params.chapter
   }
-  
+
   return res.send(allData)
 }
 
-async function getQuickSearchData(req,res){
+async function getQuickSearchData(req, res) {
   let headers = headersGenerator.getHeaders();
-  
+
   let fetchQuickSearchPage = await fetch(breakCloudFlare + "/_search.php", headers);
   let resp = await fetchQuickSearchPage.text();
-  
+
   return res.send(resp);
 }
 

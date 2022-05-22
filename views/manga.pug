@@ -1,3 +1,4 @@
+- var isBlocked = process.env['SERVERNAME'] == 'https://mangaapi.lavishkumar1.repl.co/' ? true : false;
 html
   head
     title !{SeriesName} | Magma Manga
@@ -10,5 +11,25 @@ html
   body
     include includes/thin_navbar.pug
     include includes/reusableProps.pug
+    div#main
+      div(style="background-color:white;margin-top:30px;border-radius:8px 8px 0px 0px;padding:15px;")
+        div(class="manga_info")
+          if isBlocked
+            img.manga_img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("cover.nep.li/cover/" + IndexName + '.jpg').replaceAll('/', ' '))
+          else  
+            img(class="manga_img", src="//cover.nep.li/cover/" + IndexName + '.jpg')
+          div(style="margin-left:20px;flex:0 0 70%")
+            ul.manga_info_ul
+              li
+                h1 !{SeriesName}
+              - var i = 0;
+              while i < Info.length
+                  - var infoStuff = Info[i]
+                  li 
+                    span #{infoStuff.type + ':'}
+                  - i++
+  
+
+        ul#Chapters
     script
       include /js/index.js
