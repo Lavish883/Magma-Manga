@@ -21,6 +21,13 @@ function calcDateForMangaChapters(Date) {
     return moment().diff(Date, "d");
 }
 
+function calcDateForMangaPage(e) {
+  var t = moment(e).subtract(9, "hour")
+  n = moment(),
+  m = n.diff(t, "hours");
+  return n.isSame(t, "d") ? moment(e).subtract(9, "hour").fromNow() : m < 24 ? moment(e).subtract(9, "hour").calendar() : moment(e).subtract(9, "hour").format("L");
+}
+
 function calcChapter(Chapter){
   var ChapterNumber = parseInt(Chapter.slice(1, -1));
   var Odd = Chapter[Chapter.length - 1];
@@ -96,16 +103,15 @@ function scrapeMangaInfo(page){
       
       mangaDetails.Info.push({
         'type':type.replaceAll(/\r?\n|\r|\t/g, ""),
-        'info':info.replaceAll(/\r?\n|\r|\t/g, "")
+        'info':info.replaceAll(/\r?\n|\r|\t/g, "").split(`,`)
       })
       
-      console.log(type, info)
     }
   })
   
   return mangaDetails;
   
-  return $(`ul.list-group , ul.list-group-flush`).html();
+  //return $(`ul.list-group , ul.list-group-flush`).html();
 
   
 }
@@ -186,12 +192,16 @@ function scrapeHotMangaThisMonth(html) {
     return hotMonth2 
 }
 
-function fixChaptersArry(chapters, indexName) {
+function fixChaptersArry(chapters, indexName, mangaPage = false) {
     chapters = JSON.parse(chapters);
     for (var i = 0; i < chapters.length; i++) {
         chapters[i].ChapterLink = indexName + calcChapterUrl(chapters[i].Chapter)
         chapters[i].Chapter = calcChapter(chapters[i].Chapter);
-        chapters[i].Date = calcDateForMangaChapters(chapters[i].Date);
+        if (mangaPage){
+          chapters[i].Date = calcDateForMangaPage(chapters[i].Date);
+        } else {
+          chapters[i].Date = calcDateForMangaChapters(chapters[i].Date);
+        }
     }
     return chapters.reverse();
 }

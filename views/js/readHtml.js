@@ -2,6 +2,31 @@ var longStrip = !window.location.href.includes("-page-")
 var currentlyOnPage = window.location.href.split(`-page-`)[1]
 
 
+//add to recentread localstorage array
+function addToRecentRead(chapterLink){
+  // get previous stuff
+  var recentRead = JSON.parse(window.localStorage.getItem("recentRead"));
+  if (recentRead == null || recentRead.length == 0 || recentRead == undefined){
+    recentRead = [];
+  }
+  // add to localstorage
+  if (!checkIfItRead(chapterLink)){
+    recentRead.push(chapterLink, recentRead)
+    window.localStorage.setItem("recentRead", JSON.stringify(recentRead));
+    console.log('added')
+  }
+}
+// check if this chapter has been read or not
+function checkIfItRead(chapterLink, recentRead){
+
+  for (var i= 0; i < recentRead.length; i++){
+    if (chapterLink == recentRead[i]){
+      return true;
+    }
+  }
+
+  return false;
+}
 // check if manga is bookmarked or not
 function checkIfBookmarked(){
   var bookMarks = JSON.parse(window.localStorage.getItem('bookmarks'));
@@ -152,7 +177,9 @@ function moveChapter(direction) {
     // listen for page clicks
 document.getElementById('imgs').addEventListener("click", movePage);
 
+
 // function calls
 changeReadingStyle(document.getElementById("readingStyle"), false)
 showImages(parseInt(currentlyOnPage))
+setTimeout(addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0]), 1500)
 document.body.addEventListener('click', checkIfBookmarked)

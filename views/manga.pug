@@ -21,12 +21,25 @@ html
           div(style="margin-left:20px;flex:0 0 70%")
             ul.manga_info_ul
               li
-                h1 !{SeriesName}
+                h1(style="margin:0px;padding:5px;") !{SeriesName}
               - var i = 0;
               while i < Info.length
                   - var infoStuff = Info[i]
                   li 
                     span #{infoStuff.type + ':'}
+                    if infoStuff.type == 'Alternate Name(s)' || infoStuff.type == 'Description'
+                      div &nbsp;#{infoStuff.info}
+                    else  
+                      - var allInfo = infoStuff.info;
+                      - var k = 0;
+                      while k < allInfo.length
+                        if k == 0 && infoStuff.type == 'Description'
+                          a(href="#") &nbsp;#{allInfo[k]}
+                        else
+                          a(href="#") #{allInfo[k]}
+                        if k < allInfo.length - 1
+                          span(style="font-weight:400") #{', '}
+                        - k++
                   - i++
   
 

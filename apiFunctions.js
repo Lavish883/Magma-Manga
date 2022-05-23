@@ -50,7 +50,7 @@ async function getMangaPage(req, res) {
   let chapters = resp.split(`vm.Chapters = `)[1].split(`;`)[0];
 
   allData.IndexName = req.query.manga;
-  allData.Chapters = mainFunctions.fixChaptersArry(chapters, allData.IndexName);
+  allData.Chapters = mainFunctions.fixChaptersArry(chapters, allData.IndexName, true);
 
   return res.send(allData)
 }
