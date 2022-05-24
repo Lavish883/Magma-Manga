@@ -7,18 +7,19 @@ function addToRecentRead(chapterLink){
   // get previous stuff
   var recentRead = JSON.parse(window.localStorage.getItem("recentRead"));
   if (recentRead == null || recentRead.length == 0 || recentRead == undefined){
-    recentRead = [];
+      recentRead = [];
+      console.log('made it an arry')
   }
   // add to localstorage
-  if (!checkIfItRead(chapterLink)){
-    recentRead.push(chapterLink, recentRead)
+  if (!checkIfItRead(chapterLink, recentRead)){
+    recentRead.push(chapterLink)
     window.localStorage.setItem("recentRead", JSON.stringify(recentRead));
     console.log('added')
   }
 }
 // check if this chapter has been read or not
 function checkIfItRead(chapterLink, recentRead){
-
+  console.log(recentRead)
   for (var i= 0; i < recentRead.length; i++){
     if (chapterLink == recentRead[i]){
       return true;

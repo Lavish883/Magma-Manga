@@ -98,12 +98,17 @@ function scrapeMangaInfo(page){
   
   $(mainUL).children("li").each(function(indx, element){
     if (indx != 0 && indx != 1 ) {
-      let type = $(element).text().split(`:`)[0]
-      let info = $(element).text().split(`:`)[1]
-      
+      var type = $(element).text().split(`:`)[0]
+      var info = $(element).text().split(`:`)[1]
+
+      if (type.replace(/\r?\n|\r|\t/g, "") == 'Description'){
+          info = $(element).text().split(`Description:`)[1].replace(/\r?\n|\r|\t/g, "");
+      }
+
+        // Have to fix description whitespace
       mangaDetails.Info.push({
-        'type':type.replaceAll(/\r?\n|\r|\t/g, ""),
-        'info':info.replaceAll(/\r?\n|\r|\t/g, "").split(`,`)
+        'type': type.replace(/\r?\n|\r|\t/g, ""),
+        'info': info.replace(/\r?\n|\r|\t/g, "").split(`,`)
       })
       
     }
@@ -249,9 +254,12 @@ function chapterImgURLS(currentChapter, imageDirectoryURL, indexName) {
     console.log(imageDirectoryURL)
     for (var i = 1; i < parseInt(currentChapter.Page) + 1; i++) {
         let imagePage = PageImage(i.toString());
-        let imageURLSer =  '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ( imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png').replaceAll('/', ' ')
-        //let imageURL = '//' + imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png'
-        imgURLS.push(imageURLSer);
+        if (process.env['SERVERNAME'] == 'https://mangaapi.lavishkumar1.repl.co/') {
+          var imageURL = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + (imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png').replaceAll('/', ' ')
+        } else {
+          var imageURL = '//' + imageDirectoryURL + '/manga/' + indexName + directory + chapterNumber + '-' + imagePage + '.png'
+        }
+        imgURLS.push(imageURL);
     }
 
     return imgURLS;

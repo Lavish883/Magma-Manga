@@ -51,6 +51,7 @@ async function getMangaPage(req, res) {
 
   allData.IndexName = req.query.manga;
   allData.Chapters = mainFunctions.fixChaptersArry(chapters, allData.IndexName, true);
+  allData.Chapters = allData.Chapters.reverse();
 
   return res.send(allData)
 }

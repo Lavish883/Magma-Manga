@@ -26,23 +26,28 @@ html
               while i < Info.length
                   - var infoStuff = Info[i]
                   li 
-                    span #{infoStuff.type + ':'}
-                    if infoStuff.type == 'Alternate Name(s)' || infoStuff.type == 'Description'
-                      div &nbsp;#{infoStuff.info}
-                    else  
+                    span #{infoStuff.type + ': '}
+                    if infoStuff.type == 'Description'
+                      div #{infoStuff.info}
+                    else if infoStuff.type == 'Alternate Name(s)'
+                      span(style="font-weight:400;") #{infoStuff.info}
+                    else
                       - var allInfo = infoStuff.info;
                       - var k = 0;
                       while k < allInfo.length
-                        if k == 0 && infoStuff.type == 'Description'
-                          a(href="#") &nbsp;#{allInfo[k]}
+                        if k == 0 && infoStuff.type != 'Description'
+                          a(href="#",style="margin-left:2px") #{allInfo[k]}
                         else
                           a(href="#") #{allInfo[k]}
                         if k < allInfo.length - 1
                           span(style="font-weight:400") #{', '}
                         - k++
                   - i++
-  
-
-        ul#Chapters
+        ul#Chapters_List
     script
       include /js/index.js
+    script.
+        var allChapters =  !{JSON.stringify(Chapters).replace(/<\//g, '<\\/')}
+        var allChaptersRead = JSON.parse(window.localStorage.getItem('recentRead'))
+    script
+      include /js/mangaHtml.js

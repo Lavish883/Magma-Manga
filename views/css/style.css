@@ -319,7 +319,36 @@ img {
   text-decoration:underline;
 }
 
+#Chapters_List {
+    display:flex;
+    list-style-type:none;
+    flex-direction:column;
+    margin:0px;
+    padding:0px;
+    border: 2px solid rgba(0,0,0, .125);
+    margin-top:10px;
+}
+#Chapters_List li {
+    border-top:1px solid rgba(0,0,0,.125);
+    padding:5px;
+    color:#007bff;
+}
 
+#Chapters_List li:first-child{
+    border-top:none;
+}
+
+#Chapters_List li a {
+    font-weight:600;
+    display:block;
+    margin-left:5px;
+    color:inherit;
+}
+#Chapters_List li a span{
+    float:right;
+    color:gray;
+    font-weight:400;
+}
 @media only screen and (max-width: 600px) {
     #main {
         padding: 0px 10px;
