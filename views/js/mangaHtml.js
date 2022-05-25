@@ -7,15 +7,14 @@ function isChapterRead(chapterLink) {
     }
     return false
 }
-
-
+// makes automated html for the cahpters
 function generateMangaChaptersHTML(chapter) {
     // if the chapter read then give gre font otherwise let it be normal
     let fontColor = isChapterRead(chapter.ChapterLink) ? 'grey' : 'inherit'
     return `
         <li>
            <a href=${window.location.origin + '/manga/read/' + chapter.ChapterLink + '-page-1'} style="color:${fontColor};">${chapter.Type + ' ' + chapter.Chapter}
-             <span>${chapter.Date}</span>     
+              <span>${chapter.Date}</span>     
            </a>
         </li>
     `

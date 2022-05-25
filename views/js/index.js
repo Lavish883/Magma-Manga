@@ -9,7 +9,7 @@ function makeLatestChapterHTML(manga, isPopular, isCompleted) {
   
     return `
     <div class="latest_chapters_item">
-        <a href="manga.html?manga=${manga.IndexName}" title="${manga.SeriesName}">
+        <a href="/manga/manga/${manga.IndexName}" title="${manga.SeriesName}">
             <img src="${image}" width="90" />
         </a>
         <a style="display:contents;" href="${"/manga/read/" + manga.ChapterLink + '-page-1'}" title="${manga.SeriesName + "&nbsp;Chapter&nbsp;" + manga.Chapter}">

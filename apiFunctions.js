@@ -39,7 +39,7 @@ async function getMangaPage(req, res) {
   let mangaName = req.query.manga;
 
   if (typeof mangaName === 'undefined') {
-    return res.send('not valid')
+    return res.send('manga name not given or given incorrectly')
   }
 
   let link = breakCloudFlare + '/manga/' + mangaName;

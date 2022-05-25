@@ -68,7 +68,7 @@ mixin LatestChapters(latestChapters, hotChapters)
             - h++
 
         div.latest_chapters_item
-            a(href="manga.html?manga=" + manga.IndexName, title="" + manga.SeriesName)
+            a(href="/manga/manga/" + manga.IndexName, title="" + manga.SeriesName)
                 if isBlocked
                   img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("cover.nep.li/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' '), width="90")
                 else

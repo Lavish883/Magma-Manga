@@ -10,6 +10,11 @@ const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mang
 function calcDate(date){
   return moment(date).subtract(1, 'hour').fromNow();   
 }
+// check if the chapter is new/recent
+function isNew (date){
+  var timeNow = moment(date).subtract(1,"hour");
+  return moment().diff(timeNow,"hours") < 24; 
+}
 // used for manga.html screen
 function calcDateForMangaChapters(Date) {
     var daysPassed = moment().diff(Date, "d");
@@ -203,6 +208,7 @@ function fixChaptersArry(chapters, indexName, mangaPage = false) {
         chapters[i].ChapterLink = indexName + calcChapterUrl(chapters[i].Chapter)
         chapters[i].Chapter = calcChapter(chapters[i].Chapter);
         if (mangaPage){
+          chapters[i].isNew = isNew(chapters[i].Date)
           chapters[i].Date = calcDateForMangaPage(chapters[i].Date);
         } else {
           chapters[i].Date = calcDateForMangaChapters(chapters[i].Date);
