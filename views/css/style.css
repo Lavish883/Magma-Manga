@@ -349,6 +349,16 @@ img {
     color:gray;
     font-weight:400;
 }
+#Chapters_List li a .newChapter{
+  float: none;
+  color: white;
+  background-color: gold;
+  border-radius: 3px;
+  padding: 0px 3px;
+  margin-left: 10px;
+  font-weight: 600;
+}
+
 @media only screen and (max-width: 600px) {
     #main {
         padding: 0px 10px;

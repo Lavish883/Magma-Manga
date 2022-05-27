@@ -15,7 +15,7 @@ function showResults(arry) {
     var toGoThrough = arry.length > 7 ? 7 : arry.length;
     for (var i = 0; i < toGoThrough; i++) {
       if (window.location.href.includes("mangaapi")){
-        var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li/cover/' + arry[i].i + '.jpg').replaceAll('/', ' ')
+        var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li cover ' + arry[i].i + '.jpg')
       } else {
         var image = 'https://cover.nep.li/cover/' + arry[i].i + '.jpg';
       }
@@ -23,7 +23,7 @@ function showResults(arry) {
         resultsHTML.push(
             `
                 <li>
-                    <a href="${arry[i].i}">
+                    <a href="${'/manga/manga/'+ arry[i].i}">
                         <img src="${image}" >
                         <span>${arry[i].s}</span>
                 </li>

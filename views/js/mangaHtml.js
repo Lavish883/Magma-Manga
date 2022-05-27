@@ -14,6 +14,7 @@ function generateMangaChaptersHTML(chapter) {
     return `
         <li>
            <a href=${window.location.origin + '/manga/read/' + chapter.ChapterLink + '-page-1'} style="color:${fontColor};">${chapter.Type + ' ' + chapter.Chapter}
+              ${chapter.isNew ? `<span class="newChapter">New</span>` : ''}
               <span>${chapter.Date}</span>     
            </a>
         </li>

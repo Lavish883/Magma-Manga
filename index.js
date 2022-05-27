@@ -54,7 +54,6 @@ function setup(req,res,next){
 app.get('/', (req, res) => {
   res.redirect('/manga/')
 })
-
 // index.html
 app.get('/manga/', pathFunctions.indexHtml)
 // read.html
@@ -63,12 +62,16 @@ app.get('/manga/read/:mangaChapter', pathFunctions.readHtml)
 app.get('/manga/bookmarks', pathFunctions.bookmarksHtml)
 //manga.html
 app.get('/manga/manga/:mangaName', pathFunctions.mangaHtml)
+// directory.html
+app.get('/manga/manga/directory', pathFunctions.directoryHtml)
 // quick search data
 app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)
 // get all the stuff needed for the main page of the site
 app.get('/api/manga/all', apiFunctions.getMainPageStuff)
 // given => mangaName?One-Piece
 app.get('/api/mangaName?', apiFunctions.getMangaPage)
+// directory  
+app.get('/api/manga/directory', apiFunctions.)
 // given => type as hot (popular) and latest
 app.get('/api/manga/main/:type', async (req, res) => {
   let headers = headersGenerator.getHeaders();
@@ -106,5 +109,10 @@ app.get('/api/manga/read/:chapter', apiFunctions.getMangaChapterPage)
 app.get('/manga/download/:chapter', async(req,res) => {
   res.send(req.params.chapter)
 })
+
 app.use(express.static(path.join(__dirname, 'public')));
+//The 404 Route (ALWAYS Keep this as the last route)
+app.get('*', function(req, res){
+  res.status(404).send('what???');
+});
 app.listen(port)

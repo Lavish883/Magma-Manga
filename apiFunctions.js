@@ -17,7 +17,7 @@ const headersGenerator = new HeaderGenerator({
     "windows"
   ]
 });
-
+// home page data
 async function getMainPageStuff(req, res) {
   let headers = headersGenerator.getHeaders();
 
@@ -33,7 +33,7 @@ async function getMainPageStuff(req, res) {
 
   res.send(allData)
 }
-
+// manga info
 async function getMangaPage(req, res) {
   let headers = headersGenerator.getHeaders();
   let mangaName = req.query.manga;
@@ -55,7 +55,7 @@ async function getMangaPage(req, res) {
 
   return res.send(allData)
 }
-
+// reading a chapter info
 async function getMangaChapterPage(req, res) {
   let headers = headersGenerator.getHeaders();
   // Fetch page that we need to scrape
@@ -85,7 +85,7 @@ async function getMangaChapterPage(req, res) {
 
   return res.send(allData)
 }
-
+// quick search Data
 async function getQuickSearchData(req, res) {
   let headers = headersGenerator.getHeaders();
 
@@ -94,10 +94,21 @@ async function getQuickSearchData(req, res) {
 
   return res.send(resp);
 }
+// directory data
+async function getDirectoryData(req, res){
+  let headers = headersGenerator.getHeaders();
 
+  let fetchDirectoryData = await fetch(breakCloudFlare + "/directory/", headers);
+  let resp = await fetchDirectoryData.text();
+
+  let directoryData = resp.split(`vm.FullDirectory = `)[1].split(`;`)[0]
+
+  return res.send(directoryData)
+}
 module.exports = {
   getMainPageStuff,
   getMangaPage,
   getMangaChapterPage,
-  getQuickSearchData
+  getQuickSearchData,
+  getDirectoryData
 }

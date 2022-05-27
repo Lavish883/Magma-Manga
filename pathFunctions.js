@@ -1,6 +1,6 @@
 const fetch = require('node-fetch'); // fetchs html
 const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
-var isPupServerLoaded = true;
+var isPupServerLoaded = false;
 
 async function indexHtml(req, res){
   
@@ -52,9 +52,14 @@ async function mangaHtml(req , res){
   return res.render('manga', resp)
 }
 
+async function directoryHtml(req, res){
+  
+}
+
 module.exports = {
   indexHtml,
   readHtml,
   bookmarksHtml,
-  mangaHtml
+  mangaHtml,
+  directoryHtml
 }
