@@ -101,9 +101,13 @@ async function getDirectoryData(req, res){
   let fetchDirectoryData = await fetch(breakCloudFlare + "/directory/", headers);
   let resp = await fetchDirectoryData.text();
 
-  let directoryData = resp.split(`vm.FullDirectory = `)[1].split(`;`)[0]
+  let directoryData = JSON.parse(resp.split(`vm.FullDirectory = `)[1].split(';').splice(0, 8).join(''))
 
-  return res.send(directoryData)
+  var allData = {
+      'directory': directoryData
+  }
+
+  return res.send(allData)
 }
 module.exports = {
   getMainPageStuff,

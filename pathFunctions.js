@@ -1,6 +1,6 @@
 const fetch = require('node-fetch'); // fetchs html
 const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
-var isPupServerLoaded = false;
+var isPupServerLoaded = true;
 
 async function indexHtml(req, res){
   
@@ -52,8 +52,17 @@ async function mangaHtml(req , res){
   return res.render('manga', resp)
 }
 
-async function directoryHtml(req, res){
-  
+async function directoryHtml(req, res) {
+    if (!isPupServerLoaded) {
+        isPupServerLoaded = true;
+        return res.render('loading')
+    }
+
+    // get the directory data
+    let fetchDirectoryData = await fetch(serverName + 'api/manga/directory')
+    let resp = await fetchDirectoryData.json();
+
+    return res.render('directory', resp)
 }
 
 module.exports = {

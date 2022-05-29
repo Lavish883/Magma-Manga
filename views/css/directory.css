@@ -1,0 +1,128 @@
+#MangaFilters {
+     width: fit-content;
+     margin: 10px 0px;
+     display:flex;
+}
+ #MangaFilters div {
+     padding: 1px 5px;
+     border: solid black 1px;
+     cursor: pointer;
+     border-left: none;
+}
+ #MangaFilters div:hover {
+     color: white;
+     background-color: black;
+}
+ #MangaFilters div:last-child {
+     border-radius: 0px 4px 4px 0px 
+}
+ #MangaFilters div:first-child {
+     border-left: solid 1px black;
+     border-radius: 4px 0px 0px 4px;
+}
+ #MangaFilters .active:first-child {
+     border-left: solid 1px #007bff;
+     border-radius: 4px 0px 0px 4px;
+}
+ #MangaFilters .active:hover {
+     background-color: #0069d9;
+     border-color: #0069d9;
+}
+ #MangaFilters .active {
+     padding: 1px 5px;
+     border: solid #007bff 1px;
+     cursor: pointer;
+     background-color: #007bff;
+     color: white;
+}
+ #MangaFilters .borderrightNone {
+     border-right: none;
+}
+ /** Tool tip css */
+ .tooltip {
+     position: relative;
+}
+ .tooltip .tooltiptext {
+     visibility: hidden;
+     background-color: black;
+     color: #fff;
+     text-align: center;
+     border-radius: 6px;
+     padding: 8px;
+     position: absolute;
+     z-index: 1;
+     top: 8px;
+     transform: translateY(-50%);
+     left: 100%;
+     margin-left: 10px;
+     opacity: 0;
+     transition: opacity ease-in .5s;
+     display: flex;
+     -ms-flex-direction: column;
+     -webkit-flex-direction: column;
+     flex-direction: column;
+}
+ .tooltip .tooltiptext img{
+     width:200px;
+}
+ .tooltip .tooltiptext .status{
+     text-align:left;
+     font-size:15px;
+     margin-top:3px;
+     color:white;
+     font-weight:500;
+}
+ .tooltip .tooltiptext .status span{
+     color:rgba( 255, 255 , 255 ,0.9);
+     font-weight:400;
+}
+ .tooltip .tooltiptext::after {
+     content: "";
+     position: absolute;
+     top: 50%;
+     right: 100%;
+     margin-top: -3px;
+     border-width: 8px;
+     border-style: solid;
+     border-color: transparent black transparent transparent;
+}
+ .tooltip:hover .tooltiptext {
+     visibility: visible;
+     opacity:1;
+}
+#manga_list {
+    padding: 0px;
+    margin: 0px;
+    list-style-type: none;
+}
+    #manga_list li {
+        margin: 17px 0px;
+    }
+
+        #manga_list li a {
+            color: #007bff;
+        }
+
+        #manga_list li:last-child {
+            margin: 10px 0px;
+        }
+
+        #manga_list li a:hover {
+            text-decoration: underline;
+            color: #0056b3;
+        }
+#Load_More {
+    width: 100%;
+    color: #007bff;
+    border: solid 1px #007bff;
+    text-align: center;
+    padding: 6px 0px;
+    border-radius: 4px;
+    transition: background-color 200ms linear;
+    font-size: 18px;
+}
+    #Load_More:hover {
+        color: white;
+        cursor: pointer;
+        background-color: #007bff;
+    }

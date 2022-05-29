@@ -1,0 +1,37 @@
+// !{variable name} this for using the passed in data
+
+html
+    head
+        //| !{p1}
+        title Directory 
+        meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        style 
+            include /css/navbar.css
+        style
+            include /css/style.css
+        style
+            include /css/directory.css
+        script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+    body(style="margin:0px")
+        include includes/navbar.pug
+        include includes/reusableProps.pug
+        div#main
+            div(style="margin-top:20px;display:flex;justify-content:space-between;margin-bottom:50px;")
+                div.admin_card
+                    div.admin_top
+                        i(class="far fa-folder-open")
+                        span #{' Directory (' + directory.Directory.length.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ')'}
+                    div(style="background-color:white;padding:10px 15px;")
+                        div A full list of all Manga available to read
+                        div#MangaFilters
+                        ul#manga_list
+                        div#load_more(onclick="loadMoreManga()") Load More...
+                img(src="https://releasedate.news/wp-content/uploads/2021/05/Dont-Toy-with-Me-Miss-Nagatoro-Episode-4-Release-Date-1024x564.jpg", width="347", height="211")
+        script
+            include /js/index.js
+        script.
+            var ableToFilter = ['All', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
+            var directoryBackup = !{JSON.stringify(directory).replace(/<\//g, '<\\/')} 
+            var currentDirectory = 'All'
+        script
+            include /js/directory.js

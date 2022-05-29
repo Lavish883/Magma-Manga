@@ -63,7 +63,7 @@ app.get('/manga/bookmarks', pathFunctions.bookmarksHtml)
 //manga.html
 app.get('/manga/manga/:mangaName', pathFunctions.mangaHtml)
 // directory.html
-app.get('/manga/manga/directory', pathFunctions.directoryHtml)
+app.get('/manga/directory', pathFunctions.directoryHtml)
 // quick search data
 app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)
 // get all the stuff needed for the main page of the site
@@ -71,7 +71,7 @@ app.get('/api/manga/all', apiFunctions.getMainPageStuff)
 // given => mangaName?One-Piece
 app.get('/api/mangaName?', apiFunctions.getMangaPage)
 // directory  
-app.get('/api/manga/directory', apiFunctions.)
+app.get('/api/manga/directory', apiFunctions.getDirectoryData)
 // given => type as hot (popular) and latest
 app.get('/api/manga/main/:type', async (req, res) => {
   let headers = headersGenerator.getHeaders();

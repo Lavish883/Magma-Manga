@@ -64,7 +64,7 @@ function viewMoreChapters() {
 // Set what nav_option is active
 if (window.location.pathname.includes('/index.html') || window.location.pathname === '/manga/') {
     document.getElementById('Home_nav').classList.add('small_nav_active')
-} else if (window.location.pathname.includes('/directory.html')) {
+} else if (window.location.pathname.includes('/directory')) {
     document.getElementById('Directory_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('/search.html')) {
     document.getElementById('Search_nav').classList.add('small_nav_active')
