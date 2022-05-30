@@ -147,7 +147,15 @@ async function getRecommendedManga(obj) {
         userReadManga.push(hotManga[Math.floor(Math.random() * hotManga.length)].IndexName)
     }
 
-    let fetchRecd = await fetch(window.location.origin + `/api/manga/recommend?manga1=${userReadManga[0]}&manga2=${userReadManga[1]}`)
+    // different indx so we can get different manga
+    var indx1 = Math.floor(Math.random() * userReadManga.length)
+    var indx2 = Math.floor(Math.random() * userReadManga.length)
+
+    while (userReadManga.length > 1 && indx1 == indx2){
+      indx2 = Math.floor(Math.random() * userReadManga.length)
+    }
+
+    let fetchRecd = await fetch(window.location.origin + `/api/manga/recommend?manga1=${userReadManga[indx1]}&manga2=${userReadManga[indx2]}`)
     let data = await fetchRecd.json();
 
     if (data.length < 6) {
