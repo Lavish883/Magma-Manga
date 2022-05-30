@@ -87,22 +87,7 @@ app.get('/api/manga/main/:type', async (req, res) => {
   return res.send('not valid')
 })
 // given 2 manga get there genres and then recommned a manga based on those genres
-app.get('/api/manga/recommend', async (req,res) => {
-  let headers = headersGenerator.getHeaders();
-
-  let manga1 = req.query.manga1;
-  let manga2 = req.query.manga2;
-
-  let manga1Genres = await mainFunctions.getGenres(manga1, headers);
-  let manga2Genres = await mainFunctions.getGenres(manga2, headers);
-  
-  let allGenres = [...new Set([...manga1Genres,  ...manga2Genres])]
-
-  let similarManga = await mainFunctions.getSimilarManga(allGenres)
-  
-  return res.send(similarManga)
-  
-})
+app.get('/api/manga/recommend', apiFunctions.getRecommendedManga)
 // given a chapter of a manga return all the pages adn info of that manga
 app.get('/api/manga/read/:chapter', apiFunctions.getMangaChapterPage)
 // let user download that chpater manga

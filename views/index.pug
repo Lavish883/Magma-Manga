@@ -36,7 +36,7 @@ html
                 a(href="#",style="font-size:18px; color:white;")
                     i(class="fas fa-address-book")
                     span &nbsp;Recommended for you
-            div#recdForYou(class="hot_update")
+            div#recdForYou(class="hot_update",style="overflow:hidden;max-height:200px;")
                 // item recommned for the reader
                 img#loading(src="/images/loading.svg",width="80",style="margin:auto;")
         div(style="margin-bottom:100px;")
@@ -55,5 +55,6 @@ html
     script. 
         var latestChapters = !{JSON.stringify(latestManga).replace(/<\//g, '<\\/')}
         var hotManga = !{JSON.stringify(hotMangaUpdated).replace(/<\//g, '<\\/')}
+        getRecommendedManga(document.getElementById('recdForYou'))
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
     //h1 !{message}

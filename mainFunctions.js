@@ -271,4 +271,25 @@ function chapterImgURLS(currentChapter, imageDirectoryURL, indexName) {
     return imgURLS;
 }
 
-module.exports = { chapterImgURLS, fixCurrentChapter, scrapeHotManga, fixChaptersArry, scrapeHotMangaThisMonth, scrapeAdminRecd, scrapeLatestManga, scrapeMangaInfo, getGenres, getSimilarManga}
+function fixRecdArry(arry) {
+    for (var i = 0; i < arry.length; i++) {
+        arry[i].chapterLink = arry[i].i + calcChapterUrl(arry[i].l)
+        arry[i].l = calcChapter(arry[i].l)
+    }
+    return arry
+}
+
+module.exports = {
+    chapterImgURLS,
+    fixCurrentChapter,
+    scrapeHotManga,
+    fixChaptersArry,
+    scrapeHotMangaThisMonth,
+    scrapeAdminRecd,
+    scrapeLatestManga,
+    scrapeMangaInfo,
+    getGenres,
+    getSimilarManga,
+    fixRecdArry
+
+}

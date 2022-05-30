@@ -109,10 +109,27 @@ async function getDirectoryData(req, res){
 
   return res.send(allData)
 }
+// recomended calculations
+async function getRecommendedManga(req, res) {
+  let headers = headersGenerator.getHeaders();
+
+  let manga1 = req.query.manga1;
+  let manga2 = req.query.manga2;
+
+  let manga1Genres = await mainFunctions.getGenres(manga1, headers);
+  let manga2Genres = await mainFunctions.getGenres(manga2, headers);
+  
+  let allGenres = [...new Set([...manga1Genres,  ...manga2Genres])]
+
+  let similarManga = await mainFunctions.getSimilarManga(allGenres)
+  
+  return res.send(mainFunctions.fixRecdArry(similarManga))
+}
 module.exports = {
   getMainPageStuff,
   getMangaPage,
   getMangaChapterPage,
   getQuickSearchData,
-  getDirectoryData
+  getDirectoryData,
+  getRecommendedManga
 }

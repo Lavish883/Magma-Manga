@@ -156,10 +156,16 @@ function movePage(event) {
 // go to the next chapter
 // direction meaning either next chapter or previous chapter
 function moveChapter(direction) {
-    var chapterToLook = direction == 'next' ? currentChapter.Chapter + 1 : currentChapter.Chapter - 1;
+    var currentChapterIndx = chapters.findIndex(elem => elem.Chapter == currentChapter.Chapter)
+    var chapterToLookIndx = direction == 'next' ? currentChapterIndx - 1 : currentChapterIndx + 1;
 
     for (var i = 0; i < chapters.length; i++) {
-        if (chapters[i].Chapter == chapterToLook) {
+
+        if (chapterToLookIndx < 0) {
+            break;
+        }
+
+        if (chapters[i].Chapter == chapters[chapterToLookIndx].Chapter) {
             if (longStrip) {
                 window.location.href = window.location.origin + '/manga/read/' + chapters[i].ChapterLink;
             } else {

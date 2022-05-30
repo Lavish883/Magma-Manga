@@ -1,4 +1,7 @@
 function isChapterRead(chapterLink) {
+    if (allChaptersRead == null || allChaptersRead == undefined) {
+        allChaptersRead = [];
+    }
     // conditon which checks if any elm is equal to chapterLink
     for (var i = 0; i < allChaptersRead.length; i++) {
         if (allChaptersRead[i] == chapterLink) {

@@ -100,6 +100,68 @@ document.getElementById('scroll_to_top').addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });
 })
 
+function genreateRecdHTML(manga) {
+    var htmlArry = [];
+
+    for (var i = 0; i < manga.length; i++) {
+        if (manga[i].s > 18) {
+            manga[i].s = manga.SeriesName.substr(0, 18) + '... '
+        }
+        htmlArry.push(`
+            <div class="hot_update_item">
+                <a href="/manga/read/${manga[i].chapterLink}-page-1" title="${manga[i].s} ${manga[i].l}">
+                    <div class="hot_update_item_name"> <span>${manga[i].s} ${manga[i].l}</span>
+                    </div>
+                    <img src="//cover.nep.li/cover/${manga[i].i}.jpg" style="max-width:145px;">
+                </a>
+            </div>
+        `)
+    }
+
+    return htmlArry.join('');
+}
+
+// get recommend manga for the user 
+// to do that fetch a url, need to give two params manga1 and manga2 they handle the rest
+    // the parmas need to be in indexName format => Sakamato-days, One-piece
+// get two random manga that isn't the same from recentread and bookmarks
+// after getting the response make that into htl and display it to the user
+// id => for what html elemnt to fill the html with
+async function getRecommendedManga(obj) {
+    var userReadManga = [];
+    // turn recentRead and bookmarks to param format
+    try {
+        JSON.parse(window.localStorage.getItem('recentRead')).forEach(function (e) {
+            userReadManga.push(e.split(`-chapter-`)[0])
+        })
+
+        JSON.parse(window.localStorage.getItem('bookmarks')).forEach(function (e) {
+            userReadManga.push(e.indexName)
+        })
+    } catch (err) {
+        console.log(err)
+    }
+    // if user has no recentread or bookamarks then get two random popular manga
+    if (userReadManga.length == 0) {
+        userReadManga.push(hotManga[Math.floor(Math.random() * hotManga.length)].IndexName)
+        userReadManga.push(hotManga[Math.floor(Math.random() * hotManga.length)].IndexName)
+    }
+
+    let fetchRecd = await fetch(window.location.origin + `/api/manga/recommend?manga1=${userReadManga[0]}&manga2=${userReadManga[1]}`)
+    let data = await fetchRecd.json();
+
+    if (data.length < 6) {
+        getRecommendedManga(obj);
+        return;
+    }
+
+    let htmlGenreated = genreateRecdHTML(data);
+
+    obj.innerHTML = htmlGenreated;
+    
+}
+
+
 // show Scroll to top button or not
 window.addEventListener('scroll', function () {
     if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
