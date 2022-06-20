@@ -1,0 +1,75 @@
+[
+   {
+      "name": "la0",
+      "email": "laishk@gcom",
+      "password": "$2b$10$9hPUu9J4yAxZxO4WvVStG.TLZo7vt77VevQC.k65f5yjH.I1B.Fbe",
+      "bookmarks": [],
+      "recentRead": []
+   },
+   {
+      "name": "la0?????",
+      "email": "laishk@g====com",
+      "password": "$2b$10$/31RpqXHcVGabRSwj4waauKrPc5NyTWpQazN2QXAWJ/aKYQsiPK7y",
+      "bookmarks": [],
+      "recentRead": []
+   },
+   {
+      "name": "sus",
+      "email": "sus",
+      "password": "$2b$10$gT9k1KCJ6uhrF1lavQfcLO7uoMgzwVvsuqkKT8QpwZjR1O4e1YsCq",
+      "bookmarks": [],
+      "recentRead": []
+   },
+   {
+      "name": "sussy",
+      "email": "sussy",
+      "password": "$2b$10$0a9QdfGpsv0AXUbCJUohbusxiFbgzsAEl2TwrHk1X1z0wHKOc8sH.",
+      "bookmarks": [
+         {
+            "seriesName": "Jujutsu Kaisen",
+            "indexName": "Jujutsu-Kaisen"
+         },
+         {
+            "seriesName": "The Gamer",
+            "indexName": "The-Gamer"
+         },
+         {
+            "seriesName": "My Hero Academia",
+            "indexName": "Boku-No-Hero-Academia"
+         },
+         {
+            "seriesName": "Omniscient Reader",
+            "indexName": "Omniscient-Readers-Viewpoint"
+         },
+         {
+            "seriesName": "The Way of the Househusband",
+            "indexName": "Gokushufudou-The-Way-Of-The-House-Husband"
+         },
+         {
+            "seriesName": "Komi Can’t Communicate",
+            "indexName": "Komi-san-Wa-Komyushou-Desu"
+         },
+         {
+            "seriesName": "One-Punch Man",
+            "indexName": "Onepunch-Man"
+         }
+      ],
+      "recentRead": [
+         "The-Gamer-chapter-78-index-5",
+         "The-Gamer-chapter-79-index-5",
+         "Onepunch-Man-chapter-164-index-2",
+         "Onepunch-Man-chapter-163-index-2",
+         "Onepunch-Man-chapter-161-index-2",
+         "Onepunch-Man-chapter-162-index-2",
+         "Onepunch-Man-chapter-160-index-2",
+         "Onepunch-Man-chapter-159-index-2",
+         "The-Gamer-chapter-77-index-5",
+         "The-Gamer-chapter-76-index-5",
+         "The-Gamer-chapter-73-index-5",
+         "The-Gamer-chapter-75-index-5",
+         "The-Gamer-chapter-74-index-5",
+         "The-Gamer-chapter-71-index-5",
+         "The-Gamer-chapter-72-index-5"
+      ]
+   }
+]

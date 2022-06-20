@@ -7,6 +7,7 @@ const path = require('path');
 const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const pathFunctions = require('./pathFunctions') // functions that handle use requests
 const apiFunctions = require('./apiFunctions') // function that handle all api requests
+const loginFunctions = require('./loginFunctions') // all fucntions that handle login and stuff
 
 // note to self -
   // use cookies for prefs, and login
@@ -16,7 +17,8 @@ var isPupServerLoaded = false;
 const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
 
-
+// Require dotenv
+require('dotenv').config()
 
 
 // run express at port 5832
@@ -25,6 +27,8 @@ const port = process.env.PORT || 5832;
 app.set('view engine', 'pug')
 app.use(cookieParser())
 app.locals.basedir = path.join(__dirname, 'views');
+app.use(express.json({ extended: true, limit: "1mb" }));
+
 
 // set intial cookies fro user when they comes to the website for the first time
 app.use(setup)
@@ -94,6 +98,17 @@ app.get('/api/manga/read/:chapter', apiFunctions.getMangaChapterPage)
 app.get('/manga/download/:chapter', async(req,res) => {
   res.send(req.params.chapter)
 })
+// regsiter the user
+app.post('/api/login/register', loginFunctions.registerUser);
+// login the user
+app.post('/api/login/login', loginFunctions.loginUser)
+// get user info such as bookmarks and recentread
+// before giving info verify accestoken
+app.post('/api/login/userInfo', loginFunctions.getUserInfo)
+// all users
+app.get('/api/login/allUsers', loginFunctions.allUsers);
+// get a new accestoken based on the refresh token
+app.post('/api/login/newAccessToken', loginFunctions.getNewToken);
 
 app.use(express.static(path.join(__dirname, 'public')));
 //The 404 Route (ALWAYS Keep this as the last route)
