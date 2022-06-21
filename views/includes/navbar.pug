@@ -1,3 +1,4 @@
+include login.pug
 header
     div.headerSearhConta
         a.logoContainer(href='/manga')
@@ -26,14 +27,16 @@ header
                 i.fas.fa-sun
                 span &nbsp;Dark Mode off
             div(style="margin-left:auto;position:relative;")
-                div#Login_nav(class="small_nav",style="cursor:pointer;height:100%;box-sizing:border-box")
+                div#Login_nav(onclick="toggleLoginModal()",class="small_nav",style="cursor:pointer;height:100%;box-sizing:border-box")
                     i(class="fas fa-sign-in-alt")
                     span &nbsp;Login
                 div#dropdown_box(class="dropdown_box")
                     a(href="settings.html",class="small_nav")
-                        i(class="fas fa-cog") Settings
-                    a(onclick="")
-                        i(class="fas fa-sign-out-alt") Logout
+                        i(class="fas fa-cog") 
+                        span &nbsp;Settings
+                    a(onclick="logOutUser()", class="small_nav")
+                        i(class="fas fa-sign-out-alt") 
+                        span &nbsp;Logout
 div#scroll_to_top
     i(class="fas fa-angle-up")
 div#dark_mode

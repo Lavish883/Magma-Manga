@@ -78,9 +78,13 @@ async function loginUser(req, res) {
     // find the actual user got to check with email and name becuase user can login with both
     //so then we can comapre passwords
     var user = allUsers.find(user => user.name == req.body.userName);
-    
+
     if (user == undefined) {
         user = allUsers.find(user => user.email == req.body.userName);
+    }
+
+    if (user == undefined) {
+        return res.sendStatus(401)
     }
 
     // check with bcrpyt either password is correct or not
@@ -94,7 +98,7 @@ async function loginUser(req, res) {
         return res.json({ accessToken: accessToken, refreshToken: refreshToken });
     }
 
-    return res.send('Username or password is incorrect')
+    return res.sendStatus(401)
 }
 // get users info like bookamrks and recentread based on the accestoken
 async function getUserInfo(req, res) {
@@ -157,10 +161,26 @@ async function getNewToken(req, res) {
     return res.send(newAcessToken);
 
 }
+// log out of the account
+async function logOutUser(req, res) {
+    let allRefreshTokens = JSON.parse(fs.readFileSync('refreshTokens.json'));
+
+    let refreshToken = req.body.refreshToken;
+    // get rid of the specfifc refreshtoken the user has so even if someone
+    // somehow gets it its useless
+    for (var i = 0; i < allRefreshTokens.length; i++) {
+        if (allRefreshTokens[i] == refreshToken) {
+            allRefreshTokens.splice(i, 1);
+        }
+    }
+    fs.writeFileSync('refreshTokens.json', JSON.stringify(allRefreshTokens));
+}
+
 module.exports = {
     allUsers,
     registerUser,
     loginUser,
     getUserInfo,
-    getNewToken
+    getNewToken,
+    logOutUser
 }

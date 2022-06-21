@@ -95,6 +95,12 @@ function handleDarkModeToggle() {
     }
 }
 
+if (window.localStorage.getItem('accessToken') != undefined || window.localStorage.getItem("accessToken") != null) {
+    document.getElementById('Login_nav').setAttribute('onclick','activateDropdown(this)');
+    document.getElementById('Login_nav').innerHTML = `<i class="fas fa-user" aria-hidden="true"></i><span> Account</span>`
+
+}
+
 // Scroll To top
 document.getElementById('scroll_to_top').addEventListener('click', function () {
     window.scrollTo({ top: 0, behavior: 'smooth' });

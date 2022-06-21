@@ -1,0 +1,30 @@
+
+style
+    include /css/login.css
+script
+    include /js/login.js
+#modal_background(onclick='toggleLoginModal()', style='display: none;')
+div(style='justify-content:center;display:flex;')
+  #loginBackground.loginBackground
+    div(style='display:flex;flex-direction:column;')
+      #headingForLog.headerofL
+        div
+          i.fas.fa-sign-in-alt
+          |  Login
+        div(onclick='closeLoginSystem()')
+          i.fas.fa-times
+      #LoginError.error
+      .contain_input
+        label(for='userName') Username/Email:
+        input#userName(autocomplete='off', spellcheck='false', name="userName")
+        
+        label(for='userPassword') Password:
+        input#userPassword(type='password', style='margin:5px 0px', name='userPassword')
+        i.far.fa-eye-slash
+      .contain_switch_buttons
+        a(onclick="changeSystem('Register')") &middot; Register
+        a(onclick="changeSystem('Forgot')") &nbsp;&nbsp;&middot; Forgot Password
+      .contain_close_button
+        a(onclick='toggleLoginModal()') Close
+        a.login(onclick='loginToAccount()') Login
+  div
