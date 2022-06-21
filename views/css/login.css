@@ -1,0 +1,180 @@
+.error {
+    background-color: #fdf6f6;
+    color: #c20707;
+    margin: 10px 20px;
+    text-align: center;
+    border: solid #de7575 2px;
+    border-radius: 4px;
+    display: none;
+    padding: 5px 0px;
+    margin-bottom: 0px;
+}
+
+.goodSign {
+    background-color: #ddeddc;
+    color: #1c910e;
+    margin: 10px 20px;
+    text-align: center;
+    border: solid #4bab33 2px;
+    border-radius: 4px;
+    display: none;
+    padding: 5px 0px;
+    margin-bottom: 0px;
+}
+
+.fa-eye {
+    margin-left: -30px;
+    cursor: pointer;
+}
+
+.fa-eye-slash {
+    margin-left: -30px;
+    cursor: pointer;
+}
+
+.overflow_hide_time {
+    padding-right: 16px;
+    overflow: hidden;
+}
+
+.contain_close_button {
+    color: gray;
+    padding: 15px 20px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+    .contain_close_button a {
+        padding: 8px 10px;
+        border-radius: 4px;
+        border: solid 1px #6c757d;
+        cursor: pointer;
+        transition: background-color 200ms ease-in;
+    }
+
+        .contain_close_button a:hover {
+            background-color: #6c757d;
+            border-color: #6c757d;
+            color: white;
+        }
+
+    .contain_close_button .login {
+        background-color: #007bff;
+        color: white;
+        border-color: #007bff;
+    }
+
+    .contain_close_button .register {
+        background-color: #28a745;
+        color: white;
+        border-color: #28a745;
+    }
+
+    .contain_close_button .forgot {
+        background-color: #dc3545;
+        color: white;
+        border-color: #dc3545;
+    }
+
+        .contain_close_button .forgot:hover {
+            background-color: #c82333;
+            border-color: #c82333;
+        }
+
+    .contain_close_button .register:hover {
+        background-color: #218838;
+        border-color: #218838;
+    }
+
+    .contain_close_button .login:hover {
+        background-color: #0069d9;
+        border-color: #0069d9;
+    }
+
+.contain_input {
+    padding: 15px 20px;
+    flex-direction: column;
+    padding-bottom: 0px;
+}
+
+.contain_switch_buttons {
+    border-bottom: solid 1px #c1c9d0;
+    color: gray;
+    padding: 7px 20px;
+    height: 30px;
+}
+
+    .contain_switch_buttons a {
+        cursor: pointer;
+    }
+
+.contain_input input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 16.5px;
+    border: solid 1px #ced4da;
+    margin: 5px 0px;
+    color: rgba(0,0,0,0.75);
+    font-weight: 400;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,"Noto Sans",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol","Noto Color Emoji";
+}
+
+    .contain_input input:-webkit-autofill {
+        border: solid 1px #ced4da;
+        -webkit-text-fill-color: rgba(0,0,0,0.75);
+        -webkit-box-shadow: 0 0 0px 1000px white inset;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
+    .contain_input input:focus {
+        border-color: #80bdff;
+        outline: none;
+    }
+
+.contain_input label {
+    font-size: 17px;
+    display: block;
+}
+
+.loginBackground .headerofL {
+    font-size: 20.5px;
+    font-weight: 500;
+    padding: 18px 15px;
+    border-bottom: 1px solid #c1c9d0;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between
+}
+
+    .loginBackground .headerofL .fa-times {
+        font-size: 17.5px;
+        color: rgba(0,0,0,0.70);
+        cursor: pointer;
+    }
+
+.loginBackground {
+    top: -500px;
+    width: 500px;
+    background-color: white;
+    position: absolute;
+    z-index: 1000;
+    border-radius: .3rem;
+    box-sizing: border-box;
+    transition: top 0.4s,opacity 0.4s;
+    opacity: 0;
+}
+
+#modal_background {
+    background-color: rgba(0, 0, 0, .7);
+    display: none;
+    height: 100%;
+    width: 100%;
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 10;
+}

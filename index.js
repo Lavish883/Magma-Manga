@@ -109,7 +109,8 @@ app.post('/api/login/userInfo', loginFunctions.getUserInfo)
 app.get('/api/login/allUsers', loginFunctions.allUsers);
 // get a new accestoken based on the refresh token
 app.post('/api/login/newAccessToken', loginFunctions.getNewToken);
-
+// log out 
+app.delete('/api/login/logout', loginFunctions.logOutUser);
 app.use(express.static(path.join(__dirname, 'public')));
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
