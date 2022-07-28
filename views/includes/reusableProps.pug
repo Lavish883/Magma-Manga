@@ -5,7 +5,7 @@ mixin adminRecd(recd)
         if isBlocked
           img#Admin_Img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("cover.nep.li/cover/" + recd.IndexName + '.jpg').replaceAll('/', ' '))
         else
-          img#Admin_Img(src= "https://cover.nep.li/cover/" + recd.IndexName + ".jpg")
+          img#Admin_Img(src= "//temp.compsci88.com/cover/" + recd.IndexName + ".jpg")
     div.admin_text
         a#Admin_Title(href="manga.html?manga=" + recd.IndexName, class="admin_hover_text")
             span #{recd.SeriesName}
@@ -33,6 +33,11 @@ mixin hotUpdate(allMangas)
         - var manga = allMangas[i]
         div.hot_update_item
             a(href="/manga/read/"+ manga.ChapterLink + "-page-1", title="" + manga.SeriesName + " Chapter " + manga.Chapter)
+                if manga.isSus
+                    div.red_overlay
+                        i(class="fa-solid fa-circle-question", title="This manga might be Hentai (manga porn)")
+                else
+                    div
                 div.hot_update_item_name 
                     if manga.SeriesName.length > 18
                         span #{manga.SeriesName.substr(0,18) + '... ' + manga.Chapter}
@@ -41,7 +46,7 @@ mixin hotUpdate(allMangas)
                 if isBlocked
                   img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("cover.nep.li/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' ') , style="max-width:145px;")
                 else  
-                  img(src = "https://cover.nep.li/cover/" + manga.IndexName + ".jpg", style="max-width:145px;")
+                  img(src = "//temp.compsci88.com/cover/" + manga.IndexName + ".jpg", style="max-width:145px;")
         - i++;
 
 mixin hotMangaOfMonth(mangas)
@@ -69,10 +74,15 @@ mixin LatestChapters(latestChapters, hotChapters)
 
         div.latest_chapters_item
             a(href="/manga/manga/" + manga.IndexName, title="" + manga.SeriesName)
+                if manga.isSus
+                    div.red_overlay
+                        i(class="fa-solid fa-circle-question", title="This manga might be Hentai (manga porn)")
+                else 
+                    div
                 if isBlocked
                   img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("cover.nep.li/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' '), width="90")
                 else
-                  img(src="https://cover.nep.li/cover/" + manga.IndexName + ".jpg",width="90")
+                  img(src="//temp.compsci88.com/cover/" + manga.IndexName + ".jpg",width="90")
             a(style="display:contents;", href="/manga/read/" + manga.ChapterLink + '-page-1', title="" + manga.SeriesName + " Chapter " + manga.Chapter)
                 div(style="margin-left:15px; margin-top:8px;")
                     div.latest_chapters_info

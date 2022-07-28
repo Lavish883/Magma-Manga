@@ -4,10 +4,10 @@ const fetch = require('node-fetch'); // fetchs html
 const cookieParser = require('cookie-parser') //parses cookies recived from the user
 const path = require('path');
 
-const mainFunctions = require('./mainFunctions') // functions needed for important stuff
-const pathFunctions = require('./pathFunctions') // functions that handle use requests
-const apiFunctions = require('./apiFunctions') // function that handle all api requests
-const loginFunctions = require('./loginFunctions') // all fucntions that handle login and stuff
+const mainFunctions = require('./mainJS/mainFunctions') // functions needed for important stuff
+const pathFunctions = require('./mainJS/pathFunctions') // functions that handle use requests
+const apiFunctions = require('./mainJS/apiFunctions') // function that handle all api requests
+const loginFunctions = require('./mainJS/loginFunctions') // all fucntions that handle login and stuff
 
 // note to self -
   // use cookies for prefs, and login

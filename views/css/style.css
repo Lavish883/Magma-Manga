@@ -6,6 +6,7 @@
     overflow: hidden;
     border-radius: 8px;
     margin-bottom: 10px;
+    position:relative;
 }
 
 .hot_update {
@@ -357,6 +358,24 @@ img {
   padding: 0px 3px;
   margin-left: 10px;
   font-weight: 600;
+}
+
+.red_overlay{
+    position:absolute;
+    height:100%;
+    width:100%;
+    background:rgba(255, 0, 0, 0.34);
+}
+
+.red_overlay i{
+    float:right;
+    margin:5px;
+    font-size:20px;
+    color:white;
+}
+
+.red_overlay i:hover{
+    color:black;
 }
 
 @media only screen and (max-width: 600px) {

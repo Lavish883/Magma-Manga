@@ -4,7 +4,7 @@ function makeLatestChapterHTML(manga, isPopular, isCompleted) {
     if (window.location.href.includes("mangaapi")){
       var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li/cover/' + manga.IndexName + '.jpg').replaceAll('/', ' ')
     } else {
-      var image = 'https://cover.nep.li/cover/' + manga.IndexName + '.jpg';
+      var image = '//temp.compsci88.com/cover/' + manga.IndexName + '.jpg';
     }
   
     return `
@@ -118,7 +118,7 @@ function genreateRecdHTML(manga) {
                 <a href="/manga/read/${manga[i].chapterLink}-page-1" title="${manga[i].s} ${manga[i].l}">
                     <div class="hot_update_item_name"> <span>${manga[i].s} ${manga[i].l}</span>
                     </div>
-                    <img src="//cover.nep.li/cover/${manga[i].i}.jpg" style="max-width:145px;">
+                    <img src="https://temp.compsci88.com/cover/${manga[i].i}.jpg" style="max-width:145px;">
                 </a>
             </div>
         `)

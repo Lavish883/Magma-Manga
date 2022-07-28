@@ -15,7 +15,7 @@ function genreateBookmarksHTML(allBookMarks) {
       if (window.location.href.includes("mangaapi")) {
         var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li cover ' + manga.indexName + '.jpg')
       } else {
-        var image = 'https://cover.nep.li/cover/' + manga.indexName + '.jpg';
+        var image = 'https://temp.compsci88.com/cover/' + manga.indexName + '.jpg';
       }
       bookmarksHTML.push(
         `
