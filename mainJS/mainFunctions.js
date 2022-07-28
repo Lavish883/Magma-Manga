@@ -1,10 +1,19 @@
 const cheerio = require('cheerio')
 const moment = require('moment')
 const fetch = require('node-fetch');
+const fs = require('fs')
 
 const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
+const susManga = JSON.parse(fs.readFileSync('./json/susManga.json'));
 
 
+// to chekc if manga is potientally sus
+function isMangaSus(mangaName) {
+    if (susManga.find(manga => manga == mangaName) != undefined) {
+        return true
+    }
+    return false
+}
 
 // used for latest chapters index.html
 function calcDate(date){
@@ -66,6 +75,7 @@ function scrapeLatestManga(page){
   for (i = 0; i < LatestChapterJSON.length; i++){
     let manga = LatestChapterJSON[i];
     manga.Date = calcDate(manga.Date);
+    manga.isSus = isMangaSus(manga.IndexName);
     manga.ChapterLink = manga.IndexName +  calcChapterUrl(manga.Chapter);
     manga.Chapter = calcChapter(manga.Chapter);
   }
@@ -80,6 +90,10 @@ function scrapeHotManga(page){
   for (i = 0; i < HotUpdateJSON.length; i++){
     let manga = HotUpdateJSON[i];
     manga.Date = calcDate(manga.Date);
+    manga.isSus = isMangaSus(manga.IndexName);
+    if (manga.IndexName == 'Yofukashi-no-Uta'){
+        manga.isSus = true;
+    }
     manga.ChapterLink = manga.IndexName +  calcChapterUrl(manga.Chapter);
     manga.Chapter = calcChapter(manga.Chapter);
   }
@@ -191,7 +205,10 @@ function scrapeAdminRecd(html) {
     let admin_Recom3 = admin_Recom2[1].split(`;`)
     let admin_Recom_Arry = JSON.parse(admin_Recom3[0]);
 
-    return admin_Recom_Arry[Math.floor(Math.random() * admin_Recom_Arry.length)];
+    var mangaChosen = admin_Recom_Arry[Math.floor(Math.random() * admin_Recom_Arry.length)]
+    mangaChosen.isSus = isMangaSus(mangaChosen.IndexName)
+    console.log(mangaChosen)
+    return mangaChosen;
 }
 
 function scrapeHotMangaThisMonth(html) {
@@ -290,6 +307,7 @@ module.exports = {
     scrapeMangaInfo,
     getGenres,
     getSimilarManga,
-    fixRecdArry
+    fixRecdArry,
+    isMangaSus
 
 }

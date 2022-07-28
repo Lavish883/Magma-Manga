@@ -67,7 +67,7 @@ function generateFilterdArryHTML(mangaList, genresList, indxStart) {
             <li>
                 <a class="tooltip" href="/manga/manga/${manga.i}">${manga.s}
                     <div class="tooltiptext">
-                        <img src="//cover.nep.li/cover/${manga.i}.jpg" />
+                        <img src="https://temp.compsci88.com/cover/${manga.i}.jpg" />
                         <span class="status">Status:
                             <span>&nbsp;${manga.st}</span>
                         </span>
