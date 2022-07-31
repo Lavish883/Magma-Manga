@@ -2,8 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\mainJS",
-    "\\public\\images"
+    "\\public",
+    "\\views\\js"
   ],
-  "SelectedNode": "\\mainJS\\loginFunctions.js",
+  "SelectedNode": "\\mainJS\\notfications.js",
   "PreviewInSolutionExplorer": false
 }

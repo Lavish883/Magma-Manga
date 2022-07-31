@@ -13,15 +13,15 @@ function genreateBookmarksHTML(allBookMarks) {
     for (var i = 0; i < allBookMarks.length; i++) {
       let manga = allBookMarks[i];
       if (window.location.href.includes("mangaapi")) {
-        var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li cover ' + manga.indexName + '.jpg')
+        var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li cover ' + manga.Index + '.jpg')
       } else {
-        var image = 'https://temp.compsci88.com/cover/' + manga.indexName + '.jpg';
+        var image = 'https://temp.compsci88.com/cover/' + manga.Index + '.jpg';
       }
       bookmarksHTML.push(
         `
           <div draggable="true" class="BookMark_Container">
-            <a draggable="false" href="${'/manga/manga/' + manga.indexName}">
-              <div class="hot_update_item_name">${manga.seriesName}</div>
+            <a draggable="false" href="${'/manga/manga/' + manga.Index}">
+              <div class="hot_update_item_name">${manga.Series}</div>
               <img class="lozad" data-src="${image}">
             </a>
           </div>

@@ -3,22 +3,35 @@ const express = require('express'); // server
 const fetch = require('node-fetch'); // fetchs html
 const cookieParser = require('cookie-parser') //parses cookies recived from the user
 const path = require('path');
+const mongoose = require('mongoose'); // database acessor
 
-const mainFunctions = require('./mainJS/mainFunctions') // functions needed for important stuff
 const pathFunctions = require('./mainJS/pathFunctions') // functions that handle use requests
 const apiFunctions = require('./mainJS/apiFunctions') // function that handle all api requests
 const loginFunctions = require('./mainJS/loginFunctions') // all fucntions that handle login and stuff
+const notificationFunctions = require('./mainJS/notfications') // functions that handle notifactions
+
+
+// Require dotenv for secrets
+require('dotenv').config()
+
+const webpush = require('web-push');
+
+const publicKey = process.env.PUBLIC_KEY;
+const privateKey = process.env.PRIVATE_KEY;
+
+webpush.setVapidDetails('mailto:lavishk750@gmail.com', publicKey, privateKey);
+
+
+
+// Connect to mongodb database
+const dbURI = process.env.DB_URL;
+mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // note to self -
   // use cookies for prefs, and login
   // while local storage for recentRead and bookmarks, easier to handle client side
 
-var isPupServerLoaded = false;
-const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
-const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
 
-// Require dotenv
-require('dotenv').config()
 
 
 // run express at port 5832
@@ -58,6 +71,8 @@ function setup(req,res,next){
 app.get('/', (req, res) => {
   res.redirect('/manga/')
 })
+
+
 // index.html
 app.get('/manga/', pathFunctions.indexHtml)
 // read.html
@@ -76,20 +91,6 @@ app.get('/api/manga/all', apiFunctions.getMainPageStuff)
 app.get('/api/mangaName?', apiFunctions.getMangaPage)
 // directory  
 app.get('/api/manga/directory', apiFunctions.getDirectoryData)
-// given => type as hot (popular) and latest
-app.get('/api/manga/main/:type', async (req, res) => {
-  let headers = headersGenerator.getHeaders();
-  let fetchHot = await fetch(breakCloudFlare, headers);
-  let resp = await fetchHot.text();
-  
-  if (req.params.type == 'hot'){
-    return res.send(mainFunctions.scrapeHotManga(resp))
-  } else if (req.params.type = 'latest'){
-    return res.send(mainFunctions.scrapeLatestManga(resp))
-  } 
-  
-  return res.send('not valid')
-})
 // given 2 manga get there genres and then recommned a manga based on those genres
 app.get('/api/manga/recommend', apiFunctions.getRecommendedManga)
 // given a chapter of a manga return all the pages adn info of that manga
@@ -98,6 +99,9 @@ app.get('/api/manga/read/:chapter', apiFunctions.getMangaChapterPage)
 app.get('/manga/download/:chapter', async(req,res) => {
   res.send(req.params.chapter)
 })
+
+/*Login Functions are below*/
+
 // regsiter the user
 app.post('/api/login/register', loginFunctions.registerUser);
 // login the user
@@ -111,9 +115,15 @@ app.get('/api/login/allUsers', loginFunctions.allUsers);
 app.post('/api/login/newAccessToken', loginFunctions.getNewToken);
 // log out 
 app.delete('/api/login/logout', loginFunctions.logOutUser);
+
+/* Notifactions functions routes are below */
+app.post('/notifaction/subscribe', notificationFunctions.subscribe);
+
 app.use(express.static(path.join(__dirname, 'public')));
+
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
   res.status(404).send('what???');
 });
+
 app.listen(port)

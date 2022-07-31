@@ -10,14 +10,17 @@
     "moment": "^2.29.2",
     "mongoose": "^6.4.4",
     "node-fetch": "^2.6.5",
-    "pug": "^3.0.2"
+    "pug": "^3.0.2",
+    "web-push": "^3.5.0"
   },
   "name": "mangaapi",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devStart": "nodemon -e .pug,js,json,mjs index.js"
+    "devStart": "nodemon -e .pug,js,json,mjs index.js",
+    "migrate": "node ./mainJS/migrateDatabase.js",
+    "start": "node ./index.js"
   },
   "keywords": [],
   "author": "",
