@@ -10,14 +10,15 @@ async function send() {
     // Register Service Worker
     console.log("Registering service worker...");
 
-    const register = await navigator.serviceWorker.register("/worker.js", {
-        scope: "/not.html"
+    const register = await navigator.serviceWorker.register("worker.js", {
+        scope: "/test/not.html"
     });
 
     console.log("Service Worker Registered...");
 
     // Register Push
     console.log("Registering Push...");
+
     const subscription = await register.pushManager.subscribe({
         userVisibleOnly: true,
         applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
@@ -30,7 +31,10 @@ async function send() {
 
     await fetch("/notifaction/subscribe", {
         method: "POST",
-        body: JSON.stringify(subscription),
+        body: JSON.stringify({
+            "subscription": subscription,
+            "token": window.localStorage.getItem("refreshToken")
+        }),
         headers: {
             "content-type": "application/json"
         }
