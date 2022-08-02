@@ -20,10 +20,15 @@ const userSchema = new Schema({
     },
     "bookMarks": {
         type: Array,
-        required: true
+        required: true,
+        default: []
     },
     "bookmarks": {
         type:Array
+    },
+    "subscribed": {
+        type: Array,
+        default: []
     },
     "pfp": {
         type: String,
@@ -57,12 +62,35 @@ const commentId = new Schema({
     }
 })
 
+const subscriptionSchema = new Schema({
+    "subscription": {
+        type: Array,
+        required: true,
+    },
+    "user": {
+        type: Array,
+        required: true
+    }
+})
+
+const subbedMangaSchema = new Schema({
+    'subbed': {
+        type: Array,
+        required: true
+    }
+})
+
 const USERS = mongoose.model('Users', userSchema);
 const refreshTokens = mongoose.model('refreshTokens', refreshTokenSchema);
+const subscription = mongoose.model('notificationSubs', subscriptionSchema);
+const subbedManga = mongoose.model('subbedManga', subbedMangaSchema);
+
 const CommentModels = mongoose.model('CommentModels', comments);
 const commentIdModals = mongoose.model('commentId', commentId);
 
 module.exports = {
     USERS,
-    refreshTokens
+    refreshTokens,
+    subscription,
+    subbedManga
 }

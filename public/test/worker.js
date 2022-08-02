@@ -5,7 +5,9 @@ self.addEventListener('push', event => {
     console.log('Push Recieved...');
 
     self.registration.showNotification(data.title, {
-        body: "Notified by Traversy Media!",
-        icon: "http://image.ibb.co/frYOFd/tmlogo.png"
+        body: data.body,
+        icon: "/images/navbar.brand.png",
+        image: data.img,
+        vibrate: [200, 100, 200, 100, 200, 100, 200]
     });
 })

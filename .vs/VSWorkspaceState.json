@@ -3,8 +3,9 @@
     "",
     "\\mainJS",
     "\\public",
-    "\\views\\js"
+    "\\public\\test",
+    "\\schemas"
   ],
-  "SelectedNode": "\\mainJS\\notfications.js",
+  "SelectedNode": "\\public\\test\\client.js",
   "PreviewInSolutionExplorer": false
 }

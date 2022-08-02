@@ -188,5 +188,6 @@ module.exports = {
     loginUser,
     getUserInfo,
     getNewToken,
-    logOutUser
+    logOutUser,
+    isTokenValid
 }
