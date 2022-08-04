@@ -1,6 +1,6 @@
 const schemas = require('../schemas/schema'); // schemas
 const mongoose = require('mongoose') // for accesing databse;
-
+const moment = require('moment')
 // Connect to mongodb database
 const dbURI = "mongodb+srv://lavishRoot:qq2nMOUee49oEjOr@lavish-anime-manga-logi.nclfo.mongodb.net/manga-anime-hold?retryWrites=true&w=majority";
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -32,7 +32,7 @@ async function migrate() {
     console.log('done');
     */
     const mangaSubbed = (await schemas.subbedManga.findOne());
-    mangaSubbed.subbed = ['Tales-Of-Demons-And-Gods', 'Edens-Zero', 'Kakkou-no-Iinazuke', 'Chainsaw-Man', 'Detective-Conan', 'Ao-No-Exorcist', 'Minami-Ke', 'Yakuza-Reincarnation', 'Angel-Heart'];
+    mangaSubbed.latestCheck = '';
     mangaSubbed.save();
 
 }

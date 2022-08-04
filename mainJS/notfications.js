@@ -1,6 +1,8 @@
 const webpush = require('web-push');
 const schemas = require('../schemas/schema'); // schemas
-const loginFunctions = require('../mainJS/loginFunctions')
+const loginFunctions = require('../mainJS/loginFunctions');
+const newManga = require('../mainJS/checkForNewManga').main;
+const moment = require('moment');
 
 async function updateSubbedManga(mangaToAdd) { // updates maga that is subbed in the databse so we dont hae to check every manga
     let subbedManga = await schemas.subbedManga.findOne();
@@ -30,7 +32,7 @@ async function saveSubscription(body) {
             await user.save();
         }
 
-        //updateSubbedManga(user.subscribed);
+        updateSubbedManga(user.subscribed);
 
         // Add the subscription to the server
         let newSubscription = new schemas.subscription({ 
@@ -71,21 +73,30 @@ async function subscribe(req, res) {
     //sendOne();
 }
 
-async function sendNotifications(subscription, manga) {
-    //console.log(subscription.subscription[0])
-    //https://temp.compsci88.com/cover/${manga.IndexName}.jpg
-    //Create Payload for notifications
-    const payload = JSON.stringify({
-        'title': `New ${manga.SeriesName} ${manga.Chapters[0].Type} ${manga.Chapters[0].Chapter} !! ^_^`,
-        'body': '',
-        'img': `https://temp.compsci88.com/cover/${manga.IndexName}.jpg`
-    });
+// delete invlaid subscriptions
+async function deleteInvalid(subscription) {
+    await schemas.subscription.findOneAndRemove({
+        'subscription': subscription
+    })
+    console.log('deleted');
+}
 
-    // Notfiy the user that they have been subscribed
-    webpush.sendNotification(subscription, payload).catch(err => console.log(err));
+async function isItTime(req, res, next) {
+    var lastTimeChecked = (await schemas.subbedManga.findOne());
+
+    //console.log('lastTimeChecked', lastTimeChecked.latestCheck)
+
+    if (lastTimeChecked.latestCheck == '' || moment().diff(lastTimeChecked.latestCheck, "hours") > 12) {
+        lastTimeChecked.latestCheck = moment().format();
+        await lastTimeChecked.save();
+        newManga();
+    }
+
+
+    next();
 }
 
 module.exports = {
     subscribe,
-    sendNotifications
+    isItTime
 }
