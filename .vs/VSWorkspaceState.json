@@ -3,9 +3,9 @@
     "",
     "\\mainJS",
     "\\public",
-    "\\public\\test",
-    "\\schemas"
+    "\\views",
+    "\\views\\js"
   ],
-  "SelectedNode": "\\public\\test\\client.js",
+  "SelectedNode": "\\views\\js\\subscribe.js",
   "PreviewInSolutionExplorer": false
 }

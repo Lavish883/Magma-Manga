@@ -7,7 +7,8 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function stuffToChange(user) {
     for (var i = 0; i < user.recentRead.length; i++) {
-        user.recentRead[i] = user.recentRead[i].split('-page-')[0].replace('=', '');
+        user.recentRead[i] = user.recentRead[i].replace('?read', '');
+        //user.recentRead[i] = user.recentRead[i].split('-page-')[0].replace('?read=', '');
     }
     console.log(user.recentRead[user.recentRead.length - 2]);
 
@@ -15,6 +16,7 @@ async function stuffToChange(user) {
 }
 
 async function migrate() {
+    /*
     const allUsers = await schemas.USERS.find();
 
     console.log(allUsers.length);
@@ -28,6 +30,11 @@ async function migrate() {
     }
     //await allUsers.save();
     console.log('done');
+    */
+    const mangaSubbed = (await schemas.subbedManga.findOne());
+    mangaSubbed.subbed = ['Tales-Of-Demons-And-Gods', 'Edens-Zero', 'Kakkou-no-Iinazuke', 'Chainsaw-Man', 'Detective-Conan', 'Ao-No-Exorcist', 'Minami-Ke', 'Yakuza-Reincarnation', 'Angel-Heart'];
+    mangaSubbed.save();
+
 }
 
 migrate();
