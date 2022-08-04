@@ -47,8 +47,12 @@ async function getMangaPage(req, res) {
   let resp = await fetchManga.text();
 
   var allData = mainFunctions.scrapeMangaInfo(resp)
-  let chapters = resp.split(`vm.Chapters = `)[1].split(`;`)[0];
-
+  try {  
+    var chapters = resp.split(`vm.Chapters = `)[1].split(`;`)[0];
+  } catch (err) {
+      console.log(link);
+      console.log(err);
+  }
   allData.IndexName = req.query.manga;
   allData.Chapters = mainFunctions.fixChaptersArry(chapters, allData.IndexName, true);
   allData.Chapters = allData.Chapters.reverse();

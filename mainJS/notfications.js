@@ -18,10 +18,7 @@ async function updateSubbedManga(mangaToAdd) { // updates maga that is subbed in
 async function saveSubscription(body) {
     let tokenValid = loginFunctions.isTokenValid(body.token, process.env.REFRESH_TOKEN_SECERT);
     /*
-    // get users with a speficic bookmark
-    let user = await schemas.USERS.find({
-       'bookmarks.Index': 'Boruto'
-    });
+    
     */
     //console.log(user[0].bookmarks);
 
@@ -33,7 +30,7 @@ async function saveSubscription(body) {
             await user.save();
         }
 
-        updateSubbedManga(user.subscribed);
+        //updateSubbedManga(user.subscribed);
 
         // Add the subscription to the server
         let newSubscription = new schemas.subscription({ 
@@ -74,26 +71,21 @@ async function subscribe(req, res) {
     //sendOne();
 }
 
-async function sendOne() {
-    let subscription = (await schemas.subscription.findOne()).subscription[0];
+async function sendNotifications(subscription, manga) {
     //console.log(subscription.subscription[0])
+    //https://temp.compsci88.com/cover/${manga.IndexName}.jpg
     //Create Payload for notifications
     const payload = JSON.stringify({
-        'title': 'New Boruto Chapter 149 !! ^_^',
+        'title': `New ${manga.SeriesName} ${manga.Chapters[0].Type} ${manga.Chapters[0].Chapter} !! ^_^`,
         'body': '',
-        'img': 'https://m.media-amazon.com/images/I/71upvIrs3nL._SL1500_.jpg'
+        'img': `https://temp.compsci88.com/cover/${manga.IndexName}.jpg`
     });
 
     // Notfiy the user that they have been subscribed
-    try {
-        webpush.sendNotification(subscription, payload);
-    } catch (err) {
-        console.log(err);
-    }
-
+    webpush.sendNotification(subscription, payload).catch(err => console.log(err));
 }
 
-
 module.exports = {
-    subscribe
+    subscribe,
+    sendNotifications
 }

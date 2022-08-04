@@ -29,7 +29,7 @@ async function send() {
     }
 
     // Register Service Worker
-    const register = await navigator.serviceWorker.register("worker.js", {
+    const register = await navigator.serviceWorker.register("/sw.js", {
         scope: "/test/not.html"
     });
 
