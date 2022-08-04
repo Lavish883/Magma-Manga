@@ -43,8 +43,8 @@ app.locals.basedir = path.join(__dirname, 'views');
 app.use(express.json({ extended: true, limit: "1mb" }));
 
 
-// set intial cookies fro user when they comes to the website for the first time
-app.use(setup)
+// see if it is time to check for new manga
+app.use(notificationFunctions.isItTime)
 
 function setup(req,res,next){
   var cookie = req.cookies.user;

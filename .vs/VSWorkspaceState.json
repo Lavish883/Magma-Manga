@@ -2,10 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\mainJS",
-    "\\public",
-    "\\views",
+    "\\schemas",
     "\\views\\js"
   ],
-  "SelectedNode": "\\views\\js\\subscribe.js",
+  "SelectedNode": "\\mainJS\\notfications.js",
   "PreviewInSolutionExplorer": false
 }

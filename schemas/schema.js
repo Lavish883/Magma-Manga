@@ -77,6 +77,9 @@ const subbedMangaSchema = new Schema({
     'subbed': {
         type: Array,
         required: true
+    },
+    'latestCheck': {
+        type: String
     }
 })
 
