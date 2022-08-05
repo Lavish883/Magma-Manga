@@ -126,4 +126,10 @@ app.get('*', function(req, res){
   res.status(404).send('what???');
 });
 
+
+process.on('unhandledRejection', error => {
+    // Will print "unhandledRejection err is not defined"
+    console.log('unhandledRejection', error.message);
+});
+
 app.listen(port)

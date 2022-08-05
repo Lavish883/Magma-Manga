@@ -2,9 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\mainJS",
-    "\\schemas",
-    "\\views\\js"
+    "\\schemas"
   ],
-  "SelectedNode": "\\mainJS\\notfications.js",
+  "SelectedNode": "\\mainJS\\checkForNewManga.js",
   "PreviewInSolutionExplorer": false
 }

@@ -73,13 +73,6 @@ async function subscribe(req, res) {
     //sendOne();
 }
 
-// delete invlaid subscriptions
-async function deleteInvalid(subscription) {
-    await schemas.subscription.findOneAndRemove({
-        'subscription': subscription
-    })
-    console.log('deleted');
-}
 
 async function isItTime(req, res, next) {
     var lastTimeChecked = (await schemas.subbedManga.findOne());
