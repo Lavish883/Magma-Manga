@@ -18,6 +18,14 @@ const privateKey = process.env.PRIVATE_KEY;
 
 webpush.setVapidDetails('mailto:lavishk750@gmail.com', publicKey, privateKey);
 
+// delete invlaid subscriptions
+async function deleteInvalid(subscription) {
+    await schemas.subscription.findOneAndRemove({
+        'subscription': subscription
+    })
+    console.log('deleted');
+}
+
 async function sendNotification(subscription, manga) {
     //console.log(subscription.subscription[0])
     //https://temp.compsci88.com/cover/${manga.IndexName}.jpg
@@ -60,27 +68,35 @@ async function findSubscriptions(manga) {
     }
 }
 
-async function isMangaNew(manga) {
+async function fetchManga(manga) {
     let link = serverName + 'api/mangaName?manga=' + manga;
+    console.log(link);
     // fetch the data
-    let fetchAllData = await fetch(link);
-    let resp = await fetchAllData.json();
-
-    if (resp.Chapters[0].isNew) {
-        findSubscriptions(resp)
-        console.log(link)
+    try {
+        let fetchAllData = await fetch(link);
+        let resp = await fetchAllData.json();
+        return resp;
+    } catch (err) {
+        console.log(err);
     }
-    console.log(resp.Chapters[0].isNew);
+    return;
 }
 
 async function main() {
-    let subbedManga = (await schemas.subbedManga.findOne()).subbed;
-
+    var subbedManga = (await schemas.subbedManga.findOne()).subbed;
+    //subbedManga = ['Jujutsu-Kaisen','Suppose-a-Kid-from-the-Last-Dungeon-Boonies-Moved-to-a-Starter-Town'];
     for (var i = 0; i < subbedManga.length; i++) {
         // setting a timeout so we don't get deteced as bots doing like 50 requests at a time
-        setTimeout(isMangaNew, 1500 * i , (subbedManga[i]));
+        let resp = await fetchManga(subbedManga[i]);
+        console.log('recevied')
+        try {
+            if (resp.Chapters[0].isNew) {
+                await findSubscriptions(resp)
+            }
+        } catch (err) {
+            console.log(err);
+        }
     }
-    console.log(1500 * subbedManga.length);
 }
 
 module.exports = {

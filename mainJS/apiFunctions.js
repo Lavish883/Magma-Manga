@@ -52,6 +52,7 @@ async function getMangaPage(req, res) {
   } catch (err) {
       console.log(link);
       console.log(err);
+      return res.status(500).send('Page is not valid');
   }
   allData.IndexName = req.query.manga;
   allData.Chapters = mainFunctions.fixChaptersArry(chapters, allData.IndexName, true);
