@@ -18,6 +18,7 @@ const webpush = require('web-push');
 
 const publicKey = process.env.PUBLIC_KEY;
 const privateKey = process.env.PRIVATE_KEY;
+console.log(publicKey, privateKey);
 
 webpush.setVapidDetails('mailto:lavishk750@gmail.com', publicKey, privateKey);
 
