@@ -1,0 +1,53 @@
+// !{variable name} this for using the passed in data
+
+html
+    head
+        //| !{p1}
+        title Directory 
+        meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        style 
+            include /css/navbar.css
+        style
+            include /css/style.css
+        style
+            include /css/search.css
+        script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+    body(style="margin:0px")
+        include includes/navbar.pug
+        include includes/reusableProps.pug
+        img#loading(class="image_center", src="/images/loading.svg",width="80")
+        div#main.none
+            div
+                div.searchHeader
+                    i(class="fas fa-search")
+                    span &nbsp;Search Manga&nbsp;
+                    span#amountOfManga
+                div.searchContainer
+                    div.containInputs
+                        div
+                            span Series Name: 
+                            input(type="text",spellcheck="false")
+                        div 
+                            span Author:
+                            input(type="text",spellcheck="false")
+                        div 
+                            span Year:
+                            input(type="text",spellcheck="false")
+                    div.borderBottom
+                    div.containFilterAndResults
+                        div#resultsContainer
+                            div.result_item
+                                a(href="#")
+                                    img(src="https://temp.compsci88.com/cover/Killstagram.jpg")
+                                div.detailContainer 
+                                    a(href="#") #Killstagram
+                                    div.gray Author:&nbsp;
+                                        span.blue Ryoung&nbsp;
+                                        | &#183; Year: 
+                                        span.blue 2019
+                        div#filters
+
+        script
+            include /js/index.js
+        script
+            include /js/search.js

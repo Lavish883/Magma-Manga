@@ -18,7 +18,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devStart": "nodemon -e .pug,js,json,mjs index.js",
+    "devStart": "nodemon -e .pug,json,mjs index.js",
     "migrate": "node ./mainJS/migrateDatabase.js",
     "start": "node ./index.js",
     "newManga": "nodemon -e .js ./mainJS/checkForNewManga.js"
