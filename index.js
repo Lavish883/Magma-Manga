@@ -27,13 +27,6 @@ webpush.setVapidDetails('mailto:lavishk750@gmail.com', publicKey, privateKey);
 const dbURI = process.env.DB_URL;
 mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
 
-// note to self -
-  // use cookies for prefs, and login
-  // while local storage for recentRead and bookmarks, easier to handle client side
-
-
-
-
 // run express at port 5832
 const app = express()
 const port = process.env.PORT || 5832;
@@ -83,6 +76,15 @@ app.get('/manga/bookmarks', pathFunctions.bookmarksHtml)
 app.get('/manga/manga/:mangaName', pathFunctions.mangaHtml)
 // directory.html
 app.get('/manga/directory', pathFunctions.directoryHtml)
+// search.html
+app.get('/manga/search', pathFunctions.searchHtml)
+// let user download that chpater manga
+app.get('/manga/download/:chapter', async (req, res) => {
+    res.send(req.params.chapter)
+})
+
+/* Api Routes are bwlow */
+
 // quick search data
 app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)
 // get all the stuff needed for the main page of the site
@@ -95,12 +97,10 @@ app.get('/api/manga/directory', apiFunctions.getDirectoryData)
 app.get('/api/manga/recommend', apiFunctions.getRecommendedManga)
 // given a chapter of a manga return all the pages adn info of that manga
 app.get('/api/manga/read/:chapter', apiFunctions.getMangaChapterPage)
-// let user download that chpater manga
-app.get('/manga/download/:chapter', async(req,res) => {
-  res.send(req.params.chapter)
-})
 
-/*Login Functions are below*/
+// get the directory for search page
+app.get('/api/searchPage', apiFunctions.getSearchData)
+/*Login Routes are below*/
 
 // regsiter the user
 app.post('/api/login/register', loginFunctions.registerUser);
@@ -129,7 +129,7 @@ app.get('*', function(req, res){
 
 process.on('unhandledRejection', error => {
     // Will print "unhandledRejection err is not defined"
-    console.log('unhandledRejection', error.message);
+    console.log('unhandledRejection', error);
 });
 
 app.listen(port)

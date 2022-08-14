@@ -66,7 +66,7 @@ if (window.location.pathname.includes('/index.html') || window.location.pathname
     document.getElementById('Home_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('/directory')) {
     document.getElementById('Directory_nav').classList.add('small_nav_active')
-} else if (window.location.pathname.includes('/search.html')) {
+} else if (window.location.pathname.includes('/search')) {
     document.getElementById('Search_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('manga/bookmarks')) {
     document.getElementById('Bookmark_nav').classList.add('small_nav_active')

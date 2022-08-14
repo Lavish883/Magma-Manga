@@ -182,7 +182,7 @@ async function getSimilarManga(genres){
   let fetchSearch = await fetch(link);
   let resp = await fetchSearch.text();
   // Directory which contains all the manga with genres and stuff
-  var DirectoryBackup = JSON.parse(resp.split(`vm.Directory = `)[1].split(`;`).splice(0, 14).join(','));
+  var DirectoryBackup = JSON.parse(resp.split(`vm.Directory = `)[1].split(`;`).splice(0, 15).join(','));
   // Get all the managa that includes all three of those genres 
   let FilteredResults = genresComparer(DirectoryBackup, genres);
   
@@ -296,6 +296,44 @@ function fixRecdArry(arry) {
     return arry
 }
 
+// fixes the chapter and date values for search results
+function fixSearchArry(arry) {
+    for (var i = 0; i < arry.length; i++) {
+        let manga = arry[i];
+
+        manga.indexName = manga.i;
+        delete manga.i;
+
+        manga.seriesName = manga.s;
+        delete manga.s;
+
+        manga.authors = manga.a;
+        delete manga.a;
+
+        manga.latestScan = moment(manga.latestScan).subtract(1, "hour").format("MM/DD/YYYY");
+        delete manga.ls;
+
+        manga.latestChapter = calcChapter(manga.l);
+
+        manga.chapterUrl = '/manga/read/' + manga.indexName + calcChapterUrl(manga.l);
+        delete manga.l;
+
+        manga.alternateNames = manga.al;
+        delete manga.al;
+
+        manga.genres = manga.g;
+        delete manga.g;
+
+        manga.isHot = manga.h;
+        delete manga.h;
+
+        manga.offical = manga.o;
+        delete manga.o;
+
+    }
+    return arry;
+}
+
 module.exports = {
     chapterImgURLS,
     fixCurrentChapter,
@@ -308,6 +346,6 @@ module.exports = {
     getGenres,
     getSimilarManga,
     fixRecdArry,
-    isMangaSus
-
+    isMangaSus,
+    fixSearchArry
 }
