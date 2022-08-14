@@ -17,7 +17,7 @@ function showResults(arry) {
       if (window.location.href.includes("mangaapi")){
         var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li cover ' + arry[i].i + '.jpg')
       } else {
-        var image = 'https://cover.nep.li/cover/' + arry[i].i + '.jpg';
+        var image = 'https://temp.compsci88.com/cover/' + arry[i].i + '.jpg';
       }
       
         resultsHTML.push(

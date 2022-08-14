@@ -36,7 +36,7 @@ function checkIfBookmarked() {
     }
     for (var i = 0; i < bookMarks.length; i++) {
         let manga = bookMarks[i];
-        if (manga.seriesName == currentChapter.seriesName && manga.indexName == currentChapter.indexName) {
+        if (manga.Index == currentChapter.indexName) {
             return true
         }
     }
@@ -64,12 +64,12 @@ function bookMark(obj) {
     }
 
     if (!bookMarked) {
-        bookMarks.push({ 'seriesName': currentChapter.seriesName, 'indexName': currentChapter.indexName });
+        bookMarks.push({ 'Series': currentChapter.seriesName, 'Index': currentChapter.indexName });
     } else {
         // remove the manga
         for (var i = bookMarks.length - 1; i >= 0; i--) {
             let manga = bookMarks[i];
-            if (manga.seriesName == currentChapter.seriesName && manga.indexName == currentChapter.indexName) {
+            if (manga.Index == currentChapter.indexName) {
                 bookMarks.splice(i, 1);
                 console.log('removed')
                 break;
