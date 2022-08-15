@@ -71,7 +71,7 @@ async function getMangaChapterPage(req, res) {
     var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
 
     var chapters = mainFunctions.fixChaptersArry(resp.split(`vm.CHAPTERS = `)[1].split(`;`)[0], indexName);
-    var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0]);
+    var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0], indexName);
 
     var imageDirectoryURL = resp.split(`vm.CurPathName = "`)[1].split(`";`)[0];
     var imageURlS = mainFunctions.chapterImgURLS(currentChapter, imageDirectoryURL, indexName);

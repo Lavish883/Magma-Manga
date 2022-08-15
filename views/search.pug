@@ -25,14 +25,14 @@ html
                 div.searchContainer
                     div.containInputs
                         div
-                            span Series Name: 
-                            input(type="text",spellcheck="false")
+                            span Series Name:
+                            input(type="text",spellcheck="false",onchange="handleChangeInValue(this)")
                         div 
                             span Author:
-                            input(type="text",spellcheck="false")
+                            input(type="text",spellcheck="false",onchange="handleChangeInValue(this)")
                         div 
                             span Year:
-                            input(type="text",spellcheck="false")
+                            input(type="text",spellcheck="false",onchange="handleChangeInValue(this)")
                     div.borderBottom
                     div.containFilterAndResults
                         div#resultsContainer

@@ -19,7 +19,6 @@ function addToRecentRead(chapterLink) {
 }
 // check if this chapter has been read or not
 function checkIfItRead(chapterLink, recentRead) {
-    console.log(recentRead)
     for (var i = 0; i < recentRead.length; i++) {
         if (chapterLink == recentRead[i]) {
             return true;
@@ -123,7 +122,6 @@ function showImages(page) {
 // listen to page clicks either it is left or right
 
 function movePage(event) {
-    console.log(event);
     if (event.type == 'click') {
         // varibles to check of the page clikc is lef tor right
         let pWidth = $(this).innerWidth();
@@ -167,28 +165,24 @@ function movePage(event) {
 // go to the next chapter
 // direction meaning either next chapter or previous chapter
 function moveChapter(direction) {
-    var currentChapterIndx = chapters.findIndex(elem => elem.Chapter == currentChapter.Chapter)
+    var currentChapterIndx = chapters.findIndex(elem => elem.ChapterLink == currentChapter.ChapterLink)
     var chapterToLookIndx = direction == 'next' ? currentChapterIndx - 1 : currentChapterIndx + 1;
-
-    for (var i = 0; i < chapters.length; i++) {
-
-        if (chapterToLookIndx < 0) {
-            break;
-        }
-
-        if (chapters[i].Chapter == chapters[chapterToLookIndx].Chapter) {
-            if (longStrip) {
-                window.location.href = window.location.origin + '/manga/read/' + chapters[i].ChapterLink;
-            } else {
-                let chapterPageToStart = direction == 'next' ? '-page-1' : '-page-' + chapters[i].Page;
-                window.location.href = window.location.origin + '/manga/read/' + chapters[i].ChapterLink + chapterPageToStart;
-            }
+    try {
+        if (longStrip) {
+            window.location.href = window.location.origin + '/manga/read/' + chapters[chapterToLookIndx].ChapterLink;
+            return;
+        } else {
+            let chapterPageToStart = direction == 'next' ? '-page-1' : '-page-' + chapters[chapterToLookIndx].Page;
+            window.location.href = window.location.origin + '/manga/read/' + chapters[chapterToLookIndx].ChapterLink + chapterPageToStart;
             return;
         }
+    } catch (err) {
+        alert('No more next chapters. You are all caught up');
+        console.log(err);
     }
-    alert('No more next chapters. You are all caught up')
 }
-// updtae url accordingly
+
+// update url accordingly
 
 
 // event listeners 

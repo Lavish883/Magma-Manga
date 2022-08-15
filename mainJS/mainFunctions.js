@@ -234,9 +234,10 @@ function fixChaptersArry(chapters, indexName, mangaPage = false) {
     return chapters.reverse();
 }
 
-function fixCurrentChapter(chapter) {
+function fixCurrentChapter(chapter, indexName) {
     chapter = JSON.parse(chapter);
-    chapter.Chapter = calcChapter(chapter.Chapter);
+    chapter.ChapterLink = indexName + calcChapterUrl(chapter.Chapter);
+    chapter.Chapter =  calcChapter(chapter.Chapter);
     chapter.Date = calcDateForMangaChapters(chapter.Date);
     return chapter
 }

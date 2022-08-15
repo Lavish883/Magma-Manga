@@ -1,17 +1,18 @@
 var directory;
-var filteredResults = [];
+var searchFilteredResults = [];
 var filtersApplied = {
-    "SeriesName": "",
+    "Series Name": "",
     "Author": "",
     "Year": "",
-    "ScanStatus": "",
-    "PublishStatus": "",
+    "Scan Status": "",
+    "Publish Status": "",
     "Type": "",
-    "OfficialTranslation": "",
+    "Official Translation": "",
     "Genres": [],
     "GenresNot": [],
-    "SortBy": ''
+    "Sort By": ''
 };
+
 // Filters avaible for the user to select
 const availableFilters = [
     {
@@ -39,7 +40,7 @@ const availableFilters = [
         'filters': ['Any', 'Action', 'Adult', 'Adventure', 'Comedy', 'Doujinshi', 'Drama', 'Ecchi', 'Fantasy', 'Gender Bender', 'Harem', 'Hentai', 'Historical', 'Horror', 'Isekai', 'Josei', 'Lolicon', 'Martial Arts', 'Mature', 'Mecha', 'Mystery', 'Psychological', 'Romance', 'School Life', 'Sci-fi', 'Seinen', 'Shotacon', 'Shoujo', 'Shoujo Ai', 'Shounen', 'Shounen Ai', 'Slice of Life', 'Smut', 'Sports', 'Supernatural', 'Tragedy', 'Yaoi', 'Yuri']
     }
 ];
-
+//fetch the serach directory and run functions to intilazie the page
 async function getSearchDirectory() {
     let fetchData = await fetch('/api/searchPage');
     let data = await fetchData.json();
@@ -55,7 +56,6 @@ async function getSearchDirectory() {
     generateFiltersHTML()
 
 }
-
 // toggle if that list of filters is visible or not
 function toggleListVisibility(obj) {
     // check if it is hidden rn or not
@@ -75,7 +75,6 @@ function toggleListVisibility(obj) {
     }
     console.log(obj);
 }
-
 // generate results html based on the arry
 function generateResultsHTML(mangaArry, indxStart) {
     let htmlGenerated = [];
@@ -125,7 +124,7 @@ function generateFiltersHTML() {
                     <i class="fas fa-caret-down"></i>
                 </div>
                 <div class="filterItems hidden">
-                    ${availableFilters[i].filters.map((filter, indx) => `<div onclick="filterSelection(this)" class="item">${filter}${ indx == 0 ?`<i class="fas fa-check"></i>`: ''}</div>`).join('')}
+                    ${availableFilters[i].filters.map((filter, indx) => `<div onclick="filterSelection(this)" class="item">${filter}${indx == 0 ? `<i class="fas fa-check"></i>` : ''}</div>`).join('')}
                 </div>
             </div>
         `)
@@ -133,14 +132,30 @@ function generateFiltersHTML() {
     document.getElementById('filters').innerHTML = htmlGenerated.join('');
 }
 // update filters applied 
-function updateFilters(type, filter) {
-
+function updateFilters(type, obj) {
+    if (type != 'Genres') {
+        filtersApplied[type] = obj.innerText;
+    } else {
+        if (obj.innerHTML.includes(`fa-check`)) {
+            filtersApplied.Genres.push(obj.innerText);
+        } else if (obj.innerHTML.includes(`fa-times`)) {
+            filtersApplied.GenresNot.push(obj.innerText);
+            // get rid of that genre from the genres filter
+            filtersApplied.Genres.splice(filtersApplied.Genres.indexOf(obj.innerText), 1);
+        } else {
+            // get rid of it from gneresNot
+            filtersApplied.GenresNot.splice(filtersApplied.GenresNot.indexOf(obj.innerText), 1);
+        }
+    }
+    console.log(filtersApplied);
 }
 // toggle filters selection
 function filterSelection(obj) {
     console.log(obj)
-    if (obj.parentElement.parentElement.children[0].innerText != 'Genres' || obj.innerText == 'Any') {
-        obj.parentElement.querySelectorAll('.fa-check').forEach((checked) => {
+    var filterHead = obj.parentElement.parentElement.children[0];
+
+    if (filterHead.innerText != 'Genres' || obj.innerText == 'Any') {
+        obj.parentElement.querySelectorAll('.fas').forEach((checked) => {
             checked.remove();
         })
         obj.innerHTML += `<i class="fas fa-check"></i>`
@@ -160,6 +175,34 @@ function filterSelection(obj) {
             obj.parentElement.children[0].innerHTML += `<i class="fas fa-check"></i>`;
         }
     }
+
+    updateFilters(filterHead.innerText, obj);
 }
+// handle value change of three inputs on top of page
+function handleChangeInValue(obj) {
+   // update that alue int he filtersApplied
+    let type = obj.parentElement.children[0].innerText.replace(':', '');
+    filtersApplied[type] = obj.value;
+    filterResultsforSearch()
+}
+// filter results for search based on filtersApplied
+function filterResultsforSearch() {
+    searchFilteredResults = JSON.parse(JSON.stringify(directory));
+
+    for (var i = directory.length - 1; i >= 0; i--) {
+        var manga = searchFilteredResults[i];
+        // see if their series name mathches
+        if (filtersApplied["Series Name"] != '') {
+            // if it doesn't inlcude the Series name get rid of it
+            if (manga.seriesName.toLowerCase().includes('ass') == false) {
+                console.log(i)
+                searchFilteredResults.splice(i, 1);
+            }
+        }
+    }
+    console.log(searchFilteredResults)
+    generateFiltersHTML(searchFilteredResults, 0);
+}
+
 getSearchDirectory();
 

@@ -2,7 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\mainJS",
-    "\\views"
+    "\\views",
+    "\\views\\js"
   ],
+  "SelectedNode": "\\views\\js\\search.js",
   "PreviewInSolutionExplorer": false
 }
