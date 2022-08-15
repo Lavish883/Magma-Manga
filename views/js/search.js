@@ -52,7 +52,7 @@ async function getSearchDirectory() {
     document.getElementById('main').classList.remove('none');
     // show the number of manga
     document.getElementById('amountOfManga').innerText = '(' + directory.length.toLocaleString("en-us") + ')';
-    generateResultsHTML(directory, 0);
+    generateResultsHTML(directory, 0, 30);
     generateFiltersHTML()
 
 }
@@ -76,10 +76,15 @@ function toggleListVisibility(obj) {
     console.log(obj);
 }
 // generate results html based on the arry
-function generateResultsHTML(mangaArry, indxStart) {
+function generateResultsHTML(mangaArry, indxStart, amount) {
     let htmlGenerated = [];
+
+    if (amount > mangaArry.length) {
+        amount = mangaArry.length;
+    }
+
     // starting at a given index add more twenty items
-    for (var i = indxStart; i < indxStart + 20; i++) {
+    for (var i = indxStart; i < indxStart + amount; i++) {
         // i is index name, s is series name, y is year released
         // h is either its popular rn or not, a is an list list of authors
         // ss is scan staus ps is publish status
@@ -180,7 +185,7 @@ function filterSelection(obj) {
 }
 // handle value change of three inputs on top of page
 function handleChangeInValue(obj) {
-   // update that alue int he filtersApplied
+    // update that alue int he filtersApplied
     let type = obj.parentElement.children[0].innerText.replace(':', '');
     filtersApplied[type] = obj.value;
     filterResultsforSearch()
@@ -189,19 +194,49 @@ function handleChangeInValue(obj) {
 function filterResultsforSearch() {
     searchFilteredResults = JSON.parse(JSON.stringify(directory));
 
-    for (var i = directory.length - 1; i >= 0; i--) {
+    for (var i = searchFilteredResults.length - 1; i >= 0; i--) {
         var manga = searchFilteredResults[i];
-        // see if their series name mathches
+        // see if their series name mathches or one of the alternate names
         if (filtersApplied["Series Name"] != '') {
             // if it doesn't inlcude the Series name get rid of it
-            if (manga.seriesName.toLowerCase().includes('ass') == false) {
-                console.log(i)
+            var doAnyMatch = false;
+            if (manga.seriesName.toLowerCase().includes(filtersApplied["Series Name"].toLowerCase())) {
+                doAnyMatch = true;
+            }
+            manga.alternateNames.map((name) => {
+                if (name.toLowerCase().includes(filtersApplied["Series Name"].toLowerCase())) {
+                    doAnyMatch = true;
+                }
+            })
+            if (doAnyMatch == false) {
                 searchFilteredResults.splice(i, 1);
+                continue;
+            }
+        }
+        // see if the year published matches
+        if (filtersApplied["Year"] != '') {
+            // if it doesn't inlcude the year get rid of it
+            if (manga.y.toLowerCase().includes(filtersApplied["Year"].toLowerCase()) == false) {
+                searchFilteredResults.splice(i, 1);
+                continue;
+            }
+        }
+        // see if the author name matches
+        if (filtersApplied["Author"] != '') {
+            // if it doesn't inlcude the author get rid of it
+            var doAnyMatch = false;
+            manga.authors.map((author) => {
+                if (author.toLowerCase().includes(filtersApplied["Author"].toLowerCase())) {
+                    doAnyMatch = true;
+                }
+            })
+            if (doAnyMatch == false) {
+                searchFilteredResults.splice(i, 1);
+                continue;
             }
         }
     }
-    console.log(searchFilteredResults)
-    generateFiltersHTML(searchFilteredResults, 0);
+    generateResultsHTML(searchFilteredResults, 0, 8);
 }
 
 getSearchDirectory();
