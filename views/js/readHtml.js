@@ -1,5 +1,5 @@
-var longStrip = !window.location.href.includes("-page-")
-var currentlyOnPage = window.location.href.split(`-page-`)[1]
+var longStrip = !window.location.href.includes("-page-");
+var currentlyOnPage = window.location.href.split(`-page-`)[1];
 
 
 //add to recentread localstorage array
@@ -86,10 +86,12 @@ function changeReadingStyle(obj, userClicked = true) {
         obj.children[0].classList.remove("fa-arrows-alt-v");
         obj.children[0].classList.add("fa-columns");
         obj.children[1].innerText = "Single Page";
+        showImages('F');
+        console.log(currentlyOnPage);
+        if (currentlyOnPage != undefined) {
+            document.getElementById('imgs').children[currentlyOnPage - 1].scrollIntoView();
+        }
         currentlyOnPage = 'F';
-        showImages(currentlyOnPage);
-        document.getElementById('imgs').children[0].scrollIntoView();
-        ;
     } else {
         obj.children[0].classList.add("fa-arrows-alt-v");
         obj.children[0].classList.remove("fa-columns");
@@ -133,32 +135,35 @@ function movePage(event) {
         } else {
             currentlyOnPage++; // Right Side of the page is clicked
         }
+
+        if (longStrip == false) { // see if we need to go on the next chapter or not
+            if (currentlyOnPage > currentChapter.Page) {
+                moveChapter('next')
+                return;
+            } else if (currentlyOnPage < 1) {
+                moveChapter('prev')
+                return;
+            }
+        }
+
+
+        if (longStrip == false) {
+            showImages(currentlyOnPage)
+        } else {
+            var ScrollToPlease = window.pageYOffset + 700 || document.documentElement.scrollTop + 700
+            window.scroll({
+                top: ScrollToPlease,
+                left: 0,
+                behavior: 'smooth'
+            })
+        }
+
     } else {
         if (event.key == "ArrowLeft") { // Left Side of the page is clicked
             currentlyOnPage--;
         } else if (event.key == "ArrowRight") { // Right side of page is clicked
             currentlyOnPage++;
         }
-    }
-
-    if (currentlyOnPage > currentChapter.Page) {
-        moveChapter('next')
-        return;
-    } else if (currentlyOnPage < 1) {
-        moveChapter('prev')
-        return;
-    }
-
-
-    if (longStrip == false) {
-        showImages(currentlyOnPage)
-    } else {
-        var ScrollToPlease = window.pageYOffset + 700 || document.documentElement.scrollTop + 700
-        window.scroll({
-            top: ScrollToPlease,
-            left: 0,
-            behavior: 'smooth'
-        })
     }
 }
 

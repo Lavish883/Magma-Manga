@@ -37,23 +37,60 @@ const availableFilters = [
     },
     {
         'name': "Genres",
-        'filters': ['Any', 'Action', 'Adult', 'Adventure', 'Comedy', 'Doujinshi', 'Drama', 'Ecchi', 'Fantasy', 'Gender Bender', 'Harem', 'Hentai', 'Historical', 'Horror', 'Isekai', 'Josei', 'Lolicon', 'Martial Arts', 'Mature', 'Mecha', 'Mystery', 'Psychological', 'Romance', 'School Life', 'Sci-fi', 'Seinen', 'Shotacon', 'Shoujo', 'Shoujo Ai', 'Shounen', 'Shounen Ai', 'Slice of Life', 'Smut', 'Sports', 'Supernatural', 'Tragedy', 'Yaoi', 'Yuri']
+        'filters': ['Any', 'Action', 'Adult', 'Adventure', 'Comedy', 'Doujinshi', 'Drama', 'Ecchi', 'Fantasy', 'Gender Bender', 'Harem', 'Hentai', 'Historical', 'Horror', 'Isekai', 'Josei', 'Lolicon', 'Martial Arts', 'Martial Arts  Shounen', 'Mature', 'Mecha', 'Mystery', 'Psychological', 'Romance', 'School Life', 'Sci-fi', 'Seinen', 'Shotacon', 'Shoujo', 'Shoujo Ai', 'Shounen', 'Shounen Ai', 'Slice of Life', 'Slice of Life  Supernatural', 'Smut', 'Sports', 'Supernatural', 'Tragedy', 'Yaoi', 'Yuri']
     }
 ];
+
+// reduce the loading time of search page
+// to do that what we can do the first time user comes to the page then fetch the directory
+// then set that directory data to localStorage
+// so we don't have to wait for fetch
+// but we do fetch and wait for a callback of when it finishes
+// after it finishes we compare what we have in localstorage and if same then we exit
+// if not same save the new directory to localstroage and set the directory varible to the newDirectory
+
+function getDirectoryFromStorage() {
+    var directoryInStorage = window.localStorage.getItem('directory');
+    // see if directory in storage is valid json or not
+    if (directoryInStorage != null || directoryInStorage != undefined) {
+        try {
+            directoryInStorage = JSON.parse(directoryInStorage);
+        } catch (err) {
+            // if error in json meaning that directory is not valid it needs to be fetched
+            getSearchDirectory().then(() => {
+                initiate();
+                window.localStorage.setItem('directory', JSON.stringify(directory));
+            });
+        }
+        directory = directoryInStorage;
+        initiate(); // load the page
+        // now see if any items updated in the directory by fetching new
+        getSearchDirectory(false);
+    } else {
+        // if there exits no directory fetch it
+        getSearchDirectory().then(() => {
+            initiate();
+            window.localStorage.setItem('directory', JSON.stringify(directory));
+        });
+    }
+
+}
 //fetch the serach directory and run functions to intilazie the page
-async function getSearchDirectory() {
-    let fetchData = await fetch('/api/searchPage');
-    let data = await fetchData.json();
+async function getSearchDirectory(noCheckNeeded = true) {
+    var fetchData = await fetch('/api/searchPage');
+    var data = await fetchData.json();
 
-    directory = data;
-
-    //get rid of the loading screen
-    document.getElementById('loading').remove();
-    document.getElementById('main').classList.remove('none');
-    // show the number of manga
-    document.getElementById('amountOfManga').innerText = '(' + directory.length.toLocaleString("en-us") + ')';
-    generateResultsHTML(directory, 0, 30);
-    generateFiltersHTML()
+    if (noCheckNeeded) {
+        directory = data;
+    } else {
+        let localDirectory = window.localStorage.getItem('directory');
+        if (localDirectory == JSON.stringify(data)) {
+            return; // do nothing meaning that our local directory is all updated
+        } else {
+            window.localStorage.setItem('directory', JSON.stringify(data));
+            directory = data;
+        }
+    }
 
 }
 // toggle if that list of filters is visible or not
@@ -141,6 +178,14 @@ function updateFilters(type, obj) {
     if (type != 'Genres') {
         filtersApplied[type] = obj.innerText;
     } else {
+        // if it is any genres then empty the arry of genres and genres not
+        if (obj.innerText == 'Any') {
+            filtersApplied.Genres = [];
+            filtersApplied.GenresNot = [];
+            filterResultsforSearch();
+            return;
+        }
+
         if (obj.innerHTML.includes(`fa-check`)) {
             filtersApplied.Genres.push(obj.innerText);
         } else if (obj.innerHTML.includes(`fa-times`)) {
@@ -153,6 +198,7 @@ function updateFilters(type, obj) {
         }
     }
     console.log(filtersApplied);
+    filterResultsforSearch();
 }
 // toggle filters selection
 function filterSelection(obj) {
@@ -161,7 +207,7 @@ function filterSelection(obj) {
 
     if (filterHead.innerText != 'Genres' || obj.innerText == 'Any') {
         obj.parentElement.querySelectorAll('.fas').forEach((checked) => {
-            checked.remove();
+            checked.remove(); // remove all signage from other elements
         })
         obj.innerHTML += `<i class="fas fa-check"></i>`
     } else {
@@ -190,10 +236,82 @@ function handleChangeInValue(obj) {
     filtersApplied[type] = obj.value;
     filterResultsforSearch()
 }
+// geners filter, checks if the genres they want or dont want is in or not
+// manga is object and wantTheGenre is booelan
+function checkGenres(manga, wantTheGenre, genresApplied) {
+    var amountNeeded = 0;
+    for (var i = 0; i < manga.genres.length; i++) {
+        for (var k = 0; k < genresApplied.length; k++) {
+            if (genresApplied[k].replace(/\s+/g, "_") == manga.genres[i].replace(/\s+/g, "_")) {
+                amountNeeded += 1;
+                break;
+            }
+        }
+    }
+    if (wantTheGenre) {
+        if (amountNeeded == genresApplied.length) {
+            return true
+        }
+        return false
+    } else {
+        if (amountNeeded != 0) {
+            return false
+        }
+        return true
+    }
+}
+// sort manga arry based on user prefences
+function sortMangaResults() {
+    if (filtersApplied["Sort By"] != '' && filtersApplied['Sort By'] != 'Alphabetical A-Z') {
+        let sortBy = filtersApplied["Sort By"];
+        // sort by popularity all time
+        if (sortBy == "Most Popular (All Time)") {
+            searchFilteredResults.sort((a, b) => {
+               return b.v - a.v;
+            })
+        }
+        // sort by populatiorny but monthly
+        if (sortBy == "Most Popular (Monthly)") {
+            searchFilteredResults.sort((a, b) => {
+                return b.vm - a.vm;
+            } )
+        }
+        // sort by least popular
+        if (sortBy === 'Least Popular') {
+            searchFilteredResults.sort((a, b) => {
+                return a.v - b.v;
+            })
+        }
+        // sort by year released oldest
+        if (sortBy === 'Year Released - Oldest') {
+            searchFilteredResults.sort((a, b) => {
+                return a.y - b.y;
+            })
+        }
+        // sort by year released newest
+        if (sortBy === 'Year Released - Newest') {
+            searchFilteredResults.sort((a, b) => {
+                return b.y - a.y;
+            })
+        }
+        // sort by recently realesed chapter
+        if (sortBy === 'Recently Released Chapter') {
+            searchFilteredResults.sort((a, b) => {
+                return b.lt - a.lt;
+            })
+        }
+        // sort by opposite alphabetical order
+        if (sortBy === 'Alphabetical Z-A') {
+            searchFilteredResults.sort((a, b) => {
+                return b.seriesName.localeCompare(a.seriesName);
+            })
+        }
+    }
+}
 // filter results for search based on filtersApplied
 function filterResultsforSearch() {
     searchFilteredResults = JSON.parse(JSON.stringify(directory));
-
+    sortMangaResults();
     for (var i = searchFilteredResults.length - 1; i >= 0; i--) {
         var manga = searchFilteredResults[i];
         // see if their series name mathches or one of the alternate names
@@ -235,9 +353,61 @@ function filterResultsforSearch() {
                 continue;
             }
         }
+        // see if offical translation matches
+        if (filtersApplied["Official Translation"] == "Offical Translation Only") {
+            if (manga.offical == "no") {
+                searchFilteredResults.splice(i, 1);
+                continue;
+            }
+        }
+        // see if scan staus matches 
+        if (filtersApplied["Scan Status"] != 'Any' && filtersApplied["Scan Status"] != '') {
+            if (manga.ss.toLowerCase() != filtersApplied["Scan Status"].toLowerCase()) {
+                searchFilteredResults.splice(i, 1);
+                continue;
+            }
+        }
+        // see if publish staus matches 
+        if (filtersApplied["Publish Status"] != 'Any' && filtersApplied["Publish Status"] != '') {
+            if (manga.ps.toLowerCase() != filtersApplied["Publish Status"].toLowerCase()) {
+                searchFilteredResults.splice(i, 1);
+                continue;
+            }
+        }
+        // see if type matches
+        if (filtersApplied["Type"] != 'Any' && filtersApplied["Type"] != '') {
+            if (manga.t.toLowerCase() != filtersApplied['Type'].toLowerCase()) {
+                searchFilteredResults.splice(i, 1);
+                continue;
+            }
+        }
+        // see if all genres mathc or not
+        if (filtersApplied["Genres"].length != 0) {
+            if (!checkGenres(manga, true, filtersApplied["Genres"])) { // ,meaning it doesnt include all genres we want
+                searchFilteredResults.splice(i, 1);
+                continue;
+            }
+        }
+        // see if amnga contains genres they dont want 
+        if (filtersApplied["GenresNot"].length != 0) {
+            if (!checkGenres(manga, false, filtersApplied["GenresNot"])) {
+                searchFilteredResults.splice(i, 1);
+                continue;
+            }
+        }
     }
     generateResultsHTML(searchFilteredResults, 0, 8);
 }
+// run this fuction when all setup is done
+function initiate() {
+    //get rid of the loading screen
+    document.getElementById('loading').remove();
+    document.getElementById('main').classList.remove('none');
+    // show the number of manga
+    document.getElementById('amountOfManga').innerText = '(' + directory.length.toLocaleString("en-us") + ')';
+    generateResultsHTML(directory, 0, 30);
+    generateFiltersHTML()
+}
 
-getSearchDirectory();
+getDirectoryFromStorage();
 

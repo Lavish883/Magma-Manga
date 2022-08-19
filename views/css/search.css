@@ -86,6 +86,7 @@
 
 .detailContainer .gray {
     margin-bottom: 5px;
+    overflow-wrap:anywhere;
 }
 
 .detailContainer .blue {
