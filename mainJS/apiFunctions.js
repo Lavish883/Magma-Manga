@@ -108,11 +108,7 @@ async function getDirectoryData(req, res) {
 
     let directoryData = JSON.parse(resp.split(`vm.FullDirectory = `)[1].split(';').splice(0, 8).join(''))
 
-    var allData = {
-        'directory': directoryData
-    }
-
-    return res.send(allData)
+    return res.send(directoryData)
 }
 // recomended calculations
 async function getRecommendedManga(req, res) {

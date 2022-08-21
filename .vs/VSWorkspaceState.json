@@ -1,8 +1,10 @@
 {
   "ExpandedNodes": [
     "",
+    "\\mainJS",
     "\\views",
     "\\views\\js"
   ],
+  "SelectedNode": "\\mainJS\\mainFunctions.js",
   "PreviewInSolutionExplorer": false
 }

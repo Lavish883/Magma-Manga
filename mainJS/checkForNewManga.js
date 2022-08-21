@@ -2,6 +2,7 @@ const fetch = require('node-fetch'); // fetchs websites
 const schemas = require('../schemas/schema'); // schemas
 const mongoose = require('mongoose') // for accesing databse;
 const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
+const moment = require('moment');
 
 // Connect to mongodb database
 const dbURI = "mongodb+srv://lavishRoot:qq2nMOUee49oEjOr@lavish-anime-manga-logi.nclfo.mongodb.net/manga-anime-hold?retryWrites=true&w=majority";
@@ -15,6 +16,7 @@ const webpush = require('web-push');
 
 const publicKey = process.env.PUBLIC_KEY;
 const privateKey = process.env.PRIVATE_KEY;
+
 
 webpush.setVapidDetails('mailto:lavishk750@gmail.com', publicKey, privateKey);
 
@@ -31,9 +33,10 @@ async function sendNotification(subscription, manga) {
     //https://temp.compsci88.com/cover/${manga.IndexName}.jpg
     //Create Payload for notifications
     const payload = JSON.stringify({
-        'title': `New ${manga.SeriesName} ${manga.Chapters[0].Type} ${manga.Chapters[0].Chapter} !! ^_^`,
+        'title': `New ${manga.seriesName} Chapter ${manga.latestChapter} !! ^_^`,
         'body': '',
-        'img': `https://temp.compsci88.com/cover/${manga.IndexName}.jpg`
+        'img': `https://temp.compsci88.com/cover/${manga.indexName}.jpg`,
+        'link': manga.chapterUrl
     });
 
     // Notfiy the user that they have been subscribed
@@ -50,7 +53,7 @@ async function findSubscriptions(manga) {
     console.log('finding subsccriptions')
     // get users with a speficic bookmark
     let user = await schemas.USERS.find({
-        'subscribed.Index': manga.IndexName
+        'subscribed.Index': manga.indexName
     });
     // for each user find their corresponding subscription
     for (var j = 0; j < user.length; j++) {
@@ -82,20 +85,29 @@ async function fetchManga(manga) {
     return;
 }
 
+// so basically first fetch the search page and the get the directory
+// then go through the direcctory anf get the manga that people are subscribed to
+// then check if that chapter has been released or not
+
+
 async function main() {
     var subbedManga = (await schemas.subbedManga.findOne()).subbed;
     //subbedManga = ['Jujutsu-Kaisen','Suppose-a-Kid-from-the-Last-Dungeon-Boonies-Moved-to-a-Starter-Town'];
-    for (var i = 0; i < subbedManga.length; i++) {
-        // setting a timeout so we don't get deteced as bots doing like 50 requests at a time
-        let resp = await fetchManga(subbedManga[i]);
-        console.log('recevied')
-        try {
-            if (resp.Chapters[0].isNew) {
-                await findSubscriptions(resp)
-            }
-        } catch (err) {
-            console.log(err);
-        }
+    let fetchDirectory = await fetch(serverName + 'api/searchPage');
+    let directory = await fetchDirectory.json();
+    console.log(directory.length);
+    // now go through the directory and see any manga matches what we are looking for
+    for (var i = 0; i < directory.length; i++) {
+        let manga = directory[i];
+        //console.log(manga.indexName);
+        let isMangaSubbed = subbedManga.indexOf(manga.indexName);
+        // if it isnt subbed we dont care
+        if (isMangaSubbed == -1) continue;
+        // now see if that chapter was released in last 24 hours
+        let timeReleased = moment.unix(manga.lt);
+        console.log(moment().diff(timeReleased, "hours") < 24);
+        if (moment().diff(timeReleased, "hours") > 24) continue;
+        findSubscriptions(manga);
     }
 }
 
