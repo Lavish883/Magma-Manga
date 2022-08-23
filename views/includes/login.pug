@@ -19,8 +19,9 @@ div(style='justify-content:center;display:flex;')
         input#userName(autocomplete='off', spellcheck='false', name="userName")
         
         label(for='userPassword') Password:
-        input#userPassword(type='password', style='margin:5px 0px', name='userPassword')
-        i.far.fa-eye-slash
+        div 
+            input#userPassword(type='password', style='margin:5px 0px', name='userPassword')
+            i.far.fa-eye-slash(onclick="togglePasswordVisbilty(this)")
       .contain_switch_buttons
         a(onclick="changeSystem('Register')") &middot; Register
         a(onclick="changeSystem('Forgot')") &nbsp;&nbsp;&middot; Forgot Password

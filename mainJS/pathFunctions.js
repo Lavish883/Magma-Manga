@@ -62,7 +62,7 @@ async function directoryHtml(req, res) {
     let fetchDirectoryData = await fetch(serverName + 'api/manga/directory')
     let resp = await fetchDirectoryData.json();
 
-    return res.render('directory', resp)
+    return res.render('directory', {'directory' :  resp })
 }
 
 async function searchHtml(req, res) {

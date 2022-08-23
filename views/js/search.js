@@ -133,21 +133,21 @@ function generateResultsHTML(mangaArry, indxStart, amount) {
              <div class="detailContainer">
                 <a class="name" href="/manga/manga/${mangaArry[i].indexName}">${mangaArry[i].seriesName}</a>
                 <div class="gray">
-                    Author:${mangaArry[i].authors.map(author => `<span class="blue">&nbsp;${author}</span>`).join(',')}
-                    &#183; Year:&nbsp;<span class="blue">${mangaArry[i].y}</span>
+                    Author:${mangaArry[i].authors.map(author => `&nbsp;<span isFor="author" onclick="addFiltersOnClick(this)" class="blue">${author}</span>`).join(',')}
+                    &#183; Year:&nbsp;<span isFor="year" onclick="addFiltersOnClick(this)" class="blue">${mangaArry[i].y}</span>
                 </div>
                 <div class="gray">
-                    Status: <span class="blue">${mangaArry[i].ss} (Scan)</span>,
-                    <span class="blue">${mangaArry[i].ps} (Publish)</span>
+                    Status: <span isFor="scan" onclick="addFiltersOnClick(this)" class="blue">${mangaArry[i].ss} (Scan)</span>,
+                    <span isFor="publish" onclick="addFiltersOnClick(this)" class="blue">${mangaArry[i].ps} (Publish)</span>
                 </div>
                 <div class="gray">
                     Latest: <a href="${mangaArry[i].chapterUrl}" class="blue">Chapter ${mangaArry[i].latestChapter} </a>
                     <span style="color:gray;">&#183; ${mangaArry[i].latestScan}</span>
                 </div>
                 <div class="gray">
-                    Genres:${mangaArry[i].genres.map(genre => `<span class="blue">&nbsp;${genre}</span>`).join(',')}
+                    Genres:${mangaArry[i].genres.map(genre => `&nbsp;<span isFor="genre" onclick="addFiltersOnClick(this)" class="blue">${genre}</span>`).join(',')}
                 </div>
-                ${mangaArry[i].offical == 'yes' ? `<div class="offical">Official Translation</div>` : ``}
+                ${mangaArry[i].offical == 'yes' ? `<div isFor="translation" onclick="addFiltersOnClick(this)" class="offical">Official Translation</div>` : ``}
              </div>
            </div>
         `)
@@ -173,7 +173,7 @@ function generateFiltersHTML() {
     }
     document.getElementById('filters').innerHTML = htmlGenerated.join('');
 }
-// update filters applied 
+// update filters applied when clicked on the  
 function updateFilters(type, obj) {
     if (type != 'Genres') {
         filtersApplied[type] = obj.innerText;
@@ -408,6 +408,39 @@ function initiate() {
     generateResultsHTML(directory, 0, 30);
     generateFiltersHTML()
 }
+// update filters on click of the manga panels
+function addFiltersOnClick(obj) {
+    let isFor = obj.getAttribute('isFor');
+    let itemText = obj.innerText.replace(' (Scan)', '').replace(' (Publish)', '');
+
+
+    if (isFor == 'author') {
+        document.querySelectorAll('.containInputs input')[1].value = obj.innerText;
+        filtersApplied["Author"] = obj.innerText;
+        filterResultsforSearch();
+        return;
+    }
+
+    if (isFor == 'year') {
+        document.querySelectorAll('.containInputs input')[2].value = obj.innerText;
+        filtersApplied["Year"] = obj.innerText;
+        filterResultsforSearch();
+        return;
+
+    }
+
+    if (isFor == 'translation') {
+        // now we pass in the filter where it says offical translation only
+        filterSelection(document.querySelectorAll('#filters .filterContainer .item')[9]);
+        return;
+    }
+
+
+    document.querySelectorAll('#filters .filterContainer .item').forEach((item) => {
+        if (item.innerText == itemText) {
+            filterSelection(item);
+        }
+    })
+}
 
 getDirectoryFromStorage();
-

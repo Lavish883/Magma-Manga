@@ -124,6 +124,8 @@ function showImages(page) {
 // listen to page clicks either it is left or right
 
 function movePage(event) {
+    if (event.key == "ArrowDown" || event.key == "ArrowUp") return;
+
     if (event.type == 'click') {
         // varibles to check of the page clikc is lef tor right
         let pWidth = $(this).innerWidth();
@@ -136,34 +138,33 @@ function movePage(event) {
             currentlyOnPage++; // Right Side of the page is clicked
         }
 
-        if (longStrip == false) { // see if we need to go on the next chapter or not
-            if (currentlyOnPage > currentChapter.Page) {
-                moveChapter('next')
-                return;
-            } else if (currentlyOnPage < 1) {
-                moveChapter('prev')
-                return;
-            }
-        }
-
-
-        if (longStrip == false) {
-            showImages(currentlyOnPage)
-        } else {
-            var ScrollToPlease = window.pageYOffset + 700 || document.documentElement.scrollTop + 700
-            window.scroll({
-                top: ScrollToPlease,
-                left: 0,
-                behavior: 'smooth'
-            })
-        }
-
     } else {
         if (event.key == "ArrowLeft") { // Left Side of the page is clicked
             currentlyOnPage--;
         } else if (event.key == "ArrowRight") { // Right side of page is clicked
             currentlyOnPage++;
         }
+    }
+
+    if (longStrip == false) { // see if we need to go on the next chapter or not
+        if (currentlyOnPage > currentChapter.Page) {
+            moveChapter('next')
+            return;
+        } else if (currentlyOnPage < 1) {
+            moveChapter('prev')
+            return;
+        }
+    }
+
+    if (longStrip == false) {
+        showImages(currentlyOnPage)
+    } else {
+        var ScrollToPlease = window.pageYOffset + 700 || document.documentElement.scrollTop + 700
+        window.scroll({
+            top: ScrollToPlease,
+            left: 0,
+            behavior: 'smooth'
+        })
     }
 }
 

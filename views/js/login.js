@@ -1,4 +1,4 @@
-// toggle Login modal tur on and off
+// toggle Login modal turn on and off
 function toggleLoginModal() {
     var modalBackground = document.getElementById('modal_background');
     var loginBackground = document.getElementById('loginBackground');
@@ -98,6 +98,18 @@ function changeSystem(id) {
 // activate dropdown on click
 function activateDropdown(obj) {
     obj.nextElementSibling.style.display = 'flex';
+}
+// toogle password shown and not
+function togglePasswordVisbilty(obj) {
+    if (obj.parentElement.children[0].type == 'password') {
+        obj.parentElement.children[0].type = '';
+        obj.classList.add('fa-eye');
+        obj.classList.remove('fa-eye-slash');
+    } else {
+        obj.parentElement.children[0].type = 'password';
+        obj.classList.remove('fa-eye');
+        obj.classList.add('fa-eye-slash');
+    }
 }
 // login 
 async function loginToAccount() {
