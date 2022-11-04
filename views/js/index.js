@@ -2,7 +2,7 @@
 function makeLatestChapterHTML(manga, isPopular, isCompleted) {
     
     if (window.location.href.includes("mangaapi")){
-      var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li/cover/' + manga.IndexName + '.jpg').replaceAll('/', ' ')
+      var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('temp.compsci88.com/cover/' + manga.IndexName + '.jpg').replaceAll('/', ' ')
     } else {
       var image = '//temp.compsci88.com/cover/' + manga.IndexName + '.jpg';
     }
