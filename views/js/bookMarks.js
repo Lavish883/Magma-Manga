@@ -13,7 +13,7 @@ function genreateBookmarksHTML(allBookMarks) {
     for (var i = 0; i < allBookMarks.length; i++) {
       let manga = allBookMarks[i];
       if (window.location.href.includes("mangaapi")) {
-        var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('cover.nep.li cover ' + manga.Index + '.jpg')
+        var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('temp.compsci88.com cover ' + manga.Index + '.jpg')
       } else {
         var image = 'https://temp.compsci88.com/cover/' + manga.Index + '.jpg';
       }

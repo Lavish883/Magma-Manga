@@ -3,7 +3,7 @@ mixin adminRecd(recd)
     - var isBlocked = process.env['SERVERNAME'] == 'https://mangaapi.lavishkumar1.repl.co/'? true : false;
     a(href="manga.html?manga=" + recd.IndexName)
         if isBlocked
-          img#Admin_Img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("cover.nep.li/cover/" + recd.IndexName + '.jpg').replaceAll('/', ' '))
+          img#Admin_Img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("temp.compsci88.com/cover/" + recd.IndexName + '.jpg').replaceAll('/', ' '))
         else
           img#Admin_Img(src= "//temp.compsci88.com/cover/" + recd.IndexName + ".jpg")
     div.admin_text
@@ -44,7 +44,7 @@ mixin hotUpdate(allMangas)
                     else
                         span #{manga.SeriesName + ' ' + manga.Chapter }
                 if isBlocked
-                  img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("cover.nep.li/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' ') , style="max-width:145px;")
+                  img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("temp.compsci88.com/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' ') , style="max-width:145px;")
                 else  
                   img(src = "//temp.compsci88.com/cover/" + manga.IndexName + ".jpg", style="max-width:145px;")
         - i++;
@@ -80,7 +80,7 @@ mixin LatestChapters(latestChapters, hotChapters)
                 else 
                     div
                 if isBlocked
-                  img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("cover.nep.li/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' '), width="90")
+                  img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("temp.compsci88.com/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' '), width="90")
                 else
                   img(src="//temp.compsci88.com/cover/" + manga.IndexName + ".jpg",width="90")
             a(style="display:contents;", href="/manga/read/" + manga.ChapterLink + '-page-1', title="" + manga.SeriesName + " Chapter " + manga.Chapter)
