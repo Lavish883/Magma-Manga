@@ -1,5 +1,5 @@
 const fetch = require('node-fetch'); // fetchs html
-const breakCloudFlare = 'https://letstrypupagain.herokuapp.com/?url=https://mangasee123.com'
+const breakCloudFlare = 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com'
 const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const HeaderGenerator = require('header-generator');
 
