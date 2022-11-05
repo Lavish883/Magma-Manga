@@ -117,7 +117,8 @@ app.post('/api/login/newAccessToken', loginFunctions.getNewToken);
 app.delete('/api/login/logout', loginFunctions.logOutUser);
 
 /* Notifactions functions routes are below */
-app.post('/notifaction/subscribe', notificationFunctions.subscribe);
+app.post('/notification/subscribe', notificationFunctions.subscribe);
+app.post('/notification/updateSubscribe', notificationFunctions.updateSubscription);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

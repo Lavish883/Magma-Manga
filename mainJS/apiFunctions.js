@@ -130,7 +130,7 @@ async function getRecommendedManga(req, res) {
 async function getSearchData(req, res) {
     let headers = headersGenerator.getHeaders();
     // fetch search page
-    let fetchSearchPage = await fetch(breakCloudFlare + '/search', headers);
+    let fetchSearchPage = await fetch(breakCloudFlare + '/search/', headers);
     let resp = await fetchSearchPage.text();
     // extract directory from that
     var directory = resp.split(`vm.Directory = `)[1].split(`;`);

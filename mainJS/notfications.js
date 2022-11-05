@@ -73,6 +73,9 @@ async function subscribe(req, res) {
     //sendOne();
 }
 
+async function updateSubscription(req, res) {
+    
+}
 
 async function isItTime(req, res, next) {
     var lastTimeChecked = (await schemas.subbedManga.findOne());
@@ -91,5 +94,6 @@ async function isItTime(req, res, next) {
 
 module.exports = {
     subscribe,
-    isItTime
+    isItTime,
+    updateSubscription
 }

@@ -1,10 +1,16 @@
 {
   "ExpandedNodes": [
     "",
+    "\\json",
     "\\mainJS",
+    "\\public",
+    "\\public\\images",
+    "\\public\\test",
+    "\\schemas",
     "\\views",
+    "\\views\\includes",
     "\\views\\js"
   ],
-  "SelectedNode": "\\mainJS\\pathFunctions.js",
+  "SelectedNode": "\\views\\includes\\thin_navbar.pug",
   "PreviewInSolutionExplorer": false
 }

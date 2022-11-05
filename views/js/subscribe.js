@@ -6,7 +6,7 @@ if ('serviceWorker' in navigator) {
 }
 
 async function subscribeToServer(subscription) {
-    await fetch("/notifaction/subscribe", {
+    await fetch("/notification/subscribe", {
         method: "POST",
         body: JSON.stringify({
             "subscription": subscription,
@@ -16,7 +16,42 @@ async function subscribeToServer(subscription) {
             "content-type": "application/json"
         }
     });
-    console.log('subscribed')
+    console.log('subscribed');
+
+    localforage.setItem('lastSubscribed', new Date());
+}
+
+// updates time in the db so we can accesse later in sw
+function updateDateInDb() {
+    let openRequest = indexedDB.open("store", 1);
+
+    openRequest.onupgradeneeded = function () {
+        // triggers if the client had no database
+        // ...perform initialization...
+        let db = openRequest.result;
+        if (!db.objectStoreNames.contains('subDate')) { // if there's no "books" store
+            db.createObjectStore('subDate', { keyPath: 'id' }); // create it
+        }
+    };
+
+    openRequest.onerror = function () {
+        console.error("Error", openRequest.error);
+    };
+
+    openRequest.onsuccess = function () {
+        let db = openRequest.result;
+        let transaction = db.transaction("subDate", "readwrite"); // (1)
+
+        let subDates = transaction.objectStore("subDate"); // (2)
+
+        let date = {
+            id : 'subscription',
+            date: new Date()
+        };
+
+        let request = subDates.add(date);
+        // continue working with database using db object
+    };
 }
 
 // Register SW and Register Push notification
@@ -30,15 +65,19 @@ async function send() {
 
     // Register Service Worker
     const register = await navigator.serviceWorker.register("/sw.js", {
-        scope: "/test/not.html"
+        scope: "/"
     });
 
-    // Register Push if user isnt already subscribed
+    // Register Push if user isn't already subscribed
     if (!(await register.pushManager.getSubscription())) { // checks if we already subscribed
-        const subscription = await register.pushManager.subscribe({
+        console.log(register.pushManager)
+        var subscription = await register.pushManager.subscribe({
             userVisibleOnly: true,
-            applicationServerKey: urlBase64ToUint8Array(publicVapidKey)
+            applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
         });
+
+
+        console.log(subscription);
         subscribeToServer(subscription)
     } else {
         console.log('already subscribed');

@@ -36,7 +36,7 @@ async function sendNotification(subscription, manga) {
         'title': `New ${manga.seriesName} Chapter ${manga.latestChapter} !! ^_^`,
         'body': '',
         'img': `https://temp.compsci88.com/cover/${manga.indexName}.jpg`,
-        'link': manga.chapterUrl
+        'link': manga.chapterUrl,
     });
 
     // Notfiy the user that they have been subscribed
@@ -110,6 +110,8 @@ async function main() {
         findSubscriptions(manga);
     }
 }
+
+main()
 
 module.exports = {
     main
