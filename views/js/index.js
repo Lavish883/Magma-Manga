@@ -1,13 +1,13 @@
 // Generate hmtl 
 function makeLatestChapterHTML(manga, isPopular, isCompleted) {
-    
-    if (window.location.href.includes("mangaapi")){
-      var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('temp.compsci88.com/cover/' + manga.IndexName + '.jpg').replaceAll('/', ' ')
-    } else {
-      var image = '//temp.compsci88.com/cover/' + manga.IndexName + '.jpg';
-    }
-  
-    return `
+
+  if (window.location.href.includes("mangaapi")) {
+    var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('temp.compsci88.com/cover/' + manga.IndexName + '.jpg').replaceAll('/', ' ')
+  } else {
+    var image = '//temp.compsci88.com/cover/' + manga.IndexName + '.jpg';
+  }
+
+  return `
     <div class="latest_chapters_item">
         <a href="/manga/manga/${manga.IndexName}" title="${manga.SeriesName}">
             <img src="${image}" width="90" />
@@ -16,7 +16,7 @@ function makeLatestChapterHTML(manga, isPopular, isCompleted) {
             <div style="margin-left:15px; margin-top:8px;">
                 <div class="latest_chapters_info">
                     ${isPopular ? `<i style="color:red" class="fas fa-fire-alt"></i>` : ''}
-                    ${isCompleted ? `<i style="color:darkorange" class="fas fa-check-circle"></i>`: ''}
+                    ${isCompleted ? `<i style="color:darkorange" class="fas fa-check-circle"></i>` : ''}
                     <span>${manga.SeriesName}</span>
                 </div>
                 <div style="margin-top:0px;">
@@ -36,84 +36,84 @@ function makeLatestChapterHTML(manga, isPopular, isCompleted) {
 
 // View more chapters that are latest on index.html
 function viewMoreChapters() {
-    var chaptersShown = $('#latestChapters .latest_chapters_item').length;
-    var chaptersHTMLArry = [];
+  var chaptersShown = $('#latestChapters .latest_chapters_item').length;
+  var chaptersHTMLArry = [];
 
-    for (var i = chaptersShown; i < chaptersShown + 18; i++) {
-        let isPopular = false;
-        try {
-            var isCompleted = latestChapters[i].ScanStatus == 'Complete' ? true : false
-            for (var h = 0; h < hotManga.length; h++) {
-                if (hotManga[h].SeriesID === latestChapters[i].SeriesID) {
-                    isPopular = true;
-                    break;
-                }
-            }
-            chaptersHTMLArry.push(makeLatestChapterHTML(latestChapters[i], isPopular, isCompleted))
-            // Get rid of view more chapters button
-            if (latestChapters.length - 1 === i) {
-                document.getElementById('viewMoreChapters').classList.add('none');
-            }
-        } catch (err) {
-            console.log(err)
+  for (var i = chaptersShown; i < chaptersShown + 18; i++) {
+    let isPopular = false;
+    try {
+      var isCompleted = latestChapters[i].ScanStatus == 'Complete' ? true : false
+      for (var h = 0; h < hotManga.length; h++) {
+        if (hotManga[h].SeriesID === latestChapters[i].SeriesID) {
+          isPopular = true;
+          break;
         }
+      }
+      chaptersHTMLArry.push(makeLatestChapterHTML(latestChapters[i], isPopular, isCompleted))
+      // Get rid of view more chapters button
+      if (latestChapters.length - 1 === i) {
+        document.getElementById('viewMoreChapters').classList.add('none');
+      }
+    } catch (err) {
+      console.log(err)
     }
-    $('#latestChapters')[0].innerHTML += chaptersHTMLArry.join('')
+  }
+  $('#latestChapters')[0].innerHTML += chaptersHTMLArry.join('')
 }
 
 // Set what nav_option is active
 if (window.location.pathname.includes('/index.html') || window.location.pathname === '/manga/') {
-    document.getElementById('Home_nav').classList.add('small_nav_active')
+  document.getElementById('Home_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('/directory')) {
-    document.getElementById('Directory_nav').classList.add('small_nav_active')
+  document.getElementById('Directory_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('/search')) {
-    document.getElementById('Search_nav').classList.add('small_nav_active')
+  document.getElementById('Search_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('manga/bookmarks')) {
-    document.getElementById('Bookmark_nav').classList.add('small_nav_active')
+  document.getElementById('Bookmark_nav').classList.add('small_nav_active')
 }
 
 // Dark Mode
 const isDarkModeOn = window.localStorage.getItem('darkMode');
 
 if (isDarkModeOn === null || isDarkModeOn === 'false') {
-    console.log('Dark Mode is off')
-    document.getElementById('Darkmode').innerHTML = `<i class="fas fa-sun"></i> <span>Dark Mode off</span>`
+  console.log('Dark Mode is off')
+  document.getElementById('Darkmode').innerHTML = `<i class="fas fa-sun"></i> <span>Dark Mode off</span>`
 } else {
-    document.body.classList.add('darkModeBody')
-    document.getElementById('Darkmode').innerHTML = `<i class="fas fa-moon"></i> <span>Dark Mode on</span>`
+  document.body.classList.add('darkModeBody')
+  document.getElementById('Darkmode').innerHTML = `<i class="fas fa-moon"></i> <span>Dark Mode on</span>`
 }
 
 function handleDarkModeToggle() {
-    if (window.localStorage.getItem('darkMode') === 'true') {
-        window.localStorage.setItem('darkMode', 'false')
-        document.body.classList.remove('darkModeBody')
-        document.getElementById('Darkmode').innerHTML = `<i class="fas fa-sun"></i> <span>Dark Mode off</span>`
-    } else {
-        window.localStorage.setItem('darkMode', 'true')
-        document.body.classList.add('darkModeBody')
-        document.getElementById('Darkmode').innerHTML = `<i class="fas fa-moon"></i> <span>Dark Mode on</span>`
-    }
+  if (window.localStorage.getItem('darkMode') === 'true') {
+    window.localStorage.setItem('darkMode', 'false')
+    document.body.classList.remove('darkModeBody')
+    document.getElementById('Darkmode').innerHTML = `<i class="fas fa-sun"></i> <span>Dark Mode off</span>`
+  } else {
+    window.localStorage.setItem('darkMode', 'true')
+    document.body.classList.add('darkModeBody')
+    document.getElementById('Darkmode').innerHTML = `<i class="fas fa-moon"></i> <span>Dark Mode on</span>`
+  }
 }
 
 if (window.localStorage.getItem('accessToken') != undefined || window.localStorage.getItem("accessToken") != null) {
-    document.getElementById('Login_nav').setAttribute('onclick','activateDropdown(this)');
-    document.getElementById('Login_nav').innerHTML = `<i class="fas fa-user" aria-hidden="true"></i><span> Account</span>`
+  document.getElementById('Login_nav').setAttribute('onclick', 'activateDropdown(this)');
+  document.getElementById('Login_nav').innerHTML = `<i class="fas fa-user" aria-hidden="true"></i><span> Account</span>`
 
 }
 
 // Scroll To top
-document.getElementById('scroll_to_top').addEventListener('click', function () {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+document.getElementById('scroll_to_top').addEventListener('click', function() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 })
 
 function genreateRecdHTML(manga) {
-    var htmlArry = [];
+  var htmlArry = [];
 
-    for (var i = 0; i < manga.length; i++) {
-        if (manga[i].s > 18) {
-            manga[i].s = manga.SeriesName.substr(0, 18) + '... '
-        }
-        htmlArry.push(`
+  for (var i = 0; i < manga.length; i++) {
+    if (manga[i].s > 18) {
+      manga[i].s = manga.SeriesName.substr(0, 18) + '... '
+    }
+    htmlArry.push(`
             <div class="hot_update_item">
                 <a href="/manga/read/${manga[i].chapterLink}-page-1" title="${manga[i].s} ${manga[i].l}">
                     <div class="hot_update_item_name"> <span>${manga[i].s} ${manga[i].l}</span>
@@ -122,65 +122,75 @@ function genreateRecdHTML(manga) {
                 </a>
             </div>
         `)
-    }
+  }
 
-    return htmlArry.join('');
+  return htmlArry.join('');
 }
 
 // get recommend manga for the user 
 // to do that fetch a url, need to give two params manga1 and manga2 they handle the rest
-    // the parmas need to be in indexName format => Sakamato-days, One-piece
+// the parmas need to be in indexName format => Sakamato-days, One-piece
 // get two random manga that isn't the same from recentread and bookmarks
 // after getting the response make that into htl and display it to the user
 // id => for what html elemnt to fill the html with
 async function getRecommendedManga(obj) {
-    var userReadManga = [];
-    // turn recentRead and bookmarks to param format
-    try {
-        JSON.parse(window.localStorage.getItem('recentRead')).forEach(function (e) {
-            userReadManga.push(e.split(`-chapter-`)[0])
-        })
+  var userReadManga = [];
+  // turn recentRead and bookmarks to param format
+  try {
+    JSON.parse(window.localStorage.getItem('recentRead')).forEach(function(e) {
+      userReadManga.push(e.split(`-chapter-`)[0])
+    })
 
-        JSON.parse(window.localStorage.getItem('bookmarks')).forEach(function (e) {
-            userReadManga.push(e.indexName)
-        })
-    } catch (err) {
-        console.log(err)
-    }
-    // if user has no recentread or bookamarks then get two random popular manga
-    if (userReadManga.length == 0) {
-        userReadManga.push(hotManga[Math.floor(Math.random() * hotManga.length)].IndexName)
-        userReadManga.push(hotManga[Math.floor(Math.random() * hotManga.length)].IndexName)
-    }
+    JSON.parse(window.localStorage.getItem('bookmarks')).forEach(function(e) {
+      userReadManga.push(e.indexName)
+    })
+  } catch (err) {
+    console.log(err)
+  }
+  // if user has no recentread or bookamarks then get two random popular manga
+  if (userReadManga.length == 0) {
+    userReadManga.push(hotManga[Math.floor(Math.random() * hotManga.length)].IndexName)
+    userReadManga.push(hotManga[Math.floor(Math.random() * hotManga.length)].IndexName)
+  }
 
-    // different indx so we can get different manga
-    var indx1 = Math.floor(Math.random() * userReadManga.length)
-    var indx2 = Math.floor(Math.random() * userReadManga.length)
+  // different indx so we can get different manga
+  var indx1 = Math.floor(Math.random() * userReadManga.length)
+  var indx2 = Math.floor(Math.random() * userReadManga.length)
 
-    while (userReadManga.length > 1 && indx1 == indx2){
-      indx2 = Math.floor(Math.random() * userReadManga.length)
-    }
+  while (userReadManga.length > 1 && indx1 == indx2) {
+    indx2 = Math.floor(Math.random() * userReadManga.length)
+  }
 
-    let fetchRecd = await fetch(window.location.origin + `/api/manga/recommend?manga1=${userReadManga[indx1]}&manga2=${userReadManga[indx2]}`)
-    let data = await fetchRecd.json();
+  let fetchRecd = await fetch(window.location.origin + `/api/manga/recommend?manga1=${userReadManga[indx1]}&manga2=${userReadManga[indx2]}`)
+  let data = await fetchRecd.json();
 
-    if (data.length < 6) {
-        getRecommendedManga(obj);
-        return;
-    }
+  if (data.length < 6) {
+    getRecommendedManga(obj);
+    return;
+  }
 
-    let htmlGenreated = genreateRecdHTML(data);
+  let htmlGenreated = genreateRecdHTML(data);
 
-    obj.innerHTML = htmlGenreated;
-    
+  obj.innerHTML = htmlGenreated;
+
 }
 
 
 // show Scroll to top button or not
-window.addEventListener('scroll', function () {
-    if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
-        document.getElementById('scroll_to_top').style.opacity = "1";
-    } else {
-        document.getElementById('scroll_to_top').style.opacity = "0";
-    }
+window.addEventListener('scroll', function() {
+  if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
+    document.getElementById('scroll_to_top').style.opacity = "1";
+  } else {
+    document.getElementById('scroll_to_top').style.opacity = "0";
+  }
 })
+
+// chnge image url so if it is blocked people can unblock it
+function changeImagesURL() {
+  document.querySelectorAll('img').forEach((img) => {
+    if (img.getAttribute('src').includes('axiostrailbaby')) {
+      //https://axiostrailbaby.lavishkumar1.repl.co/sendImage/temp.compsci88.com%20cover%20The-World-After-the-Fall.jpg
+      img.setAttribute('src', '//' + img.getAttribute('src').split('sendImage/')[1].replace('%20', '/'));
+    }
+  })
+}
