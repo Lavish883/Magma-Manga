@@ -26,6 +26,9 @@ header
             a#Darkmode.small_nav(onclick='handleDarkModeToggle()' style='cursor:pointer;')
                 i.fas.fa-sun
                 span &nbsp;Dark Mode off
+            a.small_nav(onclick='changeImagesURL()' title="Can't see images ?? Toggle this setting and see if they appear" style='cursor:pointer;')
+                i.fas.fa-globe
+                span &nbsp; Image URL
             div(style="margin-left:auto;position:relative;")
                 div#Login_nav(onclick="toggleLoginModal()",class="small_nav",style="cursor:pointer;height:100%;box-sizing:border-box")
                     i(class="fas fa-sign-in-alt")
