@@ -1,3 +1,20 @@
+const publicVapidKey = 'BKyhUO8OC44nSm7jC9y4JNwtiSD5Vx54vi4dAsW_LzuWgzlAkEGnaAnCO5JyXQd6shkykEawR9chC7frvDE0N2U';
+
+function urlBase64ToUint8Array(base64String) {
+    const padding = "=".repeat((4 - base64String.length % 4) % 4);
+    const base64 = (base64String + padding)
+        .replace(/\-/g, "+")
+        .replace(/_/g, "/");
+
+    const rawData = atob(base64);
+    const outputArray = new Uint8Array(rawData.length);
+
+    for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+    }
+    return outputArray;
+}
+
 console.log('Service Worker Loaded');
 importScripts('/test/localforage.min.js');
 
@@ -15,47 +32,60 @@ async function isItTime() {
     return false;
 }
 
-async function updateSubscription(subscription) {
-    await fetch("/notification/subscribe", {
+async function updateSubscription(oldSubscription, newSubscription) {
+    await fetch("/notification/updateSubscribe", {
         method: "POST",
         body: JSON.stringify({
-            "subscription": subscription,
-            "token": window.localStorage.getItem("refreshToken")
+            "oldSubscription": oldSubscription,
+            "newSubscription": newSubscription
         }),
         headers: {
             "content-type": "application/json"
         }
     });
-    console.log('subscribed')
+
+    console.log('re-subscribed')
 }
 
 function updatePushSubscription(subscription) {
-    console.log(subscription);
-    if (isItTime()) {
-        console.log('letssssssssssssssss goooooooo')
-    }
+    console.log('okay we need to update >>>>>>>>')
 }
 
 // show notifaction if recivd from the server
 self.addEventListener('push', event => {
     const data = event.data.json();
-    console.log('Push Recieved...');
+    console.log('Push Recieved...', data);
 
-    // update  push subscription after all notifications have been received
-    setTimeout(() => {
-        self.registration.pushManager.getSubscription().then((subscription) => {
-            updatePushSubscription(subscription);
+    if (data.type == 'updatingSubscription') {
+        /*
+        // update  push subscription after all notifications have been received
+        self.registration.pushManager.getSubscription().then( async function (subscription) {
+            var oldSubscription = subscription;
+            console.log(subscription);
+
+            var newSubscription = await self.registration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: urlBase64ToUint8Array(publicVapidKey),
+            })
+
+            console.log(newSubscription)
+
+            updateSubscription(oldSubscription, newSubscription)
+            self.registration.showNotification('sub updated', {
+
+            })
         })
-    }, 1000) // 1 second
+        */
+    } else {
+        self.registration.showNotification(data.title, {
+            body: data.body,
+            icon: "/images/navbar.brand.png",
+            image: data.img,
+            vibrate: [200, 100, 200, 100, 200, 100, 200],
+            data: data
+        });
+    }
 
-    console.log()
-    self.registration.showNotification(data.title, {
-        body: data.body,
-        icon: "/images/navbar.brand.png",
-        image: data.img,
-        vibrate: [200, 100, 200, 100, 200, 100, 200],
-        data: data
-    });
     var init = { "status": 200, "statusText": "I am a custom service worker response!" };
     return new Response(null, init);
 })

@@ -28,20 +28,29 @@ async function deleteInvalid(subscription) {
     console.log('deleted');
 }
 
-async function sendNotification(subscription, manga) {
+async function sendNotification(subscription, manga, blankNotification = false) {
     //console.log(subscription.subscription[0])
     //https://temp.compsci88.com/cover/${manga.IndexName}.jpg
+
     //Create Payload for notifications
-    const payload = JSON.stringify({
-        'title': `New ${manga.seriesName} Chapter ${manga.latestChapter} !! ^_^`,
-        'body': '',
-        'img': `https://temp.compsci88.com/cover/${manga.indexName}.jpg`,
-        'link': manga.chapterUrl,
-    });
+    var payload;
+    // blank meaning that we just want to send some info and actual display something
+    if (blankNotification) {
+        payload = JSON.stringify({
+            'type': 'updatingSubscription'
+        })
+    } else {
+        payload = JSON.stringify({
+            'title': `New ${manga.seriesName} Chapter ${manga.latestChapter} !! ^_^`,
+            'body': '',
+            'img': `https://temp.compsci88.com/cover/${manga.indexName}.jpg`,
+            'link': manga.chapterUrl,
+        });
+    }
 
     // Notfiy the user that they have been subscribed
     webpush.sendNotification(subscription, payload).catch(err => {
-        console.log(err.statusCode)
+        console.log(err, 'statusCode')
         // meaning that subscription is invlaid and should be deleted
         if (err.statusCode == 410 || err.statusCode == 404) {
             deleteInvalid(subscription);
@@ -85,10 +94,19 @@ async function fetchManga(manga) {
     return;
 }
 
+// send notifaction requesting client side to update their subscription to the server
+async function requestSubscriptionUpdate() {
+    var userWithSubscriptions = await schemas.subscription.find();
+
+    for (var subscription of userWithSubscriptions) {
+        //console.log(subscription.subscription[0], 'usesss')
+        sendNotification(subscription.subscription[0], null, true);
+    }
+}
+
 // so basically first fetch the search page and the get the directory
 // then go through the direcctory anf get the manga that people are subscribed to
 // then check if that chapter has been released or not
-
 
 async function main() {
     var subbedManga = (await schemas.subbedManga.findOne()).subbed;
@@ -111,8 +129,7 @@ async function main() {
     }
 }
 
-main()
-
 module.exports = {
-    main
+    main,
+    requestSubscriptionUpdate
 }
