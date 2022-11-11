@@ -1,7 +1,10 @@
 const webpush = require('web-push');
 const schemas = require('../schemas/schema'); // schemas
+
 const loginFunctions = require('../mainJS/loginFunctions');
 const newManga = require('../mainJS/checkForNewManga').main;
+const requestSubscriptionUpdate = require('../mainJS/checkForNewManga').requestSubscriptionUpdate;
+
 const moment = require('moment');
 
 async function updateSubbedManga(mangaToAdd) { // updates maga that is subbed in the databse so we dont hae to check every manga
@@ -74,7 +77,11 @@ async function subscribe(req, res) {
 }
 
 async function updateSubscription(req, res) {
-    
+    // get rid of the old subscription and then add the new one in the server one
+
+    console.log('YAY!!!!')
+
+    return res.send('!!!');
 }
 
 async function isItTime(req, res, next) {
@@ -82,11 +89,24 @@ async function isItTime(req, res, next) {
 
     //console.log('lastTimeChecked', lastTimeChecked.latestCheck)
 
+    // check if we need to check for new manga updates
     if (lastTimeChecked.latestCheck == '' || moment().diff(lastTimeChecked.latestCheck, "hours") > 12) {
         lastTimeChecked.latestCheck = moment().format();
         await lastTimeChecked.save();
         newManga();
     }
+
+    // scraped the idea for resubscribing becuase concluded not needed 
+    /*
+    // check if we need to update the subscription for users
+    if (lastTimeChecked.latestSubCheck == '' ||moment().diff(lastTimeChecked.latestSubCheck, "seconds") > 20) {
+        lastTimeChecked.latestSubCheck = moment().format();
+        await lastTimeChecked.save();
+        // send notification that tells the client side to request a new subscription
+        console.log('requested .......')
+        requestSubscriptionUpdate();
+    }
+    */
 
 
     next();

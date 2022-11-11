@@ -80,6 +80,9 @@ const subbedMangaSchema = new Schema({
     },
     'latestCheck': {
         type: String
+    },
+    'latestSubCheck': {
+        type: String
     }
 })
 

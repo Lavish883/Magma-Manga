@@ -18,7 +18,7 @@ async function subscribeToServer(subscription) {
     });
     console.log('subscribed');
 
-    localforage.setItem('lastSubscribed', new Date());
+    //localforage.setItem('lastSubscribed', new Date());
 }
 
 // updates time in the db so we can accesse later in sw
