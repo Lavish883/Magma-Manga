@@ -1,0 +1,31 @@
+// !{variable name} this for using the passed in data
+
+html
+    head
+        //| !{p1}
+        title Directory 
+        meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        style 
+            include /css/navbar.css
+        style
+            include /css/style.css
+        style
+            include /css/search.css
+        script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+        script(src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js")
+    body(style="margin:0px")
+        include includes/navbar.pug
+        include includes/reusableProps.pug
+        img#loading(class="image_center", src="/images/loading.svg",width="80")
+        div#main.none
+            div(style="margin-bottom:100px;")
+                div.admin_top(style="margin-top:25px;")
+                    a(style="font-size:18px; color:white;")
+                        i(class="fas fa-book")
+                        span &nbsp;Latest Chapters from your Bookmarks
+                div#newSubscribedChapters.hot_update
+
+        script
+            include /js/index.js
+        script
+            include /js/recentChapter.js

@@ -1,5 +1,5 @@
 // Generate hmtl 
-function makeLatestChapterHTML(manga, isPopular, isCompleted) {
+function makeLatestChapterHTML(manga, isPopular = false, isCompleted = false) {
 
   if (window.location.href.includes("mangaapi")) {
     var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('temp.compsci88.com/cover/' + manga.IndexName + '.jpg').replaceAll('/', ' ')
@@ -70,6 +70,8 @@ if (window.location.pathname.includes('/index.html') || window.location.pathname
   document.getElementById('Search_nav').classList.add('small_nav_active')
 } else if (window.location.pathname.includes('manga/bookmarks')) {
   document.getElementById('Bookmark_nav').classList.add('small_nav_active')
+} else if (window.location.pathname.includes('manga/recentChapters')) {
+  document.getElementById('Read_nav').classList.add('small_nav_active')
 }
 
 // Dark Mode

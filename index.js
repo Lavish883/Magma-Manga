@@ -78,6 +78,8 @@ app.get('/manga/manga/:mangaName', pathFunctions.mangaHtml)
 app.get('/manga/directory', pathFunctions.directoryHtml)
 // search.html
 app.get('/manga/search', pathFunctions.searchHtml)
+// recentChapters.html
+app.get('/manga/recentChapters', pathFunctions.recentChaptersHtml)
 // let user download that chpater manga
 app.get('/manga/download/:chapter', async (req, res) => {
     res.send(req.params.chapter)
@@ -124,7 +126,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function(req, res){
-  res.status(404).send('what???');
+  res.status(404).send('page does not exist 404');
 });
 
 

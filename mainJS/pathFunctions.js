@@ -1,5 +1,5 @@
 const fetch = require('node-fetch'); // fetchs html
-const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
+const serverName = process.env['SERVERNAME'] || 'http://localhost:8080/';
 var isPupServerLoaded = false;
 
 async function indexHtml(req, res) {
@@ -74,11 +74,16 @@ async function searchHtml(req, res) {
     return res.render('search')
 }
 
+async function recentChaptersHtml(req, res) {
+    return res.render('recentChapters')
+}
+
 module.exports = {
     indexHtml,
     readHtml,
     bookmarksHtml,
     mangaHtml,
     directoryHtml,
-    searchHtml
+    searchHtml,
+    recentChaptersHtml
 }

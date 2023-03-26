@@ -24,6 +24,8 @@ async function getMainPageStuff(req, res) {
     let fetchAll = await fetch(breakCloudFlare, headers);
     let resp = await fetchAll.text();
 
+    console.log(resp)
+
     var allData = {
         'adminRecd': mainFunctions.scrapeAdminRecd(resp),
         'hotMangaUpdated': mainFunctions.scrapeHotManga(resp),
