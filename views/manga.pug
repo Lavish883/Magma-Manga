@@ -1,8 +1,13 @@
 - var isBlocked = process.env['SERVERNAME'] == 'https://mangaapi.lavishkumar1.repl.co/' ? true : false;
-html
+doctype html
+html(lang="en")
   head
     title !{SeriesName} | Magma Manga
     meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0") 
+    meta(charset="UTF-8")
+    meta(name="theme-color" content="#000000")
+    meta(name="description",content=`Read ${SeriesName} on Magma Manga`)
+    link(rel="manifest" href="/pwa.webmanifest")
     style 
       include /css/thin_navbar.css
     style

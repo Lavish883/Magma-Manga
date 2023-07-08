@@ -1,10 +1,14 @@
 // !{variable name} this for using the passed in data
-
-html
+doctype html
+html(lang="en")
     head
         //| !{p1}
         title Directory 
         meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        meta(charset="UTF-8")
+        meta(name="description",content="Recent Chapters of what you have bookmarked")
+        meta(name="theme-color" content="#000000")
+        link(rel="manifest" href="/pwa.webmanifest")
         style 
             include /css/navbar.css
         style
@@ -16,7 +20,7 @@ html
     body(style="margin:0px")
         include includes/navbar.pug
         include includes/reusableProps.pug
-        img#loading(class="image_center", src="/images/loading.svg",width="80")
+        img#loading(alt="loading", class="image_center", src="/images/loading.svg",width="80")
         div#main.none
             div(style="margin-bottom:100px;")
                 div.admin_top(style="margin-top:25px;")

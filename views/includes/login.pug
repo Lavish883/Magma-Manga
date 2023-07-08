@@ -23,9 +23,9 @@ div(style='justify-content:center;display:flex;')
             input#userPassword(type='password', style='margin:5px 0px', name='userPassword')
             i.far.fa-eye-slash(onclick="togglePasswordVisbilty(this)")
       .contain_switch_buttons
-        a(onclick="changeSystem('Register')") &middot; Register
-        a(onclick="changeSystem('Forgot')") &nbsp;&nbsp;&middot; Forgot Password
+        a(href="#",onclick="changeSystem('Register')") &middot; Register
+        a(href="#",onclick="changeSystem('Forgot')") &nbsp;&nbsp;&middot; Forgot Password
       .contain_close_button
-        a(onclick='toggleLoginModal()') Close
-        a.login(onclick='loginToAccount()') Login
+        a(href="#",onclick='toggleLoginModal()') Close
+        a.login(href="#",onclick='loginToAccount()') Login
   div

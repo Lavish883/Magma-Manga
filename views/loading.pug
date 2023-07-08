@@ -1,9 +1,14 @@
 // For when the server that fetchs manga is turning on
-html
+doctype html
+html(lang="en")
   head
     //| !{p1}
     title Read Manga
     meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0, shrink-to-fit=no, user-scalable=no")
+    meta(charset="UTF-8")
+    meta(name="theme-color" content="#000000")
+    meta(name="description",content="Read Manga")
+    link(rel="manifest" href="/pwa.webmanifest")
     style 
         include /css/navbar.css
     style
@@ -11,7 +16,7 @@ html
     script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
   body(style="margin:0px")
     include includes/navbar.pug
-    img#loading(class="image_center", src="/images/loading.svg",width="80")
+    img#loading(alt="loading", class="image_center", src="/images/loading.svg",width="80")
     script
         include /js/index.js
     script.

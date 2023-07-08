@@ -2,7 +2,7 @@ include login.pug
 header
     div.headerSearhConta
         a.logoContainer(href='/manga')
-            img(src='/images/navbar.brand.png',width='250',style='margin-top:10px')
+            img(alt='logo image', src='/images/navbar.brand.png',width='250',style='margin-top:10px')
         div.search_container
             div.search_bar
                 input#Search_input(placeholder='Quick Search...')
@@ -23,7 +23,7 @@ header
             a#Search_nav.small_nav(href='/manga/search' style='')
                 i.fas.fa-search
                 span &nbsp;Search
-            a#Darkmode.small_nav(onclick='handleDarkModeToggle()' style='cursor:pointer;')
+            a#Darkmode.small_nav(href="#",onclick='handleDarkModeToggle()' style='cursor:pointer;')
                 i.fas.fa-sun
                 span &nbsp;Dark Mode off
             a.small_nav(href='/manga/recentChapters' id="Read_nav" title="See if there any new chapters from manga you have bookmarked" style='cursor:pointer;')
@@ -37,7 +37,7 @@ header
                     a(href="settings.html",class="small_nav")
                         i(class="fas fa-cog") 
                         span &nbsp;Settings
-                    a(onclick="logOutUser()", class="small_nav")
+                    a(href="#", onclick="logOutUser()", class="small_nav")
                         i(class="fas fa-sign-out-alt") 
                         span &nbsp;Logout
 div#scroll_to_top

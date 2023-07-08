@@ -3,8 +3,10 @@ async function getSearchDirectory() {
     let resp = await searchPageInfo.json();
 
     // set the directory in local storage
-    window.localStorage.setItem('directory', JSON.stringify(resp));
-    return resp;
+    //window.localStorage.setItem('directory', JSON.stringify(resp));
+    //return resp;
+
+    filterManga(resp);
 }
 
 // makes loading time faster by loading it instalty from local storage and then in background fething the new data
@@ -68,8 +70,10 @@ async function filterManga(directory) {
     var userBookmarks = window.localStorage.getItem('bookmarks');
     if (userBookmarks == null || userBookmarks == undefined) {
         document.getElementById('newSubscribedChapters').innerHTML = `<div style="color:black;">You have no bookmarks. Add some to use this feauture !!</div>`
+        displayNewChapters();
         return;
     }
+
     userBookmarks = JSON.parse(userBookmarks);
 
     // make an array of all the manga bookmarked to just index names
@@ -101,4 +105,4 @@ function displayNewChapters() {
     document.getElementById('loading').classList.add('none');
 }
 
-getDirectoryFromStorage();
+getSearchDirectory();

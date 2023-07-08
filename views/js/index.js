@@ -120,7 +120,7 @@ function genreateRecdHTML(manga) {
                 <a href="/manga/read/${manga[i].chapterLink}-page-1" title="${manga[i].s} ${manga[i].l}">
                     <div class="hot_update_item_name"> <span>${manga[i].s} ${manga[i].l}</span>
                     </div>
-                    <img src="https://temp.compsci88.com/cover/${manga[i].i}.jpg" style="max-width:145px;">
+                    <img alt="${manga[i].s}" src="https://temp.compsci88.com/cover/${manga[i].i}.jpg" style="max-width:145px;">
                 </a>
             </div>
         `)

@@ -1,9 +1,14 @@
 // !{variable name} this for using the passed in data
-html
+doctype html
+html(lang="en")
   head
     //| !{p1}
     title Read Manga
     meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+    meta(charset="UTF-8")
+    meta(name="description",content="Read Manga Online with the best quality fast and easy. That is updated daily") 
+    meta(name="theme-color" content="#000000")
+    link(rel="manifest" href="/pwa.webmanifest")
     style 
         include /css/navbar.css
     style
@@ -20,7 +25,7 @@ html
                     span &nbsp;Admin Recommendation
                 div.admin_back
                     +adminRecd(adminRecd)
-            img(src="https://releasedate.news/wp-content/uploads/2021/05/Dont-Toy-with-Me-Miss-Nagatoro-Episode-4-Release-Date-1024x564.jpg", width="347")
+            img(alt="nagataro", src="https://releasedate.news/wp-content/uploads/2021/05/Dont-Toy-with-Me-Miss-Nagatoro-Episode-4-Release-Date-1024x564.jpg", width="347")
         div(style="margin-top:25px")
             div.admin_top
                 a(href="#",style="font-size:18px; color:white;")
@@ -29,7 +34,7 @@ html
             div#hot_update(class="hot_update")
                 +hotUpdate(hotMangaUpdated)
         div#hotMonth(class="admin_top")
-            a.admin_hover_text(style="font-weight: 600;color:#007bff") Hot Manga This Month
+            a.admin_hover_text(href="#",style="font-weight: 600;color:#007bff") Hot Manga This Month
             +hotMangaOfMonth(hotMangaThisMonth)
         div(style="margin-top:25px;")
             div.admin_top
@@ -38,10 +43,10 @@ html
                     span &nbsp;Recommended for you
             div#recdForYou(class="hot_update",style="overflow:hidden;max-height:200px;")
                 // item recommned for the reader
-                img#loading(src="/images/loading.svg",width="80",style="margin:auto;")
+                img#loading(alt="loading", src="/images/loading.svg",width="80",style="margin:auto;")
         div(style="margin-bottom:100px;")
             div.admin_top(style="margin-top:25px;")
-                a(style="font-size:18px; color:white;")
+                a(href="#",style="font-size:18px; color:white;")
                     i(class="fas fa-book")
                     span &nbsp;Latest Chapters
             div#latestChapters(class="hot_update")
