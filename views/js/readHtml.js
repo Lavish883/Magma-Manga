@@ -16,6 +16,9 @@ function addToRecentRead(chapterLink) {
         window.localStorage.setItem("recentRead", JSON.stringify(recentRead));
         console.log('added')
     }
+    if (window.localStorage.getItem('accessToken') != undefined || window.localStorage.getItem("accessToken") != null) {
+        getUserInfo();
+    }
 }
 // check if this chapter has been read or not
 function checkIfItRead(chapterLink, recentRead) {

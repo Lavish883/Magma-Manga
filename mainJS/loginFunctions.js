@@ -107,11 +107,11 @@ async function getUserInfo(req, res) {
     if (tokenValid == false) {
         return res.sendStatus(401);
     }
-    console.log(tokenValid)
+    //console.log(tokenValid)
     // info about bookmarks and recentRead we have on the server
     var userCloud = await findUser(tokenValid.name, tokenValid.name);
     userCloud = userCloud[0];
-    console.log(userCloud)
+    //console.log(userCloud)
     var reqRecentRead = req.body.recentRead;
     var reqBookmarks = req.body.bookmarks;
     // now combine what the user has on their local machine and update that to our server

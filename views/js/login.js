@@ -183,7 +183,13 @@ async function getNewAccesToken() {
     }
 
     let newTokenRequest = await fetch(url, settings);
-    let resp = newTokenRequest.text();
+    // if the refresh token is expired log out
+    if (newTokenRequest.status == 401) {
+        alert('your session has expired');
+        await logOutUser();
+        return;
+    }
+    let resp = await newTokenRequest.text();
 
     window.localStorage.setItem('accessToken', resp)
 }
@@ -215,7 +221,6 @@ async function getUserInfo() {
     window.localStorage.setItem('bookmarks', JSON.stringify(resp.bookmarks))
 
     console.log(resp);
-
 }
 // logout of the user
 async function logOutUser() {
@@ -238,4 +243,12 @@ async function logOutUser() {
 
     window.localStorage.clear();
     window.location.reload();
+}
+
+// get the updated info from the cloud when u go to the bookmarks
+if (window.location.href.includes('bookmarks')) {
+    if (window.localStorage.getItem('accessToken') != null && window.localStorage.getItem('refreshToken') != null) {
+        console.log('updating all info')
+        getUserInfo();
+    }
 }

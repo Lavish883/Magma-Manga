@@ -180,14 +180,6 @@ body {
     max-height:145px;
 }
 
-.thin_navabr {
-    display: flex;
-    flex-direction: row;
-    height: 50px;
-    background-color: #2B2B2B;
-    padding: 0px 130px 0px 150px
-}
-
 #imgs {
     padding: 50px;
     padding-top: 10px;
@@ -378,6 +370,21 @@ img {
     color:black;
 }
 
+
+
+@media only screen and (max-width: 900px) {
+    #imgs {
+        padding: 20px;
+    }
+}
+
+@media only screen and (max-width: 750px) {
+    #imgs {
+        padding: 10px;
+    }
+}
+
+
 @media only screen and (max-width: 600px) {
     #main {
         padding: 0px 10px;
@@ -406,6 +413,11 @@ img {
     .hot_update {
         padding: 15px 5px;
         justify-content: space-around;
+    }
+
+    #imgs {
+        padding: 0px;
+        padding-top: 10px;
     }
 }
 
