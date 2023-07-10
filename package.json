@@ -5,6 +5,7 @@
     "cookie-parser": "^1.4.6",
     "dotenv": "^16.0.1",
     "express": "^4.17.3",
+    "express-async-errors": "^3.1.1",
     "header-generator": "^1.1.3",
     "jsonwebtoken": "^8.5.1",
     "moment": "^2.29.2",
@@ -18,7 +19,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "devStart": "nodemon -e .pug,json,mjs,js index.js",
+    "devStart": "nodemon -e .pug,json,mjs,js,css index.js",
     "migrate": "node ./mainJS/migrateDatabase.js",
     "start": "node ./index.js",
     "newManga": "nodemon -e .js ./mainJS/checkForNewManga.js"

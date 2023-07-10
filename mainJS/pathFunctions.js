@@ -1,6 +1,8 @@
 const fetch = require('node-fetch'); // fetchs html
 const serverName = process.env['SERVERNAME'] || 'http://localhost:8080/';
-var isPupServerLoaded = false;
+var isPupServerLoaded = true;
+const fs = require('fs');
+const susManga = JSON.parse(fs.readFileSync('./json/susManga.json'));
 
 async function indexHtml(req, res) {
 
@@ -11,6 +13,7 @@ async function indexHtml(req, res) {
 
     let fetchAllData = await fetch(serverName + 'api/manga/all')
     let resp = await fetchAllData.json();
+    resp.susManga = susManga;
 
     return res.render('index', resp)
 }
@@ -31,7 +34,7 @@ async function readHtml(req, res) {
     } else {
         resp.title = resp.seriesName + ' Chapter ' + resp.currentChapter.Chapter
     }
-
+    resp.susManga = susManga;
     return res.render('read', resp)
 }
 
@@ -49,6 +52,8 @@ async function mangaHtml(req, res) {
     let fetchAllData = await fetch(serverName + 'api/mangaName?manga=' + req.params.mangaName);
     let resp = await fetchAllData.json();
 
+    resp.susManga = susManga;
+
     return res.render('manga', resp)
 }
 
@@ -62,7 +67,7 @@ async function directoryHtml(req, res) {
     let fetchDirectoryData = await fetch(serverName + 'api/manga/directory')
     let resp = await fetchDirectoryData.json();
 
-    return res.render('directory', {'directory' :  resp })
+    return res.render('directory', {'directory' :  resp, 'susManga' : susManga })
 }
 
 async function searchHtml(req, res) {

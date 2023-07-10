@@ -9,10 +9,10 @@ const susManga = JSON.parse(fs.readFileSync('./json/susManga.json'));
 
 // to chekc if manga is potientally sus
 function isMangaSus(mangaName) {
-    if (susManga.find(manga => manga == mangaName) != undefined) {
-        return true
+    if (susManga[mangaName] == undefined) {
+        return false
     }
-    return false
+    return true
 }
 
 // used for latest chapters index.html

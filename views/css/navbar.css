@@ -179,6 +179,53 @@ input:focus {
         }
 }
 
+@media only screen and (max-width: 1265px) {
+    .navInfo {
+        padding: 0px 50px;
+    }
+
+    .headerSearhConta {
+        padding: 0px 41px 0px 61px;
+    }
+}
+
+@media only screen and (max-width:970px) {
+    .navInfo {
+        padding: 0px 20px;
+    }
+}
+
+@media only screen and (max-width:860px) {
+    .small_nav {
+        padding: 10px;
+    }
+}
+
+@media only screen and (max-width: 820px){
+    #Darkmode span {
+        display: none;
+    }
+}
+
+@media only screen and (max-width:730px) {
+    #Read_nav span {
+        display: none;
+    }
+}
+
+
+@media only screen and (max-width:705px) {
+    .headerSearhConta {
+        padding: 0px 10px 0px 25px;
+    }
+}
+
+@media only screen and (max-width:634px) {
+    .headerSearhConta {
+        padding: 0px 0px 0px 0px;
+    }
+}
+
 @media only screen and (max-width:338px) {
     #Login_nav span {
         display: none;

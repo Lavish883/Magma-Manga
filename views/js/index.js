@@ -10,6 +10,7 @@ function makeLatestChapterHTML(manga, isPopular = false, isCompleted = false) {
   return `
     <div class="latest_chapters_item">
         <a href="/manga/manga/${manga.IndexName}" title="${manga.SeriesName}">
+            ${isMangaSus(manga.IndexName) ? `<div class="red_overlay"><i class="fa-solid fa-circle-question" title="This manga might be Hentai (manga porn)"></i></div>` : ''}
             <img src="${image}" width="90" />
         </a>
         <a style="display:contents;" href="${"/manga/read/" + manga.ChapterLink + '-page-1'}" title="${manga.SeriesName + "&nbsp;Chapter&nbsp;" + manga.Chapter}">
@@ -33,6 +34,13 @@ function makeLatestChapterHTML(manga, isPopular = false, isCompleted = false) {
     `
 }
 
+// to chekc if manga is potientally sus
+function isMangaSus(mangaName) {
+  if (susManga[mangaName] == undefined) {
+      return false
+  }
+  return true
+}
 
 // View more chapters that are latest on index.html
 function viewMoreChapters() {
@@ -196,4 +204,3 @@ function changeImagesURL() {
     }
   })
 }
-

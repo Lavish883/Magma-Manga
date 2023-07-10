@@ -245,6 +245,28 @@ async function logOutUser() {
     window.location.reload();
 }
 
+async function removeBookmark(bookmark) {
+    const options = {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "accessToken": window.localStorage.getItem("accessToken"),
+            "bookmark": bookmark
+        })
+    }
+    
+    let removeBookmarkRequest = await fetch('/api/login/removeBookmark', options);
+    if (removeBookmarkRequest.status == 401) {
+        await getNewAccesToken();
+        return removeBookmark(bookmark);
+    }
+
+    let resp = await removeBookmarkRequest.text();
+    console.log(resp);
+}
+
 // get the updated info from the cloud when u go to the bookmarks
 if (window.location.href.includes('bookmarks')) {
     if (window.localStorage.getItem('accessToken') != null && window.localStorage.getItem('refreshToken') != null) {

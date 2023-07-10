@@ -5,6 +5,8 @@ const cookieParser = require('cookie-parser') //parses cookies recived from the 
 const path = require('path');
 const mongoose = require('mongoose'); // database acessor
 
+require('express-async-errors');
+
 const pathFunctions = require('./mainJS/pathFunctions') // functions that handle use requests
 const apiFunctions = require('./mainJS/apiFunctions') // function that handle all api requests
 const loginFunctions = require('./mainJS/loginFunctions') // all fucntions that handle login and stuff
@@ -31,13 +33,12 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
 const app = express()
 const port = process.env.PORT || 5832;
 app.set('view engine', 'pug')
-app.use(cookieParser())
 app.locals.basedir = path.join(__dirname, 'views');
 app.use(express.json({ extended: true, limit: "1mb" }));
 
 
 // see if it is time to check for new manga
-app.use(notificationFunctions.isItTime)
+//app.use(notificationFunctions.isItTime)
 
 function setup(req,res,next){
   var cookie = req.cookies.user;
@@ -62,9 +63,8 @@ function setup(req,res,next){
 }
 
 app.get('/', (req, res) => {
-  res.redirect('/manga/')
+  return res.redirect('/manga/')
 })
-
 
 // index.html
 app.get('/manga/', pathFunctions.indexHtml)
@@ -117,6 +117,8 @@ app.get('/api/login/allUsers', loginFunctions.allUsers);
 app.post('/api/login/newAccessToken', loginFunctions.getNewToken);
 // log out 
 app.delete('/api/login/logout', loginFunctions.logOutUser);
+// remove a certain manga from the users bookmarks
+app.delete('/api/login/removeBookmark', loginFunctions.removeBookmark);
 
 /* Notifactions functions routes are below */
 app.post('/notification/subscribe', notificationFunctions.subscribe);
@@ -130,9 +132,16 @@ app.get('*', function(req, res){
 });
 
 
-process.on('unhandledRejection', error => {
-    // Will print "unhandledRejection err is not defined"
-    console.log('unhandledRejection', error);
-});
+// Error handler
+app.use(async (err, req, res, next) => {
+  if (res.headersSent) {
+    return next(err)
+  }
+
+  console.error(err);
+
+  return res.status(500).send('Something broke! Please report this problem to the admin')
+})
+
 
 app.listen(port)

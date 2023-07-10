@@ -2,6 +2,7 @@
      width: fit-content;
      margin: 10px 0px;
      display:flex;
+     flex-wrap: wrap;
 }
  #MangaFilters div {
      padding: 1px 5px;
@@ -111,9 +112,9 @@
             text-decoration: underline;
             color: #0056b3;
         }
-#Load_More {
+#load_more {
     width: 100%;
-    color: #007bff;
+    color: white;
     border: solid 1px #007bff;
     text-align: center;
     padding: 6px 0px;
@@ -121,8 +122,62 @@
     transition: background-color 200ms linear;
     font-size: 18px;
 }
-    #Load_More:hover {
+    #load_more:hover {
         color: white;
         cursor: pointer;
-        background-color: #007bff;
+        background-color: #0264cc;
     }
+
+
+/** Media Queries */
+@media only screen and (max-width: 1450px) {
+    #main {
+        padding: 0px 150px;
+    }
+}
+
+@media only screen and (max-width: 1350px) {
+    #main {
+        padding: 0px 100px;
+    }
+}
+
+@media only screen and (max-width: 1250px) {
+    #main {
+        padding: 0px 50px;
+    }
+}
+
+
+@media only screen and (max-width: 1165px) {
+    #main {
+        padding: 0px 25px;
+    }
+}
+
+@media only screen and (max-width: 1080px) {
+    #main {
+        padding: 0px 10px;
+    }
+}
+
+@media only screen and (max-width:1040px){
+    #nagataro {
+        display: none;
+    }
+
+    #main {
+        padding: 0px 75px;
+    }
+
+    .admin_card {
+        width: 100%;
+    }
+}
+
+
+@media only screen and (max-width: 760px) {
+    #main {
+        padding: 0px 30px;
+    }
+}

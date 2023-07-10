@@ -74,10 +74,10 @@ function bookMark(obj) {
             if (manga.Index == currentChapter.indexName) {
                 bookMarks.splice(i, 1);
                 console.log('removed')
+                removeBookmark(manga);
                 break;
             }
         }
-
     }
     window.localStorage.setItem('bookmarks', JSON.stringify(bookMarks));
     changeBookMarkStatus(obj)

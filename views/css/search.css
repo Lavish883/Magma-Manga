@@ -42,6 +42,7 @@
 .containFilterAndResults {
     display: flex;
     flex-direction: row;
+    flex-wrap: wrap-reverse;
 }
 
 .containSortAndResults {
@@ -179,4 +180,46 @@
 
 .hidden {
     display: none;
+}
+
+@media only screen and (max-width:1230px) {
+    #main {
+        padding: 0px 150px;
+    }
+}
+
+@media only screen and (max-width:900px){
+    #main {
+        padding: 0px 75px;
+    }
+}
+
+@media only screen and (max-width:850px){
+    #main {
+        padding: 0px 25px;
+    }
+}
+
+@media only screen and (max-width:630px){
+   #resultsContainer .result_item img {
+        display: none;
+   }
+}
+
+
+@media only screen and (max-width:580px){
+
+    .containFilterAndResults {
+        flex-direction: column-reverse;
+    }
+
+    #filters {
+        flex: 1;
+        max-width: 100%;
+    }
+
+    #resultsContainer {
+        flex: 1;
+        max-width: 100%;
+    }
 }

@@ -3,6 +3,7 @@ const jwt = require('jsonwebtoken'); // json web tokens using in authentaction
 const fs = require("fs")
 const schemas = require('../schemas/schema'); // schemas
 
+
 // check if an user already exsits with that name or email
 async function findUser(userName, userEmail) {
     console.log(userName, userEmail);
@@ -123,8 +124,8 @@ async function getUserInfo(req, res) {
         userCloud.recentRead.push(...reqRecentRead)
         userCloud.recentRead = [... new Set(userCloud.recentRead)]
     }
-    console.log(userCloud);
-    console.log(userCloud.bookmarks);
+    //console.log(userCloud);
+    //console.log(userCloud.bookmarks);
     // combine bookmarks
 
     if (reqBookmarks != undefined || reqBookmarks != null) {
@@ -181,6 +182,28 @@ async function logOutUser(req, res) {
     fs.writeFileSync('refreshTokens.json', JSON.stringify(allRefreshTokens));
 }
 
+// remove the bookmark from the server
+async function removeBookmark(req, res) {
+    let tokenValid = isTokenValid(req.body.accessToken, process.env.ACCESS_TOKEN_SECERT)
+    if (tokenValid == false) {
+        return res.sendStatus(401);
+    }
+    var userCloud = await findUser(tokenValid.name, tokenValid.name);
+    userCloud = userCloud[0];
+
+    var reqBookmark = req.body.bookmark;
+
+    // go through all the bookmarks of the user and remove the one that matches the req
+    for (var i = 0; i < userCloud.bookmarks.length; i++) {
+        if (userCloud.bookmarks[i].Index == reqBookmark.Index) {
+            userCloud.bookmarks.splice(i, 1);
+            break;
+        }
+    }
+    await userCloud.save();
+}
+
+
 
 module.exports = {
     allUsers,
@@ -189,5 +212,6 @@ module.exports = {
     getUserInfo,
     getNewToken,
     logOutUser,
-    isTokenValid
+    isTokenValid,
+    removeBookmark
 }

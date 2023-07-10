@@ -30,12 +30,13 @@ html(lang="en")
                         div#MangaFilters
                         ul#manga_list
                         div#load_more(onclick="loadMoreManga()") Load More...
-                img(src="https://releasedate.news/wp-content/uploads/2021/05/Dont-Toy-with-Me-Miss-Nagatoro-Episode-4-Release-Date-1024x564.jpg", width="347", height="211")
+                img#nagataro(src="https://releasedate.news/wp-content/uploads/2021/05/Dont-Toy-with-Me-Miss-Nagatoro-Episode-4-Release-Date-1024x564.jpg", width="347", height="211")
         script
             include /js/index.js
         script.
-            var ableToFilter = ['All', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
             var directoryBackup = !{JSON.stringify(directory).replace(/<\//g, '<\\/')} 
+            var susManga = !{JSON.stringify(susManga)}
             var currentDirectory = 'All'
+            var ableToFilter = ['All', 'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
         script
             include /js/directory.js

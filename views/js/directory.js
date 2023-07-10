@@ -67,6 +67,7 @@ function generateFilterdArryHTML(mangaList, genresList, indxStart) {
             <li>
                 <a class="tooltip" href="/manga/manga/${manga.i}">${manga.s}
                     <div class="tooltiptext">
+                        ${isMangaSus(manga.i) ? `<div class="red_overlay_directory"><i class="fa-solid fa-circle-question" title="This manga might be Hentai (manga porn)"></i></div>` : ''}
                         <img src="https://temp.compsci88.com/cover/${manga.i}.jpg" />
                         <span class="status">Status:
                             <span>&nbsp;${manga.st}</span>
@@ -81,10 +82,17 @@ function generateFilterdArryHTML(mangaList, genresList, indxStart) {
         `)
     }
 
-    document.getElementById('load_more').style.display = 'block';
+    document.getElementById('load_more').style.display = 'flex';
     return htmlArry.join('')
 }
 
+// to chekc if manga is potientally sus
+function isMangaSus(mangaName) {
+    if (susManga[mangaName] == undefined) {
+        return false
+    }
+    return true
+}
 
 // filter is a string => 'All', 'A' or 'B'
 // go thorough the direcory and see which manga include that filter

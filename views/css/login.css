@@ -178,3 +178,57 @@
     left: 0;
     z-index: 10;
 }
+
+@media only screen and (max-width: 500px) {
+    #loginBackground {
+        width: 450px;
+    }
+}
+
+@media only screen and (max-width: 450px) {
+    #loginBackground {
+        width: 400px;
+    }
+}
+
+@media only screen and (max-width: 400px) {
+    #loginBackground {
+        width: 350px;
+    }
+}
+
+@media only screen and (max-width: 350px) {
+    #loginBackground {
+        width: 300px;
+    }
+}
+
+@media only screen and (max-width: 300px) {
+    #loginBackground {
+        width: 250px;
+    }
+}
+
+@media only screen and (max-width: 250px) {
+    #loginBackground {
+        width: 200px;
+    }
+}
+
+@media only screen and (max-width: 200px) {
+    #loginBackground {
+        width: 150px;
+    }
+}
+
+@media only screen and (max-width: 150px) {
+    #loginBackground {
+        width: 100px;
+    }
+}
+
+@media only screen and (max-width: 100px) {
+    #loginBackground {
+        width: 50px;
+    }
+}

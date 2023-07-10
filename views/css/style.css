@@ -370,6 +370,34 @@ img {
     color:black;
 }
 
+.red_overlay_directory {
+    position:absolute;
+    height:100%;
+    width:100%;
+    background:rgba(255, 0, 0, 0.34);
+    top: 0px;
+    left: 0px;
+    border-radius: 6px;   
+}
+/*Overlay css*/
+.red_overlay_directory .fa-circle-question {
+    position: absolute;
+    right: 12px;
+    top: 12px;
+    font-size: 20px;
+}
+
+#load_more {
+    border-radius: 8px;
+    background-color: #007bff;
+    color: white;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    font-size: 20px;
+}
 
 
 @media only screen and (max-width: 900px) {
