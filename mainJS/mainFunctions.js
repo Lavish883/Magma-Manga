@@ -54,6 +54,7 @@ function calcChapter(Chapter) {
 
 // comments go here
 function calcChapterUrl(ChapterString) {
+    console.log('str:' + ChapterString);
     var Index = "";
     var IndexString = ChapterString.substring(0, 1);
     if (IndexString != 1) {
@@ -177,26 +178,61 @@ function genresComparer(listOfManga, genres) {
     return FilteredResults
 }
 
-async function getSimilarManga(genres) {
-    let link = breakCloudFlare + '/search/?sort=vm&desc=true&genre=' + genres.join(',')
+function getMangaGenres(manga, Directory) {
+    for (var i = 0; i < Directory.length; i++) {
+        if (Directory[i].i == manga) {
+            return Directory[i].g;
+        }
+    }
+}
+
+
+async function getSimilarManga(manga1, manga2) {
+    let link = breakCloudFlare + '/search/?sort=vm&desc=true&genre=';
     let fetchSearch = await fetch(link);
     let resp = await fetchSearch.text();
     // Directory which contains all the manga with genres and stuff
     var DirectoryBackup = JSON.parse(resp.split(`vm.Directory = `)[1].split(`;`).splice(0, 15).join(','));
-    // Get all the managa that includes all three of those genres 
-    let FilteredResults = genresComparer(DirectoryBackup, genres);
+    // get genres by using the directory
+    let manga1Genres = await getMangaGenres(manga1, DirectoryBackup);
+    let manga2Genres = await getMangaGenres(manga2, DirectoryBackup);
 
-    if (FilteredResults.length != 0) {
-        return FilteredResults;
+    let allGenres = [...new Set([...manga1Genres, ...manga2Genres])]
+    
+    var allManaga = [];
+    var i = 0;
+    // do it in chunks of 3, to get even more and better results
+    while (i < allGenres.length) {
+        let sliceTo = i + 3;
+        if (sliceTo > allGenres.length) {
+            sliceTo = allGenres.length;
+        }
+
+        let FilteredResults = genresComparer(DirectoryBackup, allGenres.slice(i, sliceTo));
+        console.log(FilteredResults)
+        allManaga.push(...FilteredResults)
+        i += 3;
+    }
+    
+    // Get all the managa that includes all three of those genres 
+
+    //console.log(allGenres.slice(0, 3))
+    console.log(allManaga.length)
+
+    if (allManaga.length != 0) {
+        // shuffle the array
+        return allManaga;
     }
 
     DirectoryBackup.sort(function (a, b) {
         return b.vm - a.vm;
     })
 
-    DirectoryBackup.length = 10
-    return DirectoryBackup
+    
+    console.log('no genres found, returning top 10')
 
+    DirectoryBackup.length = 12;
+    return DirectoryBackup
 }
 
 function scrapeAdminRecd(html) {
@@ -291,6 +327,7 @@ function chapterImgURLS(currentChapter, imageDirectoryURL, indexName) {
 
 function fixRecdArry(arry) {
     for (var i = 0; i < arry.length; i++) {
+        console.log(arry[i].l, arry[i].i, i)
         arry[i].chapterLink = arry[i].i + calcChapterUrl(arry[i].l)
         arry[i].l = calcChapter(arry[i].l)
     }

@@ -16,6 +16,7 @@ html(lang="en")
         style
             include /css/search.css
         script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+        script(src="https://code.jquery.com/jquery-3.7.0.slim.js")
     body(style="margin:0px")
         include includes/navbar.pug
         include includes/reusableProps.pug
@@ -50,6 +51,7 @@ html(lang="en")
                                         | &#183; Year: 
                                         span.blue 2019
                         div#filters
+                    div#load_more(onclick="loadMoreManga()") Load More ...
 
         script
             include /js/index.js

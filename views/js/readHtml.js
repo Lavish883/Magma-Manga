@@ -205,3 +205,14 @@ changeReadingStyle(document.getElementById("readingStyle"), false)
 showImages(parseInt(currentlyOnPage))
 setTimeout(addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0]), 1500)
 document.body.addEventListener('click', checkIfBookmarked)
+
+window.addEventListener('scroll', function() {
+    console.log(document.body.scrollTop)
+    if (longStrip) {
+        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50){
+            document.querySelector('header').style.display = 'none';
+        } else {
+            document.querySelector('header').style.display = 'block';
+        }
+    }
+})

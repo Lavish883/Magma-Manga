@@ -171,7 +171,20 @@ async function getRecommendedManga(obj) {
     indx2 = Math.floor(Math.random() * userReadManga.length)
   }
 
-  let fetchRecd = await fetch(window.location.origin + `/api/manga/recommend?manga1=${userReadManga[indx1]}&manga2=${userReadManga[indx2]}`)
+
+  let manga1 = userReadManga[indx1];
+  let manga2 = userReadManga[indx2];
+
+
+  if (manga1 == undefined){
+    manga1 = hotManga[Math.floor(Math.random() * hotManga.length)].IndexName
+  }
+
+  if (manga2 == undefined){
+    manga2 = hotManga[Math.floor(Math.random() * hotManga.length)].IndexName
+  }
+
+  let fetchRecd = await fetch(window.location.origin + `/api/manga/recommend?manga1=${manga1}&manga2=${manga2}`)
   let data = await fetchRecd.json();
 
   if (data.length < 6) {
@@ -184,7 +197,6 @@ async function getRecommendedManga(obj) {
   obj.innerHTML = htmlGenreated;
 
 }
-
 
 // show Scroll to top button or not
 window.addEventListener('scroll', function() {

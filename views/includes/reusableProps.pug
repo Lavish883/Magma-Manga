@@ -1,27 +1,27 @@
 // Admin Recomaddation maker
 mixin adminRecd(recd)
     - var isBlocked = process.env['SERVERNAME'] == 'https://mangaapi.lavishkumar1.repl.co/'? true : false;
-    a(href="manga.html?manga=" + recd.IndexName)
+    a(href="/manga/manga/" + recd.IndexName)
         if isBlocked
           img#Admin_Img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("temp.compsci88.com/cover/" + recd.IndexName + '.jpg').replaceAll('/', ' '))
         else
           img#Admin_Img(alt="adminImage", src= "//temp.compsci88.com/cover/" + recd.IndexName + ".jpg")
     div.admin_text
-        a#Admin_Title(href="manga.html?manga=" + recd.IndexName, class="admin_hover_text")
+        a#Admin_Title(href="/manga/manga/" + recd.IndexName, class="admin_hover_text")
             span #{recd.SeriesName}
         div
             span Year:
-                a.admin_hover_text(href="search.html?year=" + recd.Year) &nbsp;#{recd.Year}
+                a.admin_hover_text(href="/manga/search?&Year=" + recd.Year) &nbsp;#{recd.Year}
 
         div    
             span Status:
-                a.admin_hover_text(href="search.html?scan=" + recd.ScanStatus) &nbsp;#{recd.ScanStatus} (Scan)
+                a.admin_hover_text(href="/manga/search?&Scan%20Status=" + recd.ScanStatus) &nbsp;#{recd.ScanStatus} (Scan)
                 span ,
-                a.admin_hover_text(href="search.html?pub=" + recd.PublishStatus) &nbsp;#{recd.PublishStatus} (Publish)
+                a.admin_hover_text(href="/manga/search?&Publish%20Status=" + recd.PublishStatus) &nbsp;#{recd.PublishStatus} (Publish)
         div(style="max-width:570px")
             span Genres:
             each genre, indx in recd.Genres
-                a.admin_hover_text(href="search.html?genre=" + genre) &nbsp;#{genre}
+                a.admin_hover_text(href="/manga/search?&Genres=" + genre) &nbsp;#{genre}
                 if indx != recd.Genres.length - 1
                     span ,
 

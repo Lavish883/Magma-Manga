@@ -3,29 +3,69 @@ style
     include /css/login.css
 script
     include /js/login.js
-#modal_background(onclick='toggleLoginModal()', style='display: none;')
+#modal_background(onclick='toggleLoginModal()',style="display:none;")
 div(style='justify-content:center;display:flex;')
   #loginBackground.loginBackground
-    div(style='display:flex;flex-direction:column;')
+    div#login(style="display:flex;")
       #headingForLog.headerofL
         div
           i.fas.fa-sign-in-alt
           |  Login
-        div(onclick='closeLoginSystem()')
+        div(onclick='toggleLoginModal()')
           i.fas.fa-times
-      #LoginError.error
+      .errorBox
       .contain_input
         label(for='userName') Username/Email:
-        input#userName(autocomplete='off', spellcheck='false', name="userName")
+        input.userName(autocomplete='off', spellcheck='false', name="userName")
         
         label(for='userPassword') Password:
         div 
             input#userPassword(type='password', style='margin:5px 0px', name='userPassword')
             i.far.fa-eye-slash(onclick="togglePasswordVisbilty(this)")
       .contain_switch_buttons
-        a(href="#",onclick="changeSystem('Register')") &middot; Register
-        a(href="#",onclick="changeSystem('Forgot')") &nbsp;&nbsp;&middot; Forgot Password
+        a(href="#",onclick="changeSystem('register')") &middot; Register
+        a(href="#",onclick="changeSystem('forgotPassword')") &nbsp;&nbsp;&middot; Forgot Password
       .contain_close_button
         a(href="#",onclick='toggleLoginModal()') Close
-        a.login(href="#",onclick='loginToAccount()') Login
-  div
+        a.login(href="#",onclick='loginToAccount(this)') Login
+    div#register
+      #headingForLog.headerofL
+        div
+          i.fas.fa-user-plus
+          |  New Account
+        div(onclick='toggleLoginModal()')
+          i.fas.fa-times
+      .errorBox
+      .contain_input
+        label(for='userName') Username:
+        input.userName(spellcheck='false' autocomplete='off' name='userName')
+        label#userEmailLabel(for='userEmail') Email:
+        input.userEmail(type='email' style='margin:5px 0px' name='userEmail')
+        
+        label(for='userPassword') Password:
+        div
+          input.userPassword(type='password' style='margin:5px 0px' name='userPassword')
+          i.far.fa-eye-slash(onclick="togglePasswordVisbilty(this)")
+      .contain_switch_buttons
+        a#changeRegister(onclick="changeSystem('login')") &middot; Login
+        a#changePassword(onclick="changeSystem('forgotPassword')") &nbsp;&nbsp;&middot; Forgot Password
+      .contain_close_button
+        a(onclick='toggleLoginModal()') Close
+        a.register(onclick='registerAccount(this)') Register
+    div#forgotPassword
+      #headingForLog.headerofL
+        div
+          i.fas.fa-key
+          |  Reset Password
+        div(onclick='toggleLoginModal()')
+          i.fas.fa-times
+      .errorBox
+      .contain_input
+        label#userEmailLabel(for='userEmail') Email:
+        input.userEmail(type='email' style='margin:5px 0px' name='userEmail')
+      .contain_switch_buttons
+        a(onclick="changeSystem('register')") &middot; Register
+        a(onclick="changeSystem('login')") &nbsp;&nbsp;&middot; Login
+      .contain_close_button
+        a(onclick='toggleLoginModal()') Close
+        a.forgot(onclick='forgotPassword(this)') Reset Password

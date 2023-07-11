@@ -49,6 +49,53 @@ if (allChapters.length < 10) {
 } else {
     generateMangaChapters(0, 10);
 }
+
+function fixLinksinDescription(){
+    var li = document.querySelectorAll('.manga_info_ul li');
+    li.forEach(elm => {
+        var describing = elm.querySelectorAll('span')[0];
+        if (describing == undefined) return;
+        describing = describing.innerText;
+
+        if (describing.includes('Author')){
+            elm.querySelectorAll('a').forEach(anchorTag => {
+                anchorTag.setAttribute('href', "/manga/search?&Author=" + anchorTag.innerText)
+            })
+            return;
+        }  
+        
+        if (describing.includes('Genre')){
+            elm.querySelectorAll('a').forEach(anchorTag => {
+                anchorTag.setAttribute('href', "/manga/search?&Genres=" + anchorTag.innerText)
+            })
+            return;
+        } 
+        if (describing.includes('Status')){
+            elm.querySelectorAll('a').forEach(anchorTag => {
+                if (anchorTag.innerText.includes('Scan')){
+                    anchorTag.setAttribute('href', "/manga/search?&Scan Status=" + anchorTag.innerText.replace(' (Scan)', ''))
+                } else {
+                    anchorTag.setAttribute('href', "/manga/search?&Publish Status=" + anchorTag.innerText.replace(' (Publish)', ''))
+                }
+            })
+            return;
+        }
+        if (describing.includes("Released")){
+            elm.querySelectorAll('a').forEach(anchorTag => {
+                anchorTag.setAttribute('href', "/manga/search?&Year=" + anchorTag.innerText)
+            })
+            return;
+        }
+
+        if (describing.includes("Type")){
+            elm.querySelectorAll('a').forEach(anchorTag => {
+                anchorTag.setAttribute('href', "/manga/search?&Type=" + anchorTag.innerText)
+            })
+            return;
+        }
+    });
+}
+fixLinksinDescription();
 // Add show all chapters button
 document.getElementById('Chapters_List').innerHTML += `<li><a onclick="generateMangaChapters(0,allChapters.length, true, true)" style="color:green;cursor:pointer;">Show All Chapters<i style="float:right;marign-top:7px;margin-right:7px;" class="fas fa-chevron-down"><i></a></li>`;
 // genreates the first chapter of the manga

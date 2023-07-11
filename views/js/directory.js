@@ -40,7 +40,7 @@ function loadMoreManga() {
     document.getElementById('manga_list').innerHTML += resultsHTML;
 }
 
-// given a arry of numbers convert taht into genres according to genreslist
+// given a arry of numbers convert that into genres according to genreslist
 // => [0,3,2,9] => Action, Comdey, ....
 function convertGenres(genresList, mangaGenres) {
     var genres = [];

@@ -113,11 +113,14 @@ function toggleListVisibility(obj) {
     console.log(obj);
 }
 // generate results html based on the arry
-function generateResultsHTML(mangaArry, indxStart, amount) {
+function generateResultsHTML(mangaArry, indxStart, amount, replaceAll = true) {
     let htmlGenerated = [];
-
+    //console.log(indxStart, amount, mangaArry.length, replaceAll)
     if (amount > mangaArry.length) {
         amount = mangaArry.length;
+        document.getElementById('load_more').style.display = 'none';
+    } else {
+        document.getElementById('load_more').style.display = 'flex';
     }
 
     // starting at a given index add more twenty items
@@ -141,7 +144,7 @@ function generateResultsHTML(mangaArry, indxStart, amount) {
                     <span isFor="publish" onclick="addFiltersOnClick(this)" class="blue">${mangaArry[i].ps} (Publish)</span>
                 </div>
                 <div class="gray">
-                    Latest: <a href="${mangaArry[i].chapterUrl}" class="blue">Chapter ${mangaArry[i].latestChapter} </a>
+                    Latest: <a href="${mangaArry[i].chapterUrl}-page-1" class="blue">Chapter ${mangaArry[i].latestChapter} </a>
                     <span style="color:gray;">&#183; ${mangaArry[i].latestScan}</span>
                 </div>
                 <div class="gray">
@@ -152,7 +155,13 @@ function generateResultsHTML(mangaArry, indxStart, amount) {
            </div>
         `)
     }
-    document.getElementById('resultsContainer').innerHTML = htmlGenerated.join('');
+
+    if (replaceAll) {
+        document.getElementById('resultsContainer').innerHTML = htmlGenerated.join('');
+    } else {
+        //console.log(htmlGenerated);
+        document.getElementById('resultsContainer').innerHTML += htmlGenerated.join('');
+    }
 }
 // genreates html for all the avaible filters for user to select
 function generateFiltersHTML() {
@@ -160,21 +169,23 @@ function generateFiltersHTML() {
 
     for (var i = 0; i < availableFilters.length; i++) {
         htmlGenerated.push(`
-            <div class="filterContainer">
+            <div class="filterContainer" filterHeadName="${availableFilters[i].name}">
                 <div class="filterHead" onclick="toggleListVisibility(this)" >
                     ${availableFilters[i].name}
                     <i class="fas fa-caret-down"></i>
                 </div>
                 <div class="filterItems hidden">
-                    ${availableFilters[i].filters.map((filter, indx) => `<div onclick="filterSelection(this)" class="item">${filter}${indx == 0 ? `<i class="fas fa-check"></i>` : ''}</div>`).join('')}
+                    ${availableFilters[i].filters.map((filter, indx) => `<div onclick="filterSelection(this)" filterItemName="${filter}" class="item">${filter}${indx == 0 ? `<i class="fas fa-check"></i>` : ''}</div>`).join('')}
                 </div>
             </div>
         `)
     }
     document.getElementById('filters').innerHTML = htmlGenerated.join('');
 }
-// update filters applied when clicked on the  
+// update filters applied when clicked on the
+// init means that it is the first time the page is loaded
 function updateFilters(type, obj) {
+    //console.log(type, obj, init);
     if (type != 'Genres') {
         filtersApplied[type] = obj.innerText;
     } else {
@@ -197,12 +208,11 @@ function updateFilters(type, obj) {
             filtersApplied.GenresNot.splice(filtersApplied.GenresNot.indexOf(obj.innerText), 1);
         }
     }
-    console.log(filtersApplied);
     filterResultsforSearch();
 }
 // toggle filters selection
-function filterSelection(obj) {
-    console.log(obj)
+function filterSelection(obj, init = false) {
+    //console.log(obj, init);
     var filterHead = obj.parentElement.parentElement.children[0];
 
     if (filterHead.innerText != 'Genres' || obj.innerText == 'Any') {
@@ -226,8 +236,9 @@ function filterSelection(obj) {
             obj.parentElement.children[0].innerHTML += `<i class="fas fa-check"></i>`;
         }
     }
-
-    updateFilters(filterHead.innerText, obj);
+    if (init == false) {
+        updateFilters(filterHead.innerText, obj);
+    }
 }
 // handle value change of three inputs on top of page
 function handleChangeInValue(obj) {
@@ -267,14 +278,14 @@ function sortMangaResults() {
         // sort by popularity all time
         if (sortBy == "Most Popular (All Time)") {
             searchFilteredResults.sort((a, b) => {
-               return b.v - a.v;
+                return b.v - a.v;
             })
         }
         // sort by populatiorny but monthly
         if (sortBy == "Most Popular (Monthly)") {
             searchFilteredResults.sort((a, b) => {
                 return b.vm - a.vm;
-            } )
+            })
         }
         // sort by least popular
         if (sortBy === 'Least Popular') {
@@ -396,6 +407,7 @@ function filterResultsforSearch() {
             }
         }
     }
+    updateURL();
     generateResultsHTML(searchFilteredResults, 0, 8);
 }
 // run this fuction when all setup is done
@@ -405,8 +417,10 @@ function initiate() {
     document.getElementById('main').classList.remove('none');
     // show the number of manga
     document.getElementById('amountOfManga').innerText = '(' + directory.length.toLocaleString("en-us") + ')';
-    generateResultsHTML(directory, 0, 30);
-    generateFiltersHTML()
+    generateFiltersHTML();
+    parseUrl();
+    setFiltersViewFromUrl();
+    filterResultsforSearch();
 }
 // update filters on click of the manga panels
 function addFiltersOnClick(obj) {
@@ -443,4 +457,102 @@ function addFiltersOnClick(obj) {
     })
 }
 
+function updateURL() {
+    // got through all the filtersApplied and add them to the url
+    var url = window.location.href.split('?')[0] + '?';
+    var keys = Object.keys(filtersApplied);
+
+    for (var i = 0; i < keys.length; i++) {
+        var key = keys[i];
+        if (key == 'Genres' || key == 'GenresNot') {
+            url += key + '=' + filtersApplied[key].join(',') + '&';
+        } else {
+            url += key + '=' + filtersApplied[key] + '&';
+        }
+    }
+    window.history.pushState("", "", url);
+}
+
+function parseUrl() {
+    // parses the url and gets the filtersApplied
+    let url = window.location.href;
+    // if nothing then just return
+    if (url.includes('?') == false) {
+        generateResultsHTML(directory, 0, 30);
+        return;
+    }
+
+    url = url.split('?')[1];
+    var filters = url.split('&');
+
+    for (var i = 0; i < filters.length; i++) {
+        let filter = decodeURIComponent(filters[i]);
+        let key = filter.split('=')[0];
+        let value = filter.split('=')[1];
+
+        if (key == 'Genres' || key == 'GenresNot') {
+            var allGenres = value.split(',');
+
+            for (var j = 0; j < allGenres.length; j++) {
+                if (allGenres[j] != '') {
+                    filtersApplied[key].push(allGenres[j]);
+                }
+            }
+        } else {
+            if (key != "" && key != undefined && key != null){
+                console.log(key);
+                filtersApplied[key] = value;
+            }
+        }
+    }
+
+    console.log(filtersApplied);
+}
+
+function setFiltersViewFromUrl() {
+    var filters = Object.keys(filtersApplied);
+
+    for (var i = 0; i < filters.length; i++) {
+        let filter = filters[i];
+
+        if (filter == "Series Name" || filter == "Author" || filter == "Year") {
+            document.querySelectorAll('.containInputs input')[i].value = filtersApplied[filter];
+            continue;
+        }
+
+        if (filter == "Genres" || filter == "GenresNot") {
+            for (var j = 0; j < filtersApplied[filter].length; j++) {
+                var obj = document.querySelector(`[filterheadname="Genres"] [filteritemname="${filtersApplied[filter][j]}"]`);
+                filterSelection(obj, true);
+                // if genres not, then we just call the fucntion again to mark with a cross
+                if (filter == "GenresNot"){
+                    var obj = document.querySelector(`[filterheadname="Genres"] [filteritemname="${filtersApplied[filter][j]}"]`);
+                    filterSelection(obj, true);
+                }
+            }
+            
+            continue;
+        }
+
+        var obj = document.querySelector(`[filterheadname="${filter}"] [filteritemname="${filtersApplied[filter]}"]`);
+        // if the filter exits then select it and make a checkmark there
+        if (obj != null) {
+            filterSelection(obj, true);
+        }
+
+    }
+
+}
+
+function loadMoreManga() {
+    var mangaGeneratedAlready = document.querySelectorAll('#resultsContainer .result_item').length;
+    // meaning we have no filters applied hence no filtere manga so pass in directory
+    if (searchFilteredResults.length == 0) {
+        generateResultsHTML(directory, mangaGeneratedAlready, mangaGeneratedAlready + 10, false);
+    } else {
+        generateResultsHTML(searchFilteredResults, mangaGeneratedAlready, mangaGeneratedAlready + 10, false);
+    }
+}
+
+jQuery(document).ready(function (n) { window.history && window.history.pushState && n(window).on("popstate", function () { location.reload() }) });
 getDirectoryFromStorage();

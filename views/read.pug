@@ -15,7 +15,7 @@ html(lang="en")
     body(style="margin:0px")
         include includes/thin_navbar.pug
         div#read_options
-            a.option(href="#",style="flex:0 0 33.333333%;max-width:33.333333%;")
+            a.option(href='/manga/manga/' + currentChapter.indexName ,style="flex:0 0 33.333333%;max-width:33.333333%;")
                 i(class="fas fa-book") &nbsp;
                 span !{seriesName}
             a.option

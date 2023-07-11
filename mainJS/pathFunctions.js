@@ -54,6 +54,9 @@ async function mangaHtml(req, res) {
 
     resp.susManga = susManga;
 
+    console.log(resp.Info);
+    // add search links
+    
     return res.render('manga', resp)
 }
 

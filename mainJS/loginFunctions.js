@@ -53,7 +53,7 @@ async function registerUser(req, res) {
     var userInDatabase = await findUser(user.name, user.email);
 
     if (userInDatabase.length != 0) {
-        return res.send('exits')
+        return res.status(400).send('User already exists with that name or email !!')
     }
     // hash the password so someone with access to the file can't steal it
     const hashedPassword = await bcrypt.hash(user.password, 10)

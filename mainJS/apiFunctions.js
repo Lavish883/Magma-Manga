@@ -116,19 +116,26 @@ async function getDirectoryData(req, res) {
 }
 // recomended calculations
 async function getRecommendedManga(req, res) {
-    let headers = headersGenerator.getHeaders();
-
     let manga1 = req.query.manga1;
     let manga2 = req.query.manga2;
 
-    let manga1Genres = await mainFunctions.getGenres(manga1, headers);
-    let manga2Genres = await mainFunctions.getGenres(manga2, headers);
+    let similarManga = await mainFunctions.getSimilarManga(manga1, manga2)
+    
+    // get rid of duplicates
+    for (var i = similarManga.length - 1; i >= 0; i--) {
+        for (var j = i - 1; j >= 0; j--) {
+            if (similarManga[i].i === similarManga[j].i) {
+                similarManga.splice(i, 1);
+                break;
+            }
+        }
+    }
 
-    let allGenres = [...new Set([...manga1Genres, ...manga2Genres])]
-
-    let similarManga = await mainFunctions.getSimilarManga(allGenres)
-
-    return res.send(mainFunctions.fixRecdArry(similarManga))
+    let fixedManga = mainFunctions.fixRecdArry(similarManga);
+    // shuffle array
+    fixedManga = fixedManga.sort(() => Math.random() - 0.5);
+    fixedManga.length = 12;
+    return res.send(fixedManga)
 }
 // get search data
 async function getSearchData(req, res) {

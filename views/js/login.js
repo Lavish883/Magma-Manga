@@ -15,85 +15,12 @@ function toggleLoginModal() {
 }
 // toggle bewteen register, login, and forgot password
 function changeSystem(id) {
-    if (id === 'Register') {
-        document.getElementById('loginBackground').innerHTML = `
-                        <div class="" style="display:flex;flex-direction:column;">
-                    <div id="headingForLog" class="headerofL">
-                        <div><i class="fas fa-user-plus"></i> New Account</div>
-                        <div onclick="toggleLoginModal()"><i class="fas fa-times"></i></div>
-                    </div>
-                    <div id="LoginError" class="error"></div>
-                    <div class="contain_input">
-                        <label for="userName">Username:</label>
-                        <input spellcheck="false" autocomplete="off" id="userName" name="userName" />
-
-                    <label id="userEmailLabel" for="userEmail">Email:</label>
-                    <input type="email" style="margin:5px 0px" id="userEmail" name="userEmail" />
-
-                    <label for="userPassword">Password:</label>
-                        <input type="password" style="margin:5px 0px" id="userPassword" name="userPassword" /><i class="far fa-eye-slash"></i>
-
-                    </div>
-                    <div class="contain_switch_buttons">
-                        <a onclick="changeSystem('Login')" id="changeRegister">&middot; Login</a>
-                        <a onclick="changeSystem('Forgot')" id="changePassword">&nbsp;&nbsp;&middot; Forgot Password</a>
-                    </div>
-                    <div class="contain_close_button">
-                        <a onclick="toggleLoginModal()">Close</a>
-                        <a onclick="registerAccount()" class="register">Register</a>
-                    </div>
-                </div>
-                    `
-    } else if (id === 'Login') {
-        document.getElementById('loginBackground').innerHTML = `
-                        <div class="" style="display:flex;flex-direction:column;">
-                    <div id="headingForLog" class="headerofL">
-                        <div><i class="fas fa-sign-in-alt"></i> Login</div>
-                        <div onclick="toggleLoginModal()"><i class="fas fa-times"></i></div>
-                    </div>
-                    <div id="LoginError" class="error"></div>
-                    <div class="contain_input">
-                        <label for="userName">Username/Email:</label>
-                        <input autocomplete="off" spellcheck="false" id="userName" name="userName" />
-                        <label for="userPassword">Password:</label>
-                        <input type="password" style="margin:5px 0px" id="userPassword" name="userPassword" /><i class="far fa-eye-slash"></i>
-
-                    </div>
-                    <div class="contain_switch_buttons">
-                        <a onclick="changeSystem('Register')">&middot; Register</a>
-                        <a onclick="changeSystem('Forgot')">&nbsp;&nbsp;&middot; Forgot Password</a>
-                    </div>
-                    <div class="contain_close_button">
-                        <a onclick="toggleLoginModal()">Close</a>
-                        <a onclick="loginToAccount()" class="login">Login</a>
-                    </div>
-                </div>
-                    `
-    } else if (id === 'Forgot') {
-        document.getElementById('loginBackground').innerHTML = `
-                        <div class="" style="display:flex;flex-direction:column;">
-                    <div id="headingForLog" class="headerofL">
-                        <div><i class="fas fa-key"></i> Reset Password</div>
-                        <div onclick="toggleLoginModal()"><i class="fas fa-times"></i></div>
-                    </div>
-                    <div id="LoginError" class="error"></div>
-                    <div class="contain_input">
-
-                    <label id="userEmailLabel" for="userEmail">Email:</label>
-                    <input type="email" style="margin:5px 0px" id="userEmail" name="userEmail" />
-
-                    </div>
-                    <div class="contain_switch_buttons">
-                        <a onclick="changeSystem('Register')">&middot; Register</a>
-                        <a onclick="changeSystem('Login')">&nbsp;&nbsp;&middot; Login</a>
-                    </div>
-                    <div class="contain_close_button">
-                        <a onclick="toggleLoginModal()">Close</a>
-                        <a onclick="processLogin()" class="forgot">Reset Password</a>
-                    </div>
-                </div>
-                    `
+    var idArry = ['login', 'register', 'forgotPassword'];
+    for (var i = 0; i < idArry.length; i++) {
+        document.getElementById(idArry[i]).style.display = 'none';
     }
+
+    document.getElementById(id).style.display = 'flex';
 }
 // activate dropdown on click
 function activateDropdown(obj) {
@@ -112,9 +39,21 @@ function togglePasswordVisbilty(obj) {
     }
 }
 // login 
-async function loginToAccount() {
-    let userName = document.querySelector('[name=userName]')
-    let password = document.querySelector('[name=userPassword]')
+async function loginToAccount(obj) {
+    let userName = document.querySelector('#login [name=userName]')
+    let password = document.querySelector('#login [name=userPassword]')
+
+    // now show loading 
+    obj.innerHTML += '&nbsp;<i class="fas fa-spinner fa-spin"></i>'
+    obj.setAttribute("onclick", "")
+    obj.style.cursor = 'not-allowed';
+    obj.style.backgroundColor = "#80bdff";
+
+    if (userName.value == '' || password.value == '') {
+        document.querySelector('#login .errorBox').innerText = 'Please fill out all fields before submitting!!'
+        document.querySelector('#login .errorBox').style.display = 'block';
+        return;
+    }
 
     const url = window.location.origin + '/api/login/login';
     const settings = {
@@ -131,22 +70,43 @@ async function loginToAccount() {
     let loginRequest = await fetch(url, settings);
 
     if (loginRequest.status == 401) {
-        alert('wrong username or password')
+        document.querySelector('#login .errorBox').innerText = 'Wrong username or password!!'
+        document.querySelector('#login .errorBox').style.display = 'block';
+
+        // now show loading 
+        obj.innerHTML = 'Login'
+        obj.setAttribute("onclick", "loginToAccount(this)")
+        obj.style = '';
+        return;
     }
+
     let resp = await loginRequest.json();
 
     window.localStorage.setItem('accessToken', resp.accessToken);
     window.localStorage.setItem('refreshToken', resp.refreshToken);
 
     await getUserInfo()
-    alert('logged in')
     window.location.reload();
 }
 // register an account
-async function registerAccount() {
-    let userName = document.querySelector('[name=userName]')
-    let password = document.querySelector('[name=userPassword]')
-    let email = document.querySelector('[name=userEmail]')
+async function registerAccount(obj) {
+    let userName = document.querySelector('#register [name=userName]')
+    let password = document.querySelector('#register [name=userPassword]')
+    let email = document.querySelector('#register [name=userEmail]')
+
+    // now show loading 
+    obj.innerHTML += '&nbsp;<i class="fas fa-spinner fa-spin"></i>'
+    obj.setAttribute("onclick", "")
+    obj.style.cursor = 'not-allowed';
+    obj.style.backgroundColor = "#28a745b0";
+
+
+    if (userName.value == '' || password.value == '' || email.value == '') {
+        document.querySelector('#register .errorBox').classList.remove('successBox');
+        document.querySelector('#register .errorBox').innerText = 'Please fill out all fields before submitting!!'
+        document.querySelector('#register .errorBox').style.display = 'block';
+        return;
+    }
 
     const url = window.location.origin + '/api/login/register';
     const settings = {
@@ -166,9 +126,38 @@ async function registerAccount() {
     let registerRequest = await fetch(url, settings);
     let resp = await registerRequest.text();
 
-    alert(resp)
+    obj.innerHTML = 'Register'
+    obj.setAttribute("onclick", "registerAccount(this)")
+    obj.style = '';
+
+    if (registerRequest.status != 200) {
+        document.querySelector('#register .errorBox').classList.remove('successBox');
+        document.querySelector('#register .errorBox').innerText = resp
+        document.querySelector('#register .errorBox').style.display = 'block';
+        return;
+    }
+
+    document.querySelector('#register .errorBox').innerText = resp
+    document.querySelector('#register .errorBox').classList.add('successBox');
 
 }
+// forgot password
+async function forgotPassword(obj) {
+    let email = document.querySelector('#forgotPassword [name=userEmail]')
+
+    // now show loading 
+    obj.innerHTML += '&nbsp;<i class="fas fa-spinner fa-spin"></i>'
+    obj.setAttribute("onclick", "")
+    obj.style.cursor = 'not-allowed';
+    obj.style.backgroundColor = "#dc3545bd";
+
+    if (email.value == '') {
+        document.querySelector('#forgotPassword .errorBox').innerText = 'Please fill out all fields before submitting!!'
+        document.querySelector('#forgotPassword .errorBox').style.display = 'block';
+        return;
+    }
+}
+
 // get new acces token when it is expired
 async function getNewAccesToken() {
     const url = window.location.origin + '/api/login/newAccessToken';
@@ -266,6 +255,7 @@ async function removeBookmark(bookmark) {
     let resp = await removeBookmarkRequest.text();
     console.log(resp);
 }
+
 
 // get the updated info from the cloud when u go to the bookmarks
 if (window.location.href.includes('bookmarks')) {

@@ -48,6 +48,7 @@
     .contain_close_button a {
         padding: 8px 10px;
         border-radius: 4px;
+        color: black;
         border: solid 1px #6c757d;
         cursor: pointer;
         transition: background-color 200ms ease-in;
@@ -107,7 +108,12 @@
 
     .contain_switch_buttons a {
         cursor: pointer;
+        color: #777777;
     }
+
+        .contain_switch_buttons a:hover {
+            color: #000000;
+        }
 
 .contain_input input {
     width: 100%;
@@ -177,6 +183,33 @@
     bottom: 0;
     left: 0;
     z-index: 10;
+    transition: ease-in 0.5s;
+}
+
+#loginBackground {
+    transition: ease-in 0.5s;
+}
+.errorBox {
+    background-color: #fdf6f6;
+    color: #c20707;
+    margin: 10px 20px;
+    text-align: center;
+    border: solid #de7575 2px;
+    border-radius: 4px;
+    display: none;
+    padding: 5px 0px;
+    margin-bottom: 0px;
+}
+
+.successBox {
+    background-color: #f6fdf6;
+    color: #97c207;
+    border: solid #b3de75 2px;
+}
+
+#login, #register , #forgotPassword {
+    display:none;
+    flex-direction:column;
 }
 
 @media only screen and (max-width: 500px) {

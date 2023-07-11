@@ -6,17 +6,17 @@ header(style='position:fixed;width:100%;z-index:1;')
       a(href='/manga/' title='HomePage')
         img(src='/images/navbar.brand.png' height='44' style='margin-top:5px')
     div(style='display:flex; flex-direction:row;align-items:center;width:100%;')
-      a.small_nav(href='search.html' title='Search')
+      a.small_nav(href='/manga/search' title='Search')
         i.fas.fa-search
         span(style='font-size:18px;') &nbsp;Search
-      a#random.small_nav(href='index.html' title='Random Manga')
+      a#randomManga.small_nav(href='#' title='Random Manga')
         i.fas.fa-random
         span(style='font-size:18px;') &nbsp;Random
       a#Darkmode.small_nav(onclick='handleDarkModeToggle()' style='cursor:pointer;' title='Dark Mode Toggle')
         i.fas.fa-sun
         span &nbsp;Dark Mode off
       div(style='margin-left:auto;position:relative;')
-        a#Login_nav.small_nav(style='cursor:pointer;height:100%;box-sizing:border-box')
+        a#Login_nav.small_nav(onclick="toggleLoginModal()", style='cursor:pointer;height:100%;box-sizing:border-box')
           i.fas.fa-sign-in-alt 
           span &nbsp;Login
         #dropdown_box.dropdown_box
@@ -31,4 +31,6 @@ div#scroll_to_top
 div(style='height:50px;')
 script 
     include /js/subscribe.js
+script 
+    include /js/thinNavbar.js
 script(src="//cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js")
