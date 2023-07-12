@@ -1,0 +1,28 @@
+doctype html 
+html(lang="en")
+    head
+        //| !{p1}
+        title Read Manga
+        meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        meta(charset="UTF-8")
+        meta(name="description",content="Offline page") 
+        meta(name="theme-color" content="#000000")
+        link(rel="manifest" href="/pwa.webmanifest")
+        style 
+            include /css/navbar.css
+        style
+            include /css/style.css
+    body 
+        include includes/navbar.pug
+        div#main
+            div#offline
+                div.header
+                    div
+                        i.fas.fa-exclamation-triangle
+                        | &nbsp;Offline
+                div.errorBox
+                    | You are offline. Please check your internet connection.
+                div.containButtons
+                    a#retryButton(href="/") Retry
+        script
+            include /js/index.js

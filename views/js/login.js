@@ -52,6 +52,11 @@ async function loginToAccount(obj) {
     if (userName.value == '' || password.value == '') {
         document.querySelector('#login .errorBox').innerText = 'Please fill out all fields before submitting!!'
         document.querySelector('#login .errorBox').style.display = 'block';
+
+        // now show loading 
+        obj.innerHTML = 'Login'
+        obj.setAttribute("onclick", "loginToAccount(this)")
+        obj.style = '';
         return;
     }
 
@@ -105,6 +110,10 @@ async function registerAccount(obj) {
         document.querySelector('#register .errorBox').classList.remove('successBox');
         document.querySelector('#register .errorBox').innerText = 'Please fill out all fields before submitting!!'
         document.querySelector('#register .errorBox').style.display = 'block';
+
+        obj.innerHTML = 'Register'
+        obj.setAttribute("onclick", "registerAccount(this)")
+        obj.style = '';        
         return;
     }
 
@@ -139,7 +148,7 @@ async function registerAccount(obj) {
 
     document.querySelector('#register .errorBox').innerText = resp
     document.querySelector('#register .errorBox').classList.add('successBox');
-
+    document.querySelector('#register .errorBox').style.display = 'block';
 }
 // forgot password
 async function forgotPassword(obj) {
@@ -154,8 +163,40 @@ async function forgotPassword(obj) {
     if (email.value == '') {
         document.querySelector('#forgotPassword .errorBox').innerText = 'Please fill out all fields before submitting!!'
         document.querySelector('#forgotPassword .errorBox').style.display = 'block';
+        
+        obj.innerHTML = 'Reset Password';
+        obj.setAttribute("onclick", "forgotPassword(this)")
+        obj.style = '';
         return;
     }
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "email": email.value,
+        })
+    }
+
+    let forgotPasswordRequest = await fetch('/api/login/forgotPassword', options);
+    let resp = await forgotPasswordRequest.text();
+
+    obj.innerHTML = 'Reset Password';
+    obj.setAttribute("onclick", "forgotPassword(this)")
+    obj.style = '';
+
+    if (forgotPasswordRequest.status != 200) {
+        document.querySelector('#register .errorBox').classList.remove('successBox');
+        document.querySelector('#forgotPassword .errorBox').innerText = resp
+        document.querySelector('#forgotPassword .errorBox').style.display = 'block';
+        return;
+    }
+
+    document.querySelector('#forgotPassword .errorBox').innerText = resp
+    document.querySelector('#forgotPassword .errorBox').classList.add('successBox');
+    document.querySelector('#forgotPassword .errorBox').style.display = 'block';
 }
 
 // get new acces token when it is expired

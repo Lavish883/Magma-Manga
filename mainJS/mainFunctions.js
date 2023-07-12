@@ -209,18 +209,13 @@ async function getSimilarManga(manga1, manga2) {
         }
 
         let FilteredResults = genresComparer(DirectoryBackup, allGenres.slice(i, sliceTo));
-        console.log(FilteredResults)
+        //console.log(FilteredResults)
+        
         allManaga.push(...FilteredResults)
         i += 3;
     }
-    
-    // Get all the managa that includes all three of those genres 
-
-    //console.log(allGenres.slice(0, 3))
-    console.log(allManaga.length)
 
     if (allManaga.length != 0) {
-        // shuffle the array
         return allManaga;
     }
 
@@ -229,7 +224,7 @@ async function getSimilarManga(manga1, manga2) {
     })
 
     
-    console.log('no genres found, returning top 10')
+    console.log('no genres found, returning top 12')
 
     DirectoryBackup.length = 12;
     return DirectoryBackup

@@ -84,6 +84,10 @@ app.get('/manga/recentChapters', pathFunctions.recentChaptersHtml)
 app.get('/manga/download/:chapter', async (req, res) => {
     res.send(req.params.chapter)
 })
+// forgot password.html
+app.get('/manga/forgotPassword/:token', pathFunctions.forgotPasswordHtml);
+// offline.html
+app.get('/manga/offline', pathFunctions.offlineHtml);
 
 /* Api Routes are bwlow */
 
@@ -119,6 +123,10 @@ app.post('/api/login/newAccessToken', loginFunctions.getNewToken);
 app.delete('/api/login/logout', loginFunctions.logOutUser);
 // remove a certain manga from the users bookmarks
 app.delete('/api/login/removeBookmark', loginFunctions.removeBookmark);
+// amke forgot password linka and send to the email
+app.post('/api/login/forgotPassword', loginFunctions.makeForgotPasswordLink);
+// change the password of the user
+app.post('/api/login/changePassword', loginFunctions.changePassword);
 
 /* Notifactions functions routes are below */
 app.post('/notification/subscribe', notificationFunctions.subscribe);

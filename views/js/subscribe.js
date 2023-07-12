@@ -1,12 +1,18 @@
 document.addEventListener('DOMContentLoaded', init, false);
 
-function init() {
+async function init() {
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then((reg) => {
-        console.log('Service worker registered -->', reg);
-      }, (err) => {
-        console.error('Service worker not registered -->', err);
-      });
+    try {
+      var status = await navigator.serviceWorker.controller;
+      
+      if (status  == null) {
+        var reg = await navigator.serviceWorker.register('/sw.js');
+        console.log('Service worker registered! 😎', reg);
+      } else {
+        console.log('Service worker already registered 😅');
+      }
+    } catch (error){
+      console.error('Error: ', error)
+    }
   }
 }

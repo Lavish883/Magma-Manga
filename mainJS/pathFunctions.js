@@ -3,6 +3,7 @@ const serverName = process.env['SERVERNAME'] || 'http://localhost:8080/';
 var isPupServerLoaded = true;
 const fs = require('fs');
 const susManga = JSON.parse(fs.readFileSync('./json/susManga.json'));
+const isTokenValid = require('./loginFunctions').isTokenValid;
 
 async function indexHtml(req, res) {
 
@@ -82,8 +83,21 @@ async function searchHtml(req, res) {
     return res.render('search')
 }
 
+async function forgotPasswordHtml(req, res) {
+
+    let token = await isTokenValid(req.params.token, process.env.FORGOT_PASSWORD_TOKEN_SECERT);
+    if (token == false) {
+        return res.send('Link has expired !!');
+    }
+    return res.render('forgotPassword', { 'token': req.params.token })
+}
+
 async function recentChaptersHtml(req, res) {
     return res.render('recentChapters')
+}
+
+async function offlineHtml(req, res) {
+    return res.render('offline')
 }
 
 module.exports = {
@@ -93,5 +107,7 @@ module.exports = {
     mangaHtml,
     directoryHtml,
     searchHtml,
-    recentChaptersHtml
+    recentChaptersHtml,
+    forgotPasswordHtml,
+    offlineHtml
 }

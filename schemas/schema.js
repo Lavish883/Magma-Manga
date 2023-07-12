@@ -41,6 +41,17 @@ const refreshTokenSchema = new Schema({
     "token": {
         type: String,
         required: true
+    },
+    "email": {
+        type: String,
+        required: true
+    }
+})
+
+const forgotPasswordSchema = new Schema({
+    "token": {
+        type: String,
+        required: true
     }
 })
 
@@ -90,6 +101,7 @@ const USERS = mongoose.model('Users', userSchema);
 const refreshTokens = mongoose.model('refreshTokens', refreshTokenSchema);
 const subscription = mongoose.model('notificationSubs', subscriptionSchema);
 const subbedManga = mongoose.model('subbedManga', subbedMangaSchema);
+const forgotPasswordTokens = mongoose.model('forgotPasswordTokens', forgotPasswordSchema);
 
 const CommentModels = mongoose.model('CommentModels', comments);
 const commentIdModals = mongoose.model('commentId', commentId);
@@ -98,5 +110,6 @@ module.exports = {
     USERS,
     refreshTokens,
     subscription,
-    subbedManga
+    subbedManga,
+    forgotPasswordTokens
 }

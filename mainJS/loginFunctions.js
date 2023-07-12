@@ -1,8 +1,7 @@
 const bcrypt = require('bcrypt') // hash passwords beforing put in database
 const jwt = require('jsonwebtoken'); // json web tokens using in authentaction
-const fs = require("fs")
 const schemas = require('../schemas/schema'); // schemas
-
+const mailFunctions = require('./mailFunctions'); // mail functions
 
 // check if an user already exsits with that name or email
 async function findUser(userName, userEmail) {
@@ -92,7 +91,7 @@ async function loginUser(req, res) {
         let accessToken = generateAccesToken(user[0].name);
         let refreshToken = generateRefreshToken(user[0].name);
         // add that refresh token to the server
-        var toServerRefreshToken = new schemas.refreshTokens({ 'token': refreshToken });
+        var toServerRefreshToken = new schemas.refreshTokens({ 'token': refreshToken, 'email': user[0].email });
         await toServerRefreshToken.save();
         //console.log(accessToken);
         return res.json({ accessToken: accessToken, refreshToken: refreshToken });
@@ -179,7 +178,6 @@ async function logOutUser(req, res) {
         console.log(err);
         return res.status(500).send(err);
     }
-    fs.writeFileSync('refreshTokens.json', JSON.stringify(allRefreshTokens));
 }
 
 // remove the bookmark from the server
@@ -203,7 +201,64 @@ async function removeBookmark(req, res) {
     await userCloud.save();
 }
 
+async function makeForgotPasswordLink(req, res) {
+    let email = req.body.email;
+    let user = await schemas.USERS.find({ 'email': email });
 
+    if (user.length == 0) {
+        return res.status(401).send('No user with that email!!');
+    }
+
+    user = user[0];
+    userArry = {'name': user.name, 'email': user.email };
+
+    let token = jwt.sign(userArry, process.env.FORGOT_PASSWORD_TOKEN_SECERT, { expiresIn: '15m' });
+    console.log(token);
+
+    let url = process.env.SERVER_LINK + 'manga/forgotPassword/' + token;
+    
+    var sentEmailResponse = await mailFunctions.sendMail(email, 'Reset Password', 'Click the link to reset your password: ' + url + '\n\nIf you did not request this email, please ignore it. Do not share this link with anyone.');
+    // add the token to the database so we can check if its valid later
+    await schemas.forgotPasswordTokens.create({ 'token': token });
+
+    if (!sentEmailResponse) {
+        return res.status(500).send('Error sending email!!');
+    }
+
+    return res.send('Email sent to ' + email + ' with link to change password !!');
+}
+
+async function changePassword(req, res) {
+    let token = req.body.token;
+    let newPassword = req.body.newPassword;
+    let tokenValid = isTokenValid(token, process.env.FORGOT_PASSWORD_TOKEN_SECERT);
+    let tokenInDatabase = await schemas.forgotPasswordTokens.findOne({ 'token': token });
+
+    if (tokenValid == false || tokenInDatabase == null) {
+        return res.status(401).send('Forgot password link expired!!');
+    }
+    
+
+    let user = await schemas.USERS.find({ 'email': tokenValid.email });
+
+    if (user.length == 0) {
+        return res.status(401).send('No user with that email!!');
+    }
+
+    user = user[0];
+    // save the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
+    user.password = hashedPassword;
+    await user.save();
+
+    // delete the token from the database so it can't be used again
+    await schemas.forgotPasswordTokens.findOneAndRemove({ 'token': token });
+
+    // remove all the refresh tokens for the user so they have to log in again
+    await schemas.refreshTokens.deleteMany({ 'email': user.email });
+
+    return res.status(200).send('done');
+}
 
 module.exports = {
     allUsers,
@@ -213,5 +268,7 @@ module.exports = {
     getNewToken,
     logOutUser,
     isTokenValid,
-    removeBookmark
+    removeBookmark,
+    makeForgotPasswordLink,
+    changePassword
 }

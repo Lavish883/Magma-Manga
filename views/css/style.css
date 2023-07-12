@@ -399,6 +399,43 @@ img {
     font-size: 20px;
 }
 
+@media only screen and (max-width:1440px) {
+    #main {
+        padding:0px 150px;
+    }
+}
+
+@media only screen and (max-width:1325px) {
+    #main {
+        padding:0px 100px;
+    }
+}
+
+@media only screen and (max-width:1220px) {
+    #main {
+        padding:0px 50px;
+    }
+}
+
+@media only screen and (max-width:1150px) {
+    #main {
+        padding:0px 25px;
+    }
+}
+
+@media only screen and (max-width: 1070px) {
+    #imgs {
+        padding: 10px;
+    }
+
+    [alt="nagataro"] {
+        display: none;
+    }
+
+    .admin_card {
+        width: 100%;
+    }
+}
 
 @media only screen and (max-width: 900px) {
     #imgs {
@@ -411,6 +448,7 @@ img {
         padding: 10px;
     }
 }
+
 
 
 @media only screen and (max-width: 600px) {
@@ -489,5 +527,11 @@ img {
     .BookMark_Container {
         max-width: 155px;
         max-height: 204.6px;
+    }
+}
+
+@media only screen and (max-width: 780px){
+    #main {
+        padding: 0px 20px;
     }
 }
