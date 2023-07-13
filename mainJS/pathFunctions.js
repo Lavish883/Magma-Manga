@@ -54,8 +54,6 @@ async function mangaHtml(req, res) {
     let resp = await fetchAllData.json();
 
     resp.susManga = susManga;
-
-    console.log(resp.Info);
     // add search links
     
     return res.render('manga', resp)
@@ -100,6 +98,10 @@ async function offlineHtml(req, res) {
     return res.render('offline')
 }
 
+async function offlineReadHtml(req, res) {
+    return res.render('readOffline')
+}
+
 module.exports = {
     indexHtml,
     readHtml,
@@ -109,5 +111,6 @@ module.exports = {
     searchHtml,
     recentChaptersHtml,
     forgotPasswordHtml,
-    offlineHtml
+    offlineHtml,
+    offlineReadHtml
 }

@@ -54,7 +54,7 @@ function calcChapter(Chapter) {
 
 // comments go here
 function calcChapterUrl(ChapterString) {
-    console.log('str:' + ChapterString);
+    //console.log('str:' + ChapterString);
     var Index = "";
     var IndexString = ChapterString.substring(0, 1);
     if (IndexString != 1) {
@@ -322,7 +322,7 @@ function chapterImgURLS(currentChapter, imageDirectoryURL, indexName) {
 
 function fixRecdArry(arry) {
     for (var i = 0; i < arry.length; i++) {
-        console.log(arry[i].l, arry[i].i, i)
+        //console.log(arry[i].l, arry[i].i, i)
         arry[i].chapterLink = arry[i].i + calcChapterUrl(arry[i].l)
         arry[i].l = calcChapter(arry[i].l)
     }

@@ -337,6 +337,30 @@ img {
     margin-left:5px;
     color:inherit;
 }
+#Chapters_List li a .downloadIcon {
+    margin-right: 5px;
+}
+
+#Chapters_List li a .downloadIcon i{
+    float: right;
+    font-size: 20px;
+    margin-right: 15px;
+    transition: ease-in 0.2s;
+    color: #007bff;
+}
+
+#Chapters_List li a .downloadIcon i:hover{
+    transform: scale(1.25);
+}
+
+#Chapters_List li a .downloadIcon .fa-times{
+    color: red;
+}
+
+#Chapters_List li a .downloadIcon .fa-check{
+    color: green;
+}
+
 #Chapters_List li a span{
     float:right;
     color:gray;

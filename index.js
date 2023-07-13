@@ -88,7 +88,13 @@ app.get('/manga/download/:chapter', async (req, res) => {
 app.get('/manga/forgotPassword/:token', pathFunctions.forgotPasswordHtml);
 // offline.html
 app.get('/manga/offline', pathFunctions.offlineHtml);
+app.get('/manga/offline/read', pathFunctions.offlineReadHtml);
 
+// given a image url return the image so it can be downloaded
+app.get('/api/offline/manga/downloadImage', apiFunctions.downloadImage)
+app.get('/api/offline/mangaName?', apiFunctions.getMangaPage)
+//req.query.chapter ==> needed
+app.get('/api/offline/getMangaChapterPageOffline', apiFunctions.getMangaChapterPageOffline)
 /* Api Routes are bwlow */
 
 // quick search data

@@ -24,7 +24,7 @@ async function getMainPageStuff(req, res) {
     let fetchAll = await fetch(breakCloudFlare, headers);
     let resp = await fetchAll.text();
 
-    console.log(resp)
+    //console.log(resp)
 
     var allData = {
         'adminRecd': mainFunctions.scrapeAdminRecd(resp),
@@ -92,6 +92,23 @@ async function getMangaChapterPage(req, res) {
 
     return res.send(allData)
 }
+// get current chapter info for offline reading
+async function getMangaChapterPageOffline(req, res) {
+    // Fetch page that we need to scrape
+    let fetchManga = await fetch(breakCloudFlare + "/read-online/" + req.query.chapter)
+    let resp = await fetchManga.text();
+ 
+    var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0], req.query.chapter.split('-chapter-')[0]);
+
+    var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
+    var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
+
+    currentChapter.seriesName = seriesName;
+    currentChapter.indexName = indexName;
+
+    return res.send(currentChapter)
+}
+
 // quick search Data
 async function getQuickSearchData(req, res) {
     let headers = headersGenerator.getHeaders();
@@ -153,6 +170,18 @@ async function getSearchData(req, res) {
 
 
 }
+
+async function downloadImage(req, res) {
+    const url = req.query.url;
+    if (url == undefined || url == "") {
+        return res.send('url not given');
+    }
+    const image = await fetch(url);
+    const buffer = await image.buffer();
+    res.set('Content-Type', 'image/png');
+    return res.send(buffer);
+}
+
 module.exports = {
     getMainPageStuff,
     getMangaPage,
@@ -160,5 +189,7 @@ module.exports = {
     getQuickSearchData,
     getDirectoryData,
     getRecommendedManga,
-    getSearchData
+    getSearchData,
+    downloadImage,
+    getMangaChapterPageOffline
 }

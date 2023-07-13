@@ -2,27 +2,64 @@ doctype html
 html(lang="en")
     head
         //| !{p1}
-        title Read Manga
+        title You are offline!!
         meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
         meta(charset="UTF-8")
         meta(name="description",content="Offline page") 
         meta(name="theme-color" content="#000000")
-        link(rel="manifest" href="/pwa.webmanifest")
+        style 
+            include /css/style.css
+        style 
+            include /css/offline.css
         style 
             include /css/navbar.css
-        style
-            include /css/style.css
+        link(rel="stylesheet" href="/offline/all.css")
     body 
-        include includes/navbar.pug
+        header 
+            div#header
+                div
+                    a(href="/")
+                        img#logo(src="/offline/navbar.png",alt="logo")
+            div.navInfo
+                div(style='flex-direction:row;display:flex;height:100%;')
+                    a#Home_nav.small_nav(href='/manga/')
+                        i.fas.fa-home(aria-hidden='true')
+                        span &nbsp;Home
+                    a#Bookmark_nav.small_nav(href='/manga/bookmarks')
+                      i.fas.fa-bookmark(aria-hidden='true')
+                      span &nbsp;Bookmarks
+                    a#Directory_nav.small_nav(href='/manga/directory')
+                      i.far.fa-folder-open(aria-hidden='true')
+                      span &nbsp;Directory
+                    a#Search_nav.small_nav(href='/manga/search')
+                      i.fas.fa-search(aria-hidden='true')
+                      span &nbsp;Search
+                    a#Darkmode.small_nav(href='#' onclick='handleDarkModeToggle()' style='cursor:pointer;')
+                      i.fas.fa-moon(aria-hidden='true')
+                      span Dark Mode on
+                    a#Read_nav.small_nav(href='/manga/recentChapters' title='See if there any new chapters from manga you have bookmarked' style='cursor:pointer;')
+                      i.fas.fa-clock(aria-hidden='true')
+                      span &nbsp; Recent Chapters
         div#main
             div#offline
                 div.header
                     div
-                        i.fas.fa-exclamation-triangle
-                        | &nbsp;Offline
+                        i(class="fa-solid fa-wifi")
+                            i(class="fa-solid fa-slash")
+                        span
+                            | &nbsp;Offline
                 div.errorBox
                     | You are offline. Please check your internet connection.
                 div.containButtons
-                    a#retryButton(href="/") Retry
-        script
-            include /js/index.js
+                    a#retryButton(href="#",onclick="window.location.reload()") Retry
+            div.admin_top(style="margin-top: 20px;")
+                div(style="font-size:18px; color:white;") 
+                    i.fas.fa-floppy-disk
+                    span &nbsp; Chapters Available to Read Offline
+            div.hot_update.MangaAvailableCont
+        div#scroll_to_top
+            i(class="fas fa-angle-up")
+
+            
+        script  
+            include /js/offline.js

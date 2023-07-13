@@ -54,5 +54,7 @@ html(lang="en")
     script.
         var allChapters =  !{JSON.stringify(Chapters).replace(/<\//g, '<\\/')}
         var allChaptersRead = JSON.parse(window.localStorage.getItem('recentRead'))
+        var IndexName = "!{IndexName}"
+        var SeriesName = "!{SeriesName}"
     script
       include /js/mangaHtml.js

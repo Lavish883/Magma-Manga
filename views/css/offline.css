@@ -1,0 +1,97 @@
+#header {
+    display: flex;
+    background-color: black;
+    color: white;
+    justify-content: center;
+    align-items: center;
+    flex-direction: row;
+    flex-wrap: wrap;
+    padding: 10px;
+}
+
+
+#title #titleText {
+    font-size: 100px;
+    text-align: center;
+    margin: 0px;
+    font-weight: 200;
+}
+
+#logo {
+    height: 100px;
+}
+
+#offline {
+    font-size: 50px;
+    text-align: center;
+    margin-top: 20px;
+    font-weight: 200;
+    background-color: white;
+    border-radius: 8px;
+    padding: 10px 15px;
+}
+
+.fa-wifi {
+    position: relative;
+}
+
+.fa-wifi .fa-slash {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#retryButton {
+    text-align: center;
+    background-color: rgb(249, 94, 94);
+    border-radius: 8px;
+    padding: 5px 15px;
+    cursor: pointer;
+    font-size: 30px;
+    color: white;
+    transition: ease-in 0.2s;
+}
+
+#retryButton:hover {
+    background-color: rgb(249, 0, 0);
+    opacity: 0.8;
+}
+
+.MangaAvailableCont {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+}
+
+.mangaInfoCont {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.hot_update_item_name span {
+    color: white;
+}
+
+.AllChapterCont {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+    max-height:190px;
+    overflow-y:auto;
+}
+
+.chapterLinkButton {
+    background-color: #007bff;
+    border-radius: 8px;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-size: 20px;
+    color: white;
+    transition: ease-in 0.2s;
+    margin: 5px;
+}

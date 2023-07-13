@@ -1,10 +1,10 @@
 doctype html
 html(lang="en")
     head
-    title !{title}
+    title Read Chapter Offline
     meta(name="viewport",content="width=device-width, initial-scale=1")
     meta(charset="UTF-8")
-    meta(name="description",content="Read Chapter" + title)
+    meta(name="description",content="Read Chapter Offline")
     meta(name="theme-color" content="#000000")
     link(rel="manifest" href="/pwa.webmanifest")
     style
@@ -12,16 +12,16 @@ html(lang="en")
     style
         include /css/thin_navbar.css
     link(rel="stylesheet" href="/offline/all.css")
-    script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+
     body(style="margin:0px")
         include includes/thin_navbar.pug
         div#read_options
-            a.option(href='/manga/manga/' + currentChapter.indexName ,style="flex:0 0 33.333333%;max-width:33.333333%;")
+            a.option(href='/manga/manga/' ,style="flex:0 0 33.333333%;max-width:33.333333%;")
                 i(class="fas fa-book") &nbsp;
                 span !{seriesName}
             a.option
                 i(class="fas fa-stream") &nbsp;
-                span !{currentChapter.Type + ' ' + currentChapter.Chapter}
+                span
             a.option    
                 i(class="far fa-file") &nbsp;
                 span#pageNumber Page 1
@@ -31,21 +31,13 @@ html(lang="en")
             a.option(onclick="bookMark(this)", id ="bookMark")
                 i(class="fas fa-thumbtack") &nbsp;
                 span Bookmark
-            a.option(href="/manga/download/" + chapterLink)
+            a.option()
                 i(class="fas fa-arrow-down") &nbsp;
                 span Download Chapter
         div#imgs
-            - var i = 0;
-            while i < imageURlS.length
-                - var imageLOL = imageURlS[i]
-                img(src="" + imageLOL,class="manga_page")
-                - i++
+
+        script 
+            include /js/offlineRead.js
 
         script
             include /js/index.js
-        script 
-            include /js/readHtml.js
-        script.
-          var chapters = !{JSON.stringify(chapters).replace(/<\//g, '<\\/')} 
-          var currentChapter = !{JSON.stringify(currentChapter).replace(/<\//g, '<\\/')}    
-          changeBookMarkStatus(document.getElementById("bookMark"))

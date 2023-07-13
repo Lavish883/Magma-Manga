@@ -30,6 +30,12 @@ function checkIfItRead(chapterLink, recentRead) {
 
     return false;
 }
+
+// check if the chapter has been downloaded to the cache or not
+function checkIfItDownloaded(chapterLink, downloaded) {
+
+}
+
 // check if manga is bookmarked or not
 function checkIfBookmarked() {
     var bookMarks = JSON.parse(window.localStorage.getItem('bookmarks'));
@@ -44,7 +50,7 @@ function checkIfBookmarked() {
     }
     return false
 }
-// change the staus of bookmark that is displated to the user
+// change the staus of bookmark that is displayed to the user
 function changeBookMarkStatus(obj) {
     if (checkIfBookmarked()) {
         obj.children[0].classList.remove('fa-thumbtack');
@@ -124,6 +130,22 @@ function showImages(page) {
     }
 }
 
+function getOffset(element)
+{
+    if (!element.getClientRects().length)
+    {
+      return { top: 0, left: 0 };
+    }
+
+    let rect = element.getBoundingClientRect();
+    let win = element.ownerDocument.defaultView;
+    return (
+    {
+      top: rect.top + win.pageYOffset,
+      left: rect.left + win.pageXOffset
+    });   
+}
+
 // listen to page clicks either it is left or right
 
 function movePage(event) {
@@ -131,8 +153,9 @@ function movePage(event) {
 
     if (event.type == 'click') {
         // varibles to check of the page clikc is lef tor right
-        let pWidth = $(this).innerWidth();
-        let pOffset = $(this).offset();
+        console.log(event)
+        let pWidth = parseInt(window.getComputedStyle(event.target).width);
+        let pOffset = getOffset(event.target);
         var x = event.pageX - pOffset.left;
 
         if (pWidth / 2 > x) {
@@ -192,7 +215,6 @@ function moveChapter(direction) {
 }
 
 // update url accordingly
-
 
 // event listeners 
 // listen for page clicks
