@@ -1,7 +1,7 @@
 const fetch = require('node-fetch'); // fetchs websites
 const schemas = require('../schemas/schema'); // schemas
 const mongoose = require('mongoose') // for accesing databse;
-const serverName = process.env['SERVERNAME'] || 'http://localhost:5832/';
+const serverName = process.env['SERVERNAME'] || 'http://localhost:8080/';
 const moment = require('moment');
 
 // Connect to mongodb database
@@ -50,7 +50,7 @@ async function sendNotification(subscription, manga, blankNotification = false) 
 
     // Notfiy the user that they have been subscribed
     webpush.sendNotification(subscription, payload).catch(err => {
-        console.log(err, 'statusCode')
+        //console.log(err, 'statusCode')
         // meaning that subscription is invlaid and should be deleted
         if (err.statusCode == 410 || err.statusCode == 404) {
             deleteInvalid(subscription);
@@ -66,7 +66,7 @@ async function findSubscriptions(manga) {
     });
     // for each user find their corresponding subscription
     for (var j = 0; j < user.length; j++) {
-        console.log(user[j].name, user[j].id);
+        //console.log(user[j].name, user[j].id);
         let subscriptions = await schemas.subscription.find({
             'user.userName': user[j].name,
             'user.userId': user[j].id
@@ -74,7 +74,7 @@ async function findSubscriptions(manga) {
 
         // for each subscriptions send the notifications
         for (var k = 0; k < subscriptions.length; k++) {
-            console.log(subscriptions[k].subscription[0]);
+        //    console.log(subscriptions[k].subscription[0]);
             sendNotification(subscriptions[k].subscription[0], manga)
         }
     }
@@ -123,7 +123,7 @@ async function main() {
         if (isMangaSubbed == -1) continue;
         // now see if that chapter was released in last 24 hours
         let timeReleased = moment.unix(manga.lt);
-        console.log(moment().diff(timeReleased, "hours") < 24);
+        //console.log(moment().diff(timeReleased, "hours") < 24);
         if (moment().diff(timeReleased, "hours") > 24) continue;
         findSubscriptions(manga);
     }
@@ -133,3 +133,5 @@ module.exports = {
     main,
     requestSubscriptionUpdate
 }
+
+main();

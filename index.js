@@ -38,7 +38,7 @@ app.use(express.json({ extended: true, limit: "1mb" }));
 
 
 // see if it is time to check for new manga
-//app.use(notificationFunctions.isItTime)
+app.use(notificationFunctions.isItTime)
 
 function setup(req,res,next){
   var cookie = req.cookies.user;
