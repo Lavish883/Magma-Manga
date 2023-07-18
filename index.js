@@ -5,13 +5,14 @@ const cookieParser = require('cookie-parser') //parses cookies recived from the 
 const path = require('path');
 const mongoose = require('mongoose'); // database acessor
 
+mongoose.set('strictQuery', false);
 require('express-async-errors');
 
 const pathFunctions = require('./mainJS/pathFunctions') // functions that handle use requests
 const apiFunctions = require('./mainJS/apiFunctions') // function that handle all api requests
 const loginFunctions = require('./mainJS/loginFunctions') // all fucntions that handle login and stuff
 const notificationFunctions = require('./mainJS/notfications') // functions that handle notifactions
-
+const commentFunctions = require('./mainJS/commentFunctions') // functions that handle comments
 
 // Require dotenv for secrets
 require('dotenv').config()
@@ -137,6 +138,11 @@ app.post('/api/login/changePassword', loginFunctions.changePassword);
 /* Notifactions functions routes are below */
 app.post('/notification/subscribe', notificationFunctions.subscribe);
 app.post('/notification/updateSubscribe', notificationFunctions.updateSubscription);
+
+/* Comment Routes are below */
+app.post('/api/comments/postComment', commentFunctions.postComment);
+app.get('/api/comments/getComments', commentFunctions.getComments);
+app.delete('/api/comments/deleteComment', commentFunctions.deleteComment);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

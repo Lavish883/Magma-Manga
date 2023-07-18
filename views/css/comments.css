@@ -70,3 +70,8 @@
     transform: scale(1.25);
     margin-right: 5px;
 }
+
+#comments .comment {
+    max-height: 250px;
+    overflow-y: auto;
+}

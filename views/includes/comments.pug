@@ -1,16 +1,18 @@
 script 
     include /js/comments.js
+style 
+    include /css/comments.css
 div.commentBackground
     div.commentHead
         i.fa-regular.fa-comment &nbsp; 
-        | Comments (500)
+        span#commentCount Comments ()
     div.submitCommentCont
         textarea.commentInput(placeholder="Write Comment Here",type="text",oninput="autoResize(this)")
         div.submitCommentFooter
             div(style="display:flex;align-items:end;")
                 input(type="checkbox") 
                 span Is Markdown ? 
-            div.submitButton Comment
+            div.submitButton(onclick="submitComment(this)") Comment
     div#comments
         div.comment
             div.commentInfo

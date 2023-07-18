@@ -55,8 +55,8 @@ const forgotPasswordSchema = new Schema({
     }
 })
 
-const comments = new Schema({
-    "name": {
+const commentsSchema = new Schema({
+    "pathName": {
         type: String,
         required: true
     },
@@ -102,8 +102,8 @@ const refreshTokens = mongoose.model('refreshTokens', refreshTokenSchema);
 const subscription = mongoose.model('notificationSubs', subscriptionSchema);
 const subbedManga = mongoose.model('subbedManga', subbedMangaSchema);
 const forgotPasswordTokens = mongoose.model('forgotPasswordTokens', forgotPasswordSchema);
+const comments = mongoose.model('CommentModels', commentsSchema);
 
-const CommentModels = mongoose.model('CommentModels', comments);
 const commentIdModals = mongoose.model('commentId', commentId);
 
 module.exports = {
@@ -111,5 +111,6 @@ module.exports = {
     refreshTokens,
     subscription,
     subbedManga,
-    forgotPasswordTokens
+    forgotPasswordTokens,
+    comments,
 }
