@@ -1,0 +1,18 @@
+script 
+    include /js/comments.js
+div.commentBackground
+    div.commentHead
+        i.fa-regular.fa-comment &nbsp; 
+        | Comments (500)
+    div.submitCommentCont
+        textarea.commentInput(placeholder="Write Comment Here",type="text",oninput="autoResize(this)")
+        div.submitCommentFooter
+            div(style="display:flex;align-items:end;")
+                input(type="checkbox") 
+                span Is Markdown ? 
+            div.submitButton Comment
+    div#comments
+        div.comment
+            div.commentInfo
+            div.commentBody
+            div.commentFooter

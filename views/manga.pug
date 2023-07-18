@@ -12,6 +12,8 @@ html(lang="en")
       include /css/thin_navbar.css
     style
       include /css/style.css
+    style 
+      include /css/comments.css
     script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
   body
     include includes/thin_navbar.pug
@@ -49,6 +51,7 @@ html(lang="en")
                         - k++
                   - i++
         ul#Chapters_List
+        include includes/comments.pug
     script
       include /js/index.js
     script.

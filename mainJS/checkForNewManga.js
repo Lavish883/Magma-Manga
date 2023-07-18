@@ -133,5 +133,3 @@ module.exports = {
     main,
     requestSubscriptionUpdate
 }
-
-main();

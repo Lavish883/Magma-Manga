@@ -95,7 +95,7 @@ app.get('/api/offline/manga/downloadImage', apiFunctions.downloadImage)
 app.get('/api/offline/mangaName?', apiFunctions.getMangaPage)
 //req.query.chapter ==> needed
 app.get('/api/offline/getMangaChapterPageOffline', apiFunctions.getMangaChapterPageOffline)
-/* Api Routes are bwlow */
+/* Api Routes are below */
 
 // quick search data
 app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)

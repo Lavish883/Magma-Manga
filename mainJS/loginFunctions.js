@@ -2,6 +2,7 @@ const bcrypt = require('bcrypt') // hash passwords beforing put in database
 const jwt = require('jsonwebtoken'); // json web tokens using in authentaction
 const schemas = require('../schemas/schema'); // schemas
 const mailFunctions = require('./mailFunctions'); // mail functions
+const userNameRegexExpression = "^[A-Za-z][A-Za-z0-9_]{7,29}$"; 
 
 // check if an user already exsits with that name or email
 async function findUser(userName, userEmail) {
@@ -54,7 +55,15 @@ async function registerUser(req, res) {
     if (userInDatabase.length != 0) {
         return res.status(400).send('User already exists with that name or email !!')
     }
-    // hash the password so someone with access to the file can't steal it
+    
+    // see if the username is valid
+    var regex = new RegExp(userNameRegexExpression);
+
+    if (!regex.test(user.name)) {
+        return res.status(400).send('Username must be 6-30 characters long and can only contain letters, numbers, and underscores. It must start with a letter.')
+    }
+
+    // hash the password so someone with access to the database can't steal it
     const hashedPassword = await bcrypt.hash(user.password, 10)
 
     try {
