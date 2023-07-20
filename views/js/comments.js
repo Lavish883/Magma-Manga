@@ -1,3 +1,7 @@
+var gifSearchLastCalled = 0;
+var gifSearchOpenedBy;
+
+
 function autoResize(obj) {
     obj.style.height = 'auto';
     obj.style.height = obj.scrollHeight + 'px';
@@ -7,15 +11,21 @@ async function getComments() {
     let resp = await fetch("/api/comments/getComments?mangaPathName=" + window.location.pathname);
     let data = await resp.json();
 
-    let commentHTML =  [];
-    for (let i = 0; i < data.length; i++) {
+    let commentHTML = [];
+    for (var comment of data) {
         commentHTML.push(`
-        <div class="comment" commentId="${data[i].id}">
+        <div class="comment" commentId="${comment.id}">
             <div class="commentHeader">
-                <div class="commentUser">${data[i].user}</div>
-                <div class="commentTime">${moment(data[i].time).fromNow()}</div>
+                <div>
+                    <span class="commentUser">${comment.user}</span>
+                    <span class="commentTime">&middot; ${moment(comment.time).fromNow()}</span>
+                </div>
+                <div class="commentOptions">
+                    <div class="commentEdit">Edit</div>    
+                    <div class="commentDelete">Delete</div>
+                </div>
             </div>
-            <div class="commentBody">${data[i].comment}</div>
+            <div class="commentBody">${comment.comment}</div>
             <div class="commentFooter">
                 <div class="commentLike">Like</div>
                 <div class="commentDislike">Dislike</div>
@@ -28,6 +38,12 @@ async function getComments() {
     document.getElementById("commentCount").innerHTML = `Comments (${data.length})`
 }
 
+function unescapeHTML(str) {
+    str = str.replaceAll(/&lt;/g, '<');
+    str = str.replaceAll(/&gt;/g, '>')
+    str = str.replaceAll(/&amp;/g, '&');
+    return str;
+}
 
 async function submitComment(obj, fetchedCount = 1) {
     // fetchedCount is used to prevent infinite calls to getNewAccessToken
@@ -38,8 +54,8 @@ async function submitComment(obj, fetchedCount = 1) {
         return;
     }
 
-    let isMarkdown = obj.parentElement.querySelector("[type='checkbox'").checked;
-    let comment = obj.parentElement.parentElement.querySelector(".commentInput").value
+    let isMarkdown = obj.parentElement.parentElement.querySelector("[type='checkbox'").checked;
+    let comment = unescapeHTML(obj.parentElement.parentElement.parentElement.querySelector(".commentInput").innerHTML);
 
     // try to submit comment, if it fails and the reason of failing is
     // expired token, then refresh the token and try again
@@ -68,10 +84,54 @@ async function submitComment(obj, fetchedCount = 1) {
         await getNewAccesToken();
         return submitComment(obj, fetchedCount + 1);
     }
-    
+
     let data = await response.text();
+    if (response.status == 200) {
+        obj.parentElement.parentElement.parentElement.querySelector(".commentInput").innerHTML = "";
+        obj.parentElement.parentElement.parentElement.querySelector("[type='checkbox'").checked = false;
+    }
 
     getComments();
 }
+
+async function getGifs(obj) {
+    let response = await fetch(`/api/comments/getGifs?q=${obj.value}&offset=0`);
+    let data = await response.json();
+
+    var gifHTML = [];
+    for (var gif of data) {
+        gifHTML.push(`
+        <div onclick="selectGif(this)" class="gif">
+            <image src="${gif}" ></video>
+        </div>
+        `);
+    }
+    document.querySelector(".giphyResults").innerHTML = gifHTML.join("");
+}
+
+function debounce(obj) {
+    if (Date.now() - gifSearchLastCalled > 500) {
+        gifSearchLastCalled = Date.now();
+        getGifs(obj);
+    }
+}
+
+function selectGif(obj) {
+    var commentArea = gifSearchOpenedBy.parentElement.parentElement.parentElement.querySelector(".commentInput");
+
+    commentArea.innerText += `<img width="200" src="${obj.querySelector("img").src}" />`;
+
+    toggleGifSearch();
+}
+
+function toggleGifSearch(obj = null) {
+    if (document.querySelector(".giphyModal").style.display == "flex") {
+        document.querySelector(".giphyModal").style.display = "none";
+    } else {
+        document.querySelector(".giphyModal").style.display = "flex";
+        gifSearchOpenedBy = obj;
+    }
+}
+
 
 getComments();

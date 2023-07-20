@@ -2,17 +2,32 @@ script
     include /js/comments.js
 style 
     include /css/comments.css
+div.giphyModal
+    div.giphyModalContent
+        div.giphyModalHeader
+            span(style="font-size:20px;") Search Gifs (Powered by Giphy)
+            i.giphyModalClose.fa-solid.fa-times(style="float:right;cursor:pointer;",onclick="toggleGifSearch()")
+        div.giphyModalBody
+            div.giphySearchCont
+                img.giphyLogo(src="/images/giphyLogo.gif", style="height:70px;margin-right:15px")
+                input.giphySearch(type="text",placeholder="Search GIFs ...",onkeyup="debounce(this)")
+        div.giphyResults
+
 div.commentBackground
     div.commentHead
         i.fa-regular.fa-comment &nbsp; 
         span#commentCount Comments ()
     div.submitCommentCont
-        textarea.commentInput(placeholder="Write Comment Here",type="text",oninput="autoResize(this)")
+        div.commentInput(contenteditable="true",placeholder="Write Comment Here ...",type="text",oninput="autoResize(this)")
         div.submitCommentFooter
             div(style="display:flex;align-items:end;")
                 input(type="checkbox") 
                 span Is Markdown ? 
-            div.submitButton(onclick="submitComment(this)") Comment
+            div(style="display:flex;align-items:center;justify-content:space-between;flex-direction:row;")
+                div.submitButton(style="margin-right:10px;",onclick="toggleGifSearch(this)")
+                    i.fa-solid.fa-image &nbsp;
+                    span Add GIF 
+                div.submitButton(onclick="submitComment(this)") Comment
     div#comments
         div.comment
             div.commentInfo

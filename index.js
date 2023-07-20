@@ -143,6 +143,7 @@ app.post('/notification/updateSubscribe', notificationFunctions.updateSubscripti
 app.post('/api/comments/postComment', commentFunctions.postComment);
 app.get('/api/comments/getComments', commentFunctions.getComments);
 app.delete('/api/comments/deleteComment', commentFunctions.deleteComment);
+app.get('/api/comments/getGifs', commentFunctions.getGifs);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

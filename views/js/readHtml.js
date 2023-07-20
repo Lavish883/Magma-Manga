@@ -149,8 +149,10 @@ function getOffset(element)
 // listen to page clicks either it is left or right
 
 function movePage(event) {
-    if (event.key == "ArrowDown" || event.key == "ArrowUp") return;
-
+    if (event.type == "keyup" && event.key != "ArrowLeft" && event.key != "ArrowRight") {
+        return;
+    }
+    console.log(event.type)
     if (event.type == 'click') {
         // varibles to check of the page clikc is lef tor right
         console.log(event)

@@ -4,7 +4,7 @@ const sanitizeHtml = require('sanitize-html'); // to sanitize converted html
 const showdown = require('showdown'); // to convert markdown to html
 const mdConverter = new showdown.Converter();
 const loginFunctions = require('../mainJS/loginFunctions'); // all fucntions that handle login and stuff
-
+const fetch = require('node-fetch');
 
 async function getComments(req, res) {
     let mangaPathName = req.query.mangaPathName;
@@ -72,13 +72,27 @@ async function postComment(req, res) {
         "likes": 0,
         "dislikes": 0,
         "replies": [],
-        "id": manga.comments.length
+        "id": Math.floor((manga.comments.length * Math.random(0, 1))) + + moment.now() // can not do manga.comments.length, as user can delete comments
     });
 
     // save the manga
     await manga.save();
 
     return res.send("Comment added");
+}
+
+async function getGifs(req, res) {
+    var fetchURL = `https://api.giphy.com/v1/gifs/search?api_key=${process.env.GIPHY_API_KEY}&q=${req.query.q}&limit=10&offset=${req.query.offset}`;
+    var response = await fetch(fetchURL);
+    var data = await response.json();
+    // parse data to only get the urls
+    var newData = [];
+    // /return res.send(data.data);
+    
+    for (var i = 0; i < data.data.length; i++) {
+        newData.push(data.data[i].images.fixed_width.webp)
+    }
+    return res.send(newData);
 }
 
 async function deleteComment(req, res) {
@@ -90,5 +104,6 @@ async function deleteComment(req, res) {
 module.exports = {
     getComments,
     postComment,
-    deleteComment
+    deleteComment,
+    getGifs
 }
