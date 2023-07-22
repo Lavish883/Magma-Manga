@@ -12,6 +12,8 @@ div.giphyModal
                 img.giphyLogo(src="/images/giphyLogo.gif", style="height:70px;margin-right:15px")
                 input.giphySearch(type="text",placeholder="Search GIFs ...",onkeyup="debounce(this)")
         div.giphyResults
+        div.loadMoreCont
+            div.loadMoreButton(onclick="getGifs(this.parentElement.parentElement.querySelector('.giphySearch'), true)") Load More
 
 div.commentBackground
     div.commentHead

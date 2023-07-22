@@ -141,9 +141,12 @@ app.post('/notification/updateSubscribe', notificationFunctions.updateSubscripti
 
 /* Comment Routes are below */
 app.post('/api/comments/postComment', commentFunctions.postComment);
-app.get('/api/comments/getComments', commentFunctions.getComments);
+app.post('/api/comments/getComments', commentFunctions.getComments);
 app.delete('/api/comments/deleteComment', commentFunctions.deleteComment);
 app.get('/api/comments/getGifs', commentFunctions.getGifs);
+app.post('/api/comments/likeComment', commentFunctions.likeComment);
+app.post('/api/comments/dislikeComment', commentFunctions.dislikeComment);
+app.post('/api/comments/replyToComment', commentFunctions.replyToComment);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

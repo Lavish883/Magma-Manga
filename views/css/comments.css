@@ -32,6 +32,8 @@
     min-height: 50px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
     transition: all 0.15s ease-in;
+    box-sizing: border-box;
+    max-width: 100%;
 }
 
 .submitCommentCont .commentInput:focus {
@@ -102,6 +104,51 @@
     flex-direction: row;
     flex-wrap: wrap;
     align-items: center;
+}
+
+.commentOptions {
+    font-size: 20px;
+}
+
+.commentOptions div {
+    margin: 0px 10px;
+    cursor: pointer;
+    transition: all 0.15s ease-in;
+    color: #484848;
+}
+
+.commentOptions div:hover {
+    transform: scale(1.25);
+    color: black;
+}
+
+.commentOptions .fa-xmark:hover {
+    color: #d9534f;
+}
+
+.commentFooter div {
+    margin: 0px 10px;
+    cursor: pointer;
+    transition: all 0.15s ease-in;
+    color: #484848;
+}
+
+.commentLike:hover {
+    transform: scale(1.25);
+    color: #007bff;
+} 
+
+.commentDislike:hover {
+    transform: scale(1.25);
+    color: #d9534f;
+}
+
+.commentFooter div:first-of-type{
+    margin-left: 0px;
+}
+
+.commentFooter {
+    margin: 10px 0px;
 }
 
 [contenteditable=true]:empty:before {
@@ -206,4 +253,47 @@
     padding: 10px;
     margin: 10px;
     cursor: pointer;
+}
+
+.loadMoreButton {
+    padding: 8px 0px;
+    border-radius: 4px;
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    width: 100%;
+    margin: 10px 0px 20px 0px;
+    font-size: 18px;
+    text-align: center;
+    font-weight: 400;
+    transition: all 0.15s ease-in;
+}
+
+.loadMoreCont {
+    padding: 0px 20px;
+    display: none;
+}
+
+.commentFooter .commentReply:hover {
+    transform: scale(1.15);
+}
+
+.replyingToText {
+    margin-bottom: 10px;
+    color: #007bff;
+    cursor: pointer;
+}
+
+@keyframes shake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    10% { transform: translate(-1px, -2px) rotate(-1deg); }
+    20% { transform: translate(-3px, 0px) rotate(1deg); }
+    30% { transform: translate(3px, 2px) rotate(0deg); }
+    40% { transform: translate(1px, -1px) rotate(1deg); }
+    50% { transform: translate(-1px, 2px) rotate(-1deg); }
+    60% { transform: translate(-3px, 1px) rotate(0deg); }
+    70% { transform: translate(3px, 1px) rotate(-1deg); }
+    80% { transform: translate(-1px, -1px) rotate(1deg); }
+    90% { transform: translate(1px, 2px) rotate(0deg); }
+    100% { transform: translate(1px, -2px) rotate(-1deg); }
 }
