@@ -33,13 +33,14 @@ function makeCommentHTML(comment, isReply = false) {
             <div>
                 <span class="commentUser">${comment.user}</span>
                 <span class="commentTime">&middot; ${moment(comment.time).fromNow()}</span>
+                <span class="commentTime">${comment.wasEdited == true ? "(Edited)" : ""}</span>
             </div>
             ${comment.isOwner == true ?
             `<div class="commentOptions">
-                <div title="Edit Comment" class="commentEdit">
+                <div onclick="openEditComment(this)" title="Edit Comment" class="commentEdit">
                     <i class="fa-regular fa-pen-to-square"></i>
                 </div>    
-                <div title="Delete Comment" class="commentDelete">
+                <div onclick="deleteComment(this)" title="Delete Comment" class="commentDelete">
                     <i class="fa-solid fa-xmark"></i>
                 </div>
             </div>`: ""
@@ -86,6 +87,12 @@ async function getComments() {
     }
 
     let resp = await fetch("/api/comments/getComments", options);
+
+    if (resp.status == 401) {
+        await getNewAccesToken();
+        return getComments();
+    }
+
     let data = await resp.json();
 
     let commentHTML = [];
@@ -198,7 +205,7 @@ function debounce(obj) {
 function selectGif(obj) {
     var commentArea = gifSearchOpenedBy.parentElement.parentElement.parentElement.querySelector(".commentInput");
 
-    commentArea.textContent += `<img width="200" src="${obj.querySelector("img").src}" />`;
+    commentArea.innerHTML += `<img width="200" src="${obj.querySelector("img").src}" />`;
 
     toggleGifSearch();
     autoResize(commentArea);
@@ -244,28 +251,42 @@ async function likeOrDislikeComment(obj, url, fetchedCount = 1) {
     getComments();
 }
 
-function openReply(obj) {
-    let replyingToUser = obj.parentElement.parentElement.querySelector(".commentUser").innerText
-    let htmlToInsert = `
-    <div class="submitCommentCont">
-        <span class="replyingToText">@Replying to ${replyingToUser}</span>
-        <div class="commentInput" contenteditable="true" placeholder="Write Comment Here ..." type="text" oninput="autoResize(this)"></div>
-        <div class="submitCommentFooter">
-            <div style="display:flex;align-items:end;">
-                <input type="checkbox">
-                <span>Is Markdown ? </span>
-            </div>  
-            <div style="display:flex;align-items:center;justify-content:space-between;flex-direction:row;">
-                <div class="submitButton" style="margin-right:10px;" onclick="toggleGifSearch(this)">
-                    <i class="fa-solid fa-image">&nbsp;</i>
-                    <span>Add GIF </span>
-                </div>
-                <div class="submitButton" onclick="replyToComment(this)">Comment</div>
+// basically html string that is used to create where the user can edit their comment or reply or post
+// as they use the same base we can use the same function
+function returnCommentEditorString(innerHtml = "", isEditing = false) {
+    return `
+    <div class="commentInput" contenteditable="true" placeholder="Write Comment Here ..." type="text" oninput="autoResize(this)">${innerHtml}</div>
+    <div class="submitCommentFooter">
+        <div style="display:flex;align-items:end;">
+            <input type="checkbox">
+            <span>Is Markdown ? </span>
+        </div>  
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-direction:row;">
+            <div class="submitButton" style="margin-right:10px;" onclick="toggleGifSearch(this)">
+                <i class="fa-solid fa-image">&nbsp;</i>
+                <span>Add GIF </span>
             </div>
+            <div class="submitButton" onclick="${isEditing ? 'editComment(this)' :'replyToComment(this)'}">${isEditing ? "Finish Editing" : "Comment"}</div>
         </div>
     </div>
     `
-    obj.parentElement.parentElement.innerHTML += htmlToInsert;
+}
+
+function openReply(obj) {
+    let replyingToUser = obj.parentElement.parentElement.querySelector(".commentUser").innerText;
+    let divElement = document.createElement("div");
+    divElement.classList.add("submitCommentCont");
+    let htmlToInsert = `
+        <span class="replyingToText">@Replying to ${replyingToUser}</span>
+        ${returnCommentEditorString()}
+    `
+    divElement.innerHTML = htmlToInsert;
+    obj.parentElement.parentElement.appendChild(divElement);
+    
+    window.scrollTo({
+        "behavior": "smooth",
+        "top": divElement.offsetTop - 200
+    })
 }
 
 function checkIfUserIsLoggedIn() {
@@ -306,11 +327,86 @@ async function replyToComment(obj, fetchedCount = 1) {
             return;
         }
         await getNewAccesToken();
-        return submitComment(obj, fetchedCount + 1);
+        return replyToComment(obj, fetchedCount + 1);
     }
 
     let data = await response.text();
     getComments();
 }
+
+function openEditComment(obj) {
+    obj.parentElement.parentElement.parentElement.querySelector(".commentBody").innerHTML = `
+        <div class="submitCommentCont">
+            ${returnCommentEditorString(obj.parentElement.parentElement.parentElement.querySelector(".commentBody").innerHTML, true)}
+        </div>
+    `
+}
+
+async function editComment(obj, fetchedCount = 1) {
+    const options = {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "comment": unescapeHTML(obj.parentElement.parentElement.parentElement.querySelector(".commentInput").innerHTML),
+            "isMarkdown": obj.parentElement.parentElement.parentElement.querySelector("[type='checkbox'").checked,
+            "accessToken": window.localStorage.getItem("accessToken"),
+            "mangaPathName": window.location.pathname,
+            "commentId": obj.parentElement.parentElement.parentElement.parentElement.parentElement.getAttribute("commentid")
+        })
+    }
+
+    let resp = await fetch("/api/comments/editComment", options);
+    if (resp.status == 401) {
+        if (fetchedCount > 8) {
+            alert("Failed to edit comment, please try again later");
+            return;
+        }
+        await getNewAccesToken();
+        return editComment(obj, fetchedCount + 1);
+    }
+
+    let data = await resp.text();
+    if (resp.status != 200) {
+        alert(data);
+    }
+
+    getComments();
+}
+
+async function deleteComment(obj, fetchedCount = 1) {
+    if (!confirm("Are you sure you want to delete this comment? It can not be recovered.")) return;
+
+    const options = {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            "accessToken": window.localStorage.getItem("accessToken"),
+            "mangaPathName": window.location.pathname,
+            "commentId": obj.parentElement.parentElement.parentElement.getAttribute("commentid")
+        })
+    }
+
+    let resp = await fetch("/api/comments/deleteComment", options);
+    if (resp.status == 401) {
+        if (fetchedCount > 8) {
+            alert("Failed to delete comment, please try again later");
+            return;
+        }
+        await getNewAccesToken();
+        return deleteComment(obj, fetchedCount + 1);
+    }
+
+    let data = await resp.text();
+    if (resp.status != 200) {
+        alert(data);
+    }
+
+    getComments();
+}
+        
 
 getComments();

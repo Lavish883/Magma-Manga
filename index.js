@@ -147,6 +147,8 @@ app.get('/api/comments/getGifs', commentFunctions.getGifs);
 app.post('/api/comments/likeComment', commentFunctions.likeComment);
 app.post('/api/comments/dislikeComment', commentFunctions.dislikeComment);
 app.post('/api/comments/replyToComment', commentFunctions.replyToComment);
+app.post('/api/comments/editComment', commentFunctions.editComment);
+app.delete('/api/comments/deleteComment', commentFunctions.deleteComment);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

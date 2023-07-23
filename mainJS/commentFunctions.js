@@ -45,6 +45,8 @@ async function getComments(req, res) {
             for (var i = 0; i < manga.comments.length; i++) {
                 manga.comments[i] = personalizeComments(manga.comments[i], tokenValid.name);
             }
+        } else {
+            return res.status(401).send("Invalid Access token");
         }
     }
 
@@ -266,6 +268,67 @@ async function replyToComment(req, res){
     return res.send("Done with replying stuff");
 }
 
+async function editComment(req, res){
+    let body = req.body;
+    let tokenValid = loginFunctions.isTokenValid(body.accessToken, process.env.ACCESS_TOKEN_SECERT)
+
+    // if token is not valid return error
+    if (!tokenValid) {
+        return res.status(401).send("Invalid Access token");
+    }
+
+    var manga = await schemas.comments.findOne({ "pathName": body.mangaPathName });
+    var comment = findComment(manga, body.commentId);
+
+    // now see if the user is the owner of the comment, just to be safe
+    if (comment.user != tokenValid.name){
+        return res.status(403).send("You are not the owner of this comment");
+    }
+
+    // now edit the comment
+    comment.comment = sanitizeComment(body.comment, body.isMarkdown);
+    comment.wasEdited = true;
+
+    // save the manga
+    manga.markModified("comments");
+    await manga.save();
+
+    return res.send("Done with editing stuff");
+}
+
+async function deleteComment(req, res){
+    let body = req.body;
+    let tokenValid = loginFunctions.isTokenValid(body.accessToken, process.env.ACCESS_TOKEN_SECERT)
+
+    // if token is not valid return error
+    if (!tokenValid) {
+        return res.status(401).send("Invalid Access token");
+    }
+
+    var manga = await schemas.comments.findOne({ "pathName": body.mangaPathName });
+    
+    if (body.commentId.includes(" ")) {
+        let comment = findComment(manga, body.commentId.split(" ")[0]);
+        let reply = comment.replies.find(reply => reply.id == body.commentId);
+        // verify just to be safe
+        if (reply.user != tokenValid.name) return res.status(403).send("You are not the owner of this comment");
+
+        comment.replies.splice(comment.replies.indexOf(reply), 1);
+    } else {
+        var comment = findComment(manga, body.commentId);
+        // verify just to be safe
+        if (comment.user != tokenValid.name) return res.status(403).send("You are not the owner of this comment");
+
+        manga.comments.splice(manga.comments.indexOf(comment), 1);
+    }    
+
+    // save the manga
+    manga.markModified("comments");
+    await manga.save();
+
+    return res.send("Done with deleting stuff");
+}
+
 module.exports = {
     getComments,
     postComment,
@@ -273,5 +336,6 @@ module.exports = {
     getGifs,
     likeComment,
     dislikeComment,
-    replyToComment
+    replyToComment,
+    editComment
 }
