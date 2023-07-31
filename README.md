@@ -5,9 +5,9 @@ Disclaimer: The developer of this application does not have any affiliation with
   <li>No Ads</li>
   <li>Has over 7000+ manga to read</li>
   <li>A progressive web app, install on your phones for a native experience</li>
-  <li>Has the most recent chapters soon as its ready</li>
+  <li>Has the most recent chapters soon as it is ready</li>
   <li>A friendly user interface, for the best experience</li>
-  <li>A recommendation feature, uses advacned algorithm to get you the manga you surely will enjoy.</li>
+  <li>A recommendation feature, uses advanced algorithm to get you the manga you surely will enjoy.</li>
   <li>Account Signup 
     <ul>
     <li>Save your bookmarks and manga you have read to the server</li>
@@ -18,9 +18,9 @@ Disclaimer: The developer of this application does not have any affiliation with
   <li>Light and Dark Themes</li>
   <li>SUS Checker: Beware of the traps</li>
   <li>A Search page, filled with multitude of options to help you find what you are looking for</li>
-  <li>A recent chapters page, that shows all the manga released latest from your bookmarks</li>
-  <li>Download Manga for offline use and read manga on the go with or without WI-FI</li>
-  <li>A Comment Section on every manga page, Markdown and HTML Support, insert gifs from GIPHY</li>
+  <li>A Recent Chapters page, shows all the manga released latest from your bookmarks</li>
+  <li>Download manga for offline use and read manga on the go with or without WIFI</li>
+  <li>A Comment Section on every manga page, Markdown and HTML Support, and even insert GIFs from GIPHY</li>
 </ul>
 
 <h3>Home Page</h3>
