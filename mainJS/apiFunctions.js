@@ -2,6 +2,9 @@ const fetch = require('node-fetch'); // fetchs html
 const breakCloudFlare = 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com'
 const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const HeaderGenerator = require('header-generator');
+const fs = require('fs');
+
+const realAdminRecd = JSON.parse(fs.readFileSync('./json/adminRecd.json', 'utf8'));
 
 // Generate human like headers so site doesn't detect us
 const headersGenerator = new HeaderGenerator({
@@ -27,11 +30,13 @@ async function getMainPageStuff(req, res) {
     //console.log(resp)
 
     var allData = {
-        'adminRecd': mainFunctions.scrapeAdminRecd(resp),
+        'adminRecd': realAdminRecd[Math.floor(Math.random() * ( realAdminRecd.length - 1))],
         'hotMangaUpdated': mainFunctions.scrapeHotManga(resp),
         'hotMangaThisMonth': mainFunctions.scrapeHotMangaThisMonth(resp),
         'latestManga': mainFunctions.scrapeLatestManga(resp),
     }
+
+    console.log(allData.adminRecd)
 
     res.send(allData)
 }
