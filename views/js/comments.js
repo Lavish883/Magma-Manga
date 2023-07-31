@@ -81,7 +81,7 @@ async function getComments() {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            "mangaPathName": window.location.pathname,
+            "mangaPathName": window.location.pathname.split("-page-")[0],
             "accessToken": window.localStorage.getItem("accessToken"),
         })
     }
@@ -130,7 +130,7 @@ async function submitComment(obj, fetchedCount = 1) {
             "comment": comment,
             "isMarkdown": isMarkdown,
             "accessToken": window.localStorage.getItem("accessToken"),
-            "mangaPathName": window.location.pathname
+            "mangaPathName": window.location.pathname.split("-page-")[0]
         })
     }
 
@@ -232,7 +232,7 @@ async function likeOrDislikeComment(obj, url, fetchedCount = 1) {
         body: JSON.stringify({
             "commentId": obj.parentElement.parentElement.getAttribute("commentId"),
             "accessToken": window.localStorage.getItem("accessToken"),
-            "mangaPathName": window.location.pathname
+            "mangaPathName": window.location.pathname.split("-page-")[0]
         })
     }
 
@@ -313,7 +313,7 @@ async function replyToComment(obj, fetchedCount = 1) {
             "comment": comment,
             "isMarkdown": isMarkdown,
             "accessToken": window.localStorage.getItem("accessToken"),
-            "mangaPathName": window.location.pathname,
+            "mangaPathName": window.location.pathname.split("-page-")[0],
             "commentId": obj.parentElement.parentElement.parentElement.parentElement.getAttribute("commentId"),
             "replyingTo": obj.parentElement.parentElement.parentElement.parentElement.querySelector(".commentUser").innerText
         })
@@ -352,7 +352,7 @@ async function editComment(obj, fetchedCount = 1) {
             "comment": unescapeHTML(obj.parentElement.parentElement.parentElement.querySelector(".commentInput").innerHTML),
             "isMarkdown": obj.parentElement.parentElement.parentElement.querySelector("[type='checkbox'").checked,
             "accessToken": window.localStorage.getItem("accessToken"),
-            "mangaPathName": window.location.pathname,
+            "mangaPathName": window.location.pathname.split("-page-")[0],
             "commentId": obj.parentElement.parentElement.parentElement.parentElement.parentElement.getAttribute("commentid")
         })
     }
@@ -385,7 +385,7 @@ async function deleteComment(obj, fetchedCount = 1) {
         },
         body: JSON.stringify({
             "accessToken": window.localStorage.getItem("accessToken"),
-            "mangaPathName": window.location.pathname,
+            "mangaPathName": window.location.pathname.split("-page-")[0],
             "commentId": obj.parentElement.parentElement.parentElement.getAttribute("commentid")
         })
     }

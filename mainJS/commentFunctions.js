@@ -95,6 +95,12 @@ async function postComment(req, res) {
 
     if (manga === null) { // if it does not exist
         // create a new manga object
+
+        // if the manga is a chapter, remove the -page- from the pathName
+        if (mangaPathName.includes("-page-")) {
+            mangaPathName = mangaPathName.split("-page-")[0];
+        }
+
         const newManga = new schemas.comments({
             "pathName": mangaPathName,
             "comments": []
