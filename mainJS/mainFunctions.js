@@ -71,7 +71,9 @@ function calcChapterUrl(ChapterString) {
 }
 
 function scrapeLatestManga(page) {
-    let LatestChapterJSON = JSON.parse(page.split(`vm.LatestJSON = `)[1].split(`;`)[0]);
+    //  console.log(page);
+    let latestChapterJSONSplit = page.split(`vm.LatestJSON = `)[1].split(`;`);
+    let LatestChapterJSON = JSON.parse(latestChapterJSONSplit[0] + latestChapterJSONSplit[1]);
 
     for (i = 0; i < LatestChapterJSON.length; i++) {
         let manga = LatestChapterJSON[i];

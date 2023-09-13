@@ -254,7 +254,7 @@ async function getUserInfo() {
 }
 // logout of the user
 async function logOutUser() {
-    const url = window.location.origin + '/api/login/userInfo';
+    const url = window.location.origin + '/api/login/logout';
     const settings = {
         method: 'DELETE',
         headers: {
