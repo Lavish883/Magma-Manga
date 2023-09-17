@@ -48,10 +48,10 @@ function makeCommentHTML(comment, isReply = false) {
         </div>
         <div class="commentBody">${comment.comment}</div>
         <div class="commentFooter">
-            <div style="color:${comment.isLiked == true ? "#007bff": ""}" onclick="likeOrDislikeComment(this, '/api/comments/likeComment')" class="commentLike">
+            <div style="color:${comment.isLiked == true ? "#FF4500": ""}" onclick="likeOrDislikeComment(this, '/api/comments/likeComment')" class="commentLike">
                 <i class="fa-solid fa-arrow-up-long"></i> &middot; ${comment.likes.length}
             </div>
-            <div style="color:${comment.isDisliked == true ? "#d9534f": ""}" onclick="likeOrDislikeComment(this, '/api/comments/dislikeComment')" class="commentDislike">
+            <div style="color:${comment.isDisliked == true ? "#7193FF": ""}" onclick="likeOrDislikeComment(this, '/api/comments/dislikeComment')" class="commentDislike">
                 <i class="fa-solid fa-arrow-down-long"></i> &middot; ${comment.dislikes.length}
             </div>
             <div onclick="openReply(this)" class="commentReply">

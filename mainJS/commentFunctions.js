@@ -50,7 +50,7 @@ async function getComments(req, res) {
         }
     }
 
-    console.log(manga.comments);
+    //console.log(manga.comments);
     return res.send(manga.comments);
 }
 

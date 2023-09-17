@@ -13,6 +13,7 @@ const apiFunctions = require('./mainJS/apiFunctions') // function that handle al
 const loginFunctions = require('./mainJS/loginFunctions') // all fucntions that handle login and stuff
 const notificationFunctions = require('./mainJS/notfications') // functions that handle notifactions
 const commentFunctions = require('./mainJS/commentFunctions') // functions that handle comments
+const mailFunctions = require('./mainJS/mailFunctions'); // mail functions
 
 // Require dotenv for secrets
 require('dotenv').config()
@@ -163,10 +164,9 @@ app.use(async (err, req, res, next) => {
   if (res.headersSent) {
     return next(err)
   }
-
-  console.error(err);
-
-  return res.status(500).send('Something broke! Please report this problem to the admin')
+  // send email to admin
+  await mailFunctions.sendMail(process.env.EMAIL, 'An Error has occured', err.stack);
+  return res.status(500).send('Something broke! Please try again later. An Email has been sent to the admin. Thank you for your patience.')
 })
 
 

@@ -135,12 +135,12 @@
 
 .commentLike:hover {
     transform: scale(1.25);
-    color: #007bff;
+    color: #FF4500;
 } 
 
 .commentDislike:hover {
     transform: scale(1.25);
-    color: #d9534f;
+    color: #7193FF;
 }
 
 .commentFooter div:first-of-type{
