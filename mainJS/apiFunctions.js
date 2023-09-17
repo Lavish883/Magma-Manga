@@ -1,5 +1,6 @@
 const fetch = require('node-fetch'); // fetchs html
-var breakCloudFlare = 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com'
+const breakCloudFlare = 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com';
+const breakCloudFlareV2 = 'https://letstrypup-dbalavishkumar.koyeb.app/v2?url=https://mangasee123.com';
 const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const HeaderGenerator = require('header-generator');
 const fs = require('fs');
@@ -49,12 +50,7 @@ async function getMangaPage(req, res) {
         return res.send('manga name not given or given incorrectly')
     }
     
-    
-    if (mangaName.includes("Hige-Wo-Soru-Soshite-Joshikosei-Wo-Hirou")){
-        breakCloudFlare = 'https://letstrypup-dbalavishkumar.koyeb.app/v2?url=https://mangasee123.com'
-    }
-    
-    let link = breakCloudFlare + '/manga/' + mangaName;
+    let link = mangaName.includes("Hige-Wo-Soru-Soshite-Joshikosei-Wo-Hirou") ? breakCloudFlareV2 + '/manga/' + mangaName: breakCloudFlare + '/manga/' + mangaName;
     let fetchManga = await fetch(link, headers);
     let resp = await fetchManga.text();
 
