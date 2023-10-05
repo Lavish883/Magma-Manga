@@ -164,6 +164,7 @@ app.use(async (err, req, res, next) => {
   if (res.headersSent) {
     return next(err)
   }
+  console.log(err);
   // send email to admin
   await mailFunctions.sendMail(process.env.EMAIL, 'An Error has occured', err.stack);
   return res.status(500).send('Something broke! Please try again later. An Email has been sent to the admin. Thank you for your patience.')

@@ -3,7 +3,7 @@ const moment = require('moment')
 const fetch = require('node-fetch');
 const fs = require('fs')
 
-const breakCloudFlare = 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com'
+const breakCloudFlare = process.env.BREAK_CLOUDFLARE_V1 || 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com'
 const susManga = JSON.parse(fs.readFileSync('./json/susManga.json'));
 
 

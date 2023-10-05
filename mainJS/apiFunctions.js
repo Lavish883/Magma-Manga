@@ -1,11 +1,12 @@
 const fetch = require('node-fetch'); // fetchs html
-const breakCloudFlare = 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com';
-const breakCloudFlareV2 = 'https://letstrypup-dbalavishkumar.koyeb.app/v2?url=https://mangasee123.com';
+const breakCloudFlare = process.env.BREAK_CLOUDFLARE_V1 || 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com';
+const breakCloudFlareV2 = process.env.BREAK_CLOUDFLARE_V2 || 'https://letstrypup-dbalavishkumar.koyeb.app/v2?url=https://mangasee123.com';
 const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const HeaderGenerator = require('header-generator');
 const fs = require('fs');
 
 const realAdminRecd = JSON.parse(fs.readFileSync('./json/adminRecd.json', 'utf8'));
+const listOfMangaV2 = JSON.parse(fs.readFileSync('./json/listOfMangaV2.json', 'utf8'));
 
 // Generate human like headers so site doesn't detect us
 const headersGenerator = new HeaderGenerator({
@@ -41,6 +42,11 @@ async function getMainPageStuff(req, res) {
 
     res.send(allData)
 }
+
+function checkIfUseBreakCloudFlareV2(mangaName) {
+    return listOfMangaV2["data"].includes(mangaName);
+}
+
 // manga info
 async function getMangaPage(req, res) {
     let headers = headersGenerator.getHeaders();
@@ -50,7 +56,7 @@ async function getMangaPage(req, res) {
         return res.send('manga name not given or given incorrectly')
     }
     
-    let link = mangaName.includes("Hige-Wo-Soru-Soshite-Joshikosei-Wo-Hirou") ? breakCloudFlareV2 + '/manga/' + mangaName: breakCloudFlare + '/manga/' + mangaName;
+    let link = checkIfUseBreakCloudFlareV2(mangaName) ? breakCloudFlareV2 + '/manga/' + mangaName: breakCloudFlare + '/manga/' + mangaName;
     let fetchManga = await fetch(link, headers);
     let resp = await fetchManga.text();
 
@@ -72,7 +78,8 @@ async function getMangaPage(req, res) {
 async function getMangaChapterPage(req, res) {
     let headers = headersGenerator.getHeaders();
     // Fetch page that we need to scrape
-    let fetchManga = await fetch(breakCloudFlare + /read-online/ + req.params.chapter, headers)
+    let fetchUrl = checkIfUseBreakCloudFlareV2(req.params.chapter.split("-chapter-")[0]) ? breakCloudFlareV2 + '/read-online/' + req.params.chapter: breakCloudFlare + '/read-online/' + req.params.chapter;
+    let fetchManga = await fetch(fetchUrl, headers)
     let resp = await fetchManga.text();
 
     var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
