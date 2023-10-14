@@ -4,6 +4,7 @@ const fetch = require('node-fetch'); // fetchs html
 const cookieParser = require('cookie-parser') //parses cookies recived from the user
 const path = require('path');
 const mongoose = require('mongoose'); // database acessor
+const schemas = require('./schemas/schema'); // all the schemas for the database
 
 mongoose.set('strictQuery', false);
 require('express-async-errors');
@@ -42,17 +43,17 @@ app.use(express.json({ extended: true, limit: "1mb" }));
 // see if it is time to check for new manga
 app.use(notificationFunctions.isItTime)
 
-function setup(req,res,next){
+function setup(req, res, next) {
   var cookie = req.cookies.user;
   //console.log(cookie)
-  if (cookie == undefined){
+  if (cookie == undefined) {
     var intialCookies = {
       'loggedIn': false,
       'accessToken': false,
       'refreshToken': false,
     }
-    res.cookie('user',JSON.stringify(intialCookies), {
-      maxAge: 2592 * 10^6,
+    res.cookie('user', JSON.stringify(intialCookies), {
+      maxAge: 2592 * 10 ^ 6,
       secure: true,
       httpOnly: true,
       sameSite: 'lax'
@@ -84,7 +85,7 @@ app.get('/manga/search', pathFunctions.searchHtml)
 app.get('/manga/recentChapters', pathFunctions.recentChaptersHtml)
 // let user download that chpater manga
 app.get('/manga/download/:chapter', async (req, res) => {
-    res.send(req.params.chapter)
+  res.send(req.params.chapter)
 })
 // forgot password.html
 app.get('/manga/forgotPassword/:token', pathFunctions.forgotPasswordHtml);
@@ -94,9 +95,9 @@ app.get('/manga/offline/read', pathFunctions.offlineReadHtml);
 
 // given a image url return the image so it can be downloaded
 app.get('/api/offline/manga/downloadImage', apiFunctions.downloadImage)
-app.get('/api/offline/mangaName?', apiFunctions.getMangaPage)
+app.get('/api/offline/mangaName?', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaPage)
 //req.query.chapter ==> needed
-app.get('/api/offline/getMangaChapterPageOffline', apiFunctions.getMangaChapterPageOffline)
+app.get('/api/offline/getMangaChapterPageOffline', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaChapterPageOffline)
 /* Api Routes are below */
 
 // quick search data
@@ -104,13 +105,13 @@ app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)
 // get all the stuff needed for the main page of the site
 app.get('/api/manga/all', apiFunctions.getMainPageStuff)
 // given => mangaName?One-Piece
-app.get('/api/mangaName?', apiFunctions.getMangaPage)
+app.get('/api/mangaName?', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaPage)
 // directory  
 app.get('/api/manga/directory', apiFunctions.getDirectoryData)
 // given 2 manga get there genres and then recommned a manga based on those genres
 app.get('/api/manga/recommend', apiFunctions.getRecommendedManga)
 // given a chapter of a manga return all the pages adn info of that manga
-app.get('/api/manga/read/:chapter', apiFunctions.getMangaChapterPage)
+app.get('/api/manga/read', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaChapterPage)
 
 // get the directory for search page
 app.get('/api/searchPage', apiFunctions.getSearchData)
@@ -136,7 +137,7 @@ app.post('/api/login/forgotPassword', loginFunctions.makeForgotPasswordLink);
 // change the password of the user
 app.post('/api/login/changePassword', loginFunctions.changePassword);
 
-/* Notifactions functions routes are below */
+/* Notifications functions routes are below */
 app.post('/notification/subscribe', notificationFunctions.subscribe);
 app.post('/notification/updateSubscribe', notificationFunctions.updateSubscription);
 
@@ -154,7 +155,7 @@ app.delete('/api/comments/deleteComment', commentFunctions.deleteComment);
 app.use(express.static(path.join(__dirname, 'public')));
 
 //The 404 Route (ALWAYS Keep this as the last route)
-app.get('*', function(req, res){
+app.get('*', function (req, res) {
   res.status(404).send('page does not exist 404');
 });
 
@@ -164,7 +165,28 @@ app.use(async (err, req, res, next) => {
   if (res.headersSent) {
     return next(err)
   }
-  console.log(err);
+  //console.log(req)
+  console.log(err.stack);
+
+  // meaning we aren't using the right cloudflare break version with that manga, so add it to the v2 list
+  if (err.name == "FetchError" && err.message.includes("invalid json response body at")) {
+    await mailFunctions.sendMail(process.env.EMAIL, 'Added this manga to V2 check if this works later', req.url);
+    var mangaLink;
+    
+    if (req.url.includes("/read/")) {
+      mangaLink = req.url.split("/manga/read/")[1].split("-chapter-")[0];
+    } else {
+      mangaLink = req.url.split("/manga/")[1].split("manga/")[1];
+    }
+
+    console.log('mangaLink: ' + mangaLink);
+    var mangaToAdd = new schemas.mangaUsingV2({
+      'mangaLink': mangaLink
+    });
+
+    await mangaToAdd.save();
+    return res.status(500).send("Reload the page. It should work now ?")
+  }
   // send email to admin
   await mailFunctions.sendMail(process.env.EMAIL, 'An Error has occured', err.stack);
   return res.status(500).send('Something broke! Please try again later. An Email has been sent to the admin. Thank you for your patience.')

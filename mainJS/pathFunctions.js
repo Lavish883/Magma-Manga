@@ -26,7 +26,7 @@ async function readHtml(req, res) {
         return res.render('loading')
     }
     // get the chapter details
-    let fetchAllData = await fetch(serverName + 'api/manga/read/' + req.params.mangaChapter)
+    let fetchAllData = await fetch(serverName + 'api/manga/read?chapter=' + req.params.mangaChapter)
     let resp = await fetchAllData.json();
 
     // still got do the spefic page 

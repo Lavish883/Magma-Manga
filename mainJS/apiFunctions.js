@@ -4,6 +4,7 @@ const breakCloudFlareV2 = process.env.BREAK_CLOUDFLARE_V2 || 'https://letstrypup
 const mainFunctions = require('./mainFunctions') // functions needed for important stuff
 const HeaderGenerator = require('header-generator');
 const fs = require('fs');
+const schemas = require('../schemas/schema');
 
 const realAdminRecd = JSON.parse(fs.readFileSync('./json/adminRecd.json', 'utf8'));
 const listOfMangaV2 = JSON.parse(fs.readFileSync('./json/listOfMangaV2.json', 'utf8'));
@@ -47,6 +48,27 @@ function checkIfUseBreakCloudFlareV2(mangaName) {
     return listOfMangaV2["data"].includes(mangaName);
 }
 
+/* Implent v2check automatically and add that for getMangaPage, getMangaChapterPage and getMangaChapterPageOffline */
+
+// check if we need to use v2 or not for that url
+async function cloudFlareV2CheckMiddleware(req, res, next) {
+    var mangaLink;
+    // find the url of the manga
+    if (req.url.includes("/read?chapter=")) {
+        mangaLink = req.query.chapter.split("-chapter-")[0];
+    } else {
+        mangaLink = req.query.manga;
+    }
+    // check from the database if we need to use v2 or not
+    const manga = await schemas.mangaUsingV2.findOne({'mangaLink': mangaLink});
+    console.log(req.url);
+    if (manga != null && manga != undefined) {
+        req.query.useV2 = true;
+    }
+
+    next();
+}
+
 // manga info
 async function getMangaPage(req, res) {
     let headers = headersGenerator.getHeaders();
@@ -56,7 +78,7 @@ async function getMangaPage(req, res) {
         return res.send('manga name not given or given incorrectly')
     }
     
-    let link = checkIfUseBreakCloudFlareV2(mangaName) ? breakCloudFlareV2 + '/manga/' + mangaName: breakCloudFlare + '/manga/' + mangaName;
+    let link = req.query.useV2 ? breakCloudFlareV2 + '/manga/' + mangaName: breakCloudFlare + '/manga/' + mangaName;
     let fetchManga = await fetch(link, headers);
     let resp = await fetchManga.text();
 
@@ -78,10 +100,11 @@ async function getMangaPage(req, res) {
 async function getMangaChapterPage(req, res) {
     let headers = headersGenerator.getHeaders();
     // Fetch page that we need to scrape
-    let fetchUrl = checkIfUseBreakCloudFlareV2(req.params.chapter.split("-chapter-")[0]) ? breakCloudFlareV2 + '/read-online/' + req.params.chapter: breakCloudFlare + '/read-online/' + req.params.chapter;
+    let fetchUrl = req.query.useV2 ? breakCloudFlareV2 + '/read-online/' + req.query.chapter : breakCloudFlare + '/read-online/' + req.query.chapter;
+    console.log('fetch thi shit ' + fetchUrl);
     let fetchManga = await fetch(fetchUrl, headers)
     let resp = await fetchManga.text();
-
+    
     var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
     var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
 
@@ -100,7 +123,7 @@ async function getMangaChapterPage(req, res) {
         'imageURlS': imageURlS,
         'seriesName': seriesName,
         'indexName': indexName,
-        'chapterLink': req.params.chapter
+        'chapterLink': req.query.chapter
     }
 
     return res.send(allData)
@@ -108,7 +131,8 @@ async function getMangaChapterPage(req, res) {
 // get current chapter info for offline reading
 async function getMangaChapterPageOffline(req, res) {
     // Fetch page that we need to scrape
-    let fetchManga = await fetch(breakCloudFlare + "/read-online/" + req.query.chapter)
+    let fetchUrl = req.query.useV2 ? breakCloudFlareV2 + '/read-online/' + req.query.chapter: breakCloudFlare + '/read-online/' + req.query.chapter;
+    let fetchManga = await fetch(fetchUrl);
     let resp = await fetchManga.text();
  
     var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0], req.query.chapter.split('-chapter-')[0]);
@@ -204,5 +228,6 @@ module.exports = {
     getRecommendedManga,
     getSearchData,
     downloadImage,
-    getMangaChapterPageOffline
+    getMangaChapterPageOffline,
+    cloudFlareV2CheckMiddleware
 }
