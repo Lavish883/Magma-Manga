@@ -67,13 +67,21 @@ async function makeChaptersArry() {
   return mangaAvailble;
 }
 
-function makeMangaChaptersHTML(mangaAvailble) {
+async function makeMangaChaptersHTML(mangaAvailble) {
   var htmlArry = [];
 
   for (var i = 0; i < mangaAvailble.length; i++) {
+    // Access the cache, to get the chapter type
+    var cacheName = mangaAvailble[i].chapterKey;
+    var cache = await caches.open(cacheName);
+    var cachedItems = await cache.keys();
+
+    var req = await fetch(cachedItems[0].url)
+    var resp = await req.json();
+
     htmlArry.push(`
       <a class="chapterLinkButton" href="/manga/offline/read?${mangaAvailble[i].chapterKey}-page-1" title="Chapter ${mangaAvailble[i].chapterNumber}">
-        <span>Chapter ${mangaAvailble[i].chapterNumber}</span>
+        <span>${resp.Type} ${mangaAvailble[i].chapterNumber}</span>
       </a>
     `)
   }
@@ -103,7 +111,7 @@ async function makeAvailableMangaHTML() {
           </a>
         </div>
         <div class="AllChapterCont">
-          ${makeMangaChaptersHTML(mangaAvailble[mangas[i]])}
+          ${await makeMangaChaptersHTML(mangaAvailble[mangas[i]])}
         </div>
       </div>
     `)
