@@ -297,11 +297,35 @@ async function removeBookmark(bookmark) {
     console.log(resp);
 }
 
+async function addBookmark(bookmark) {
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "accessToken": window.localStorage.getItem("accessToken"),
+            "bookmark": bookmark
+        })
+    }
+    
+    let addBookmarkRequest = await fetch('/api/login/addBookmark', options);
+    if (addBookmarkRequest.status == 401) {
+        await getNewAccesToken();
+        return addBookmark(bookmark);
+    }
+
+    let resp = await addBookmarkRequest.text();
+    console.log(resp);
+}
 
 // get the updated info from the cloud when u go to the bookmarks
 if (window.location.href.includes('bookmarks')) {
     if (window.localStorage.getItem('accessToken') != null && window.localStorage.getItem('refreshToken') != null) {
-        console.log('updating all info')
-        getUserInfo();
+        console.log('updating all info');
+        (async () => {
+            await getUserInfo();
+            getBookMarks();
+        })()
     }
 }

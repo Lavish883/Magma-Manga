@@ -73,6 +73,7 @@ function bookMark(obj) {
 
     if (!bookMarked) {
         bookMarks.push({ 'Series': currentChapter.seriesName, 'Index': currentChapter.indexName });
+        addBookmark({ 'Series': currentChapter.seriesName, 'Index': currentChapter.indexName });
     } else {
         // remove the manga
         for (var i = bookMarks.length - 1; i >= 0; i--) {
@@ -109,6 +110,9 @@ function changeReadingStyle(obj, userClicked = true) {
             currentlyOnPage = 1;
             showImages(currentlyOnPage);
         }
+    }
+    if (userClicked) {
+        updateURL();
     }
 }
 // show Images in single Page mode
@@ -152,10 +156,9 @@ function movePage(event) {
     if (event.type == "keyup" && event.key != "ArrowLeft" && event.key != "ArrowRight") {
         return;
     }
-    console.log(event.type)
+
     if (event.type == 'click') {
         // varibles to check of the page clikc is lef tor right
-        console.log(event)
         let pWidth = parseInt(window.getComputedStyle(event.target).width);
         let pOffset = getOffset(event.target);
         var x = event.pageX - pOffset.left;
@@ -165,7 +168,6 @@ function movePage(event) {
         } else {
             currentlyOnPage++; // Right Side of the page is clicked
         }
-
     } else {
         if (event.key == "ArrowLeft") { // Left Side of the page is clicked
             currentlyOnPage--;
@@ -194,11 +196,12 @@ function movePage(event) {
             behavior: 'smooth'
         })
     }
+    updateURL();
 }
 
 // go to the next chapter
 // direction meaning either next chapter or previous chapter
-function moveChapter(direction) {
+function moveChapter(direction, goToBeginning = false) {
     var currentChapterIndx = chapters.findIndex(elem => elem.ChapterLink == currentChapter.ChapterLink)
     var chapterToLookIndx = direction == 'next' ? currentChapterIndx - 1 : currentChapterIndx + 1;
     try {
@@ -206,7 +209,8 @@ function moveChapter(direction) {
             window.location.href = window.location.origin + '/manga/read/' + chapters[chapterToLookIndx].ChapterLink;
             return;
         } else {
-            let chapterPageToStart = direction == 'next' ? '-page-1' : '-page-' + chapters[chapterToLookIndx].Page;
+            let pageToStart = goToBeginning ? 1 : currentChapter.Page;
+            let chapterPageToStart = direction == 'next' ? '-page-1' : '-page-' + pageToStart;
             window.location.href = window.location.origin + '/manga/read/' + chapters[chapterToLookIndx].ChapterLink + chapterPageToStart;
             return;
         }
@@ -217,7 +221,18 @@ function moveChapter(direction) {
 }
 
 // update url accordingly
-
+function updateURL(){
+    if (longStrip) {
+        window.history.pushState({}, '', window.location.origin + '/manga/read/' + currentChapter.ChapterLink);
+    } else {
+        window.history.pushState({}, '', window.location.origin + '/manga/read/' + currentChapter.ChapterLink + '-page-' + currentlyOnPage);
+    }
+}
+// fixes thin navbar
+function fixNavbar() {
+    document.querySelector('#thinNavbarChapters').style.display = 'block';
+    document.querySelector('#thinNavbarChapters #chapterNum').innerText = currentChapter.Chapter;
+}
 // event listeners 
 // listen for page clicks
 document.getElementById('imgs').addEventListener("click", movePage);
@@ -229,6 +244,8 @@ changeReadingStyle(document.getElementById("readingStyle"), false)
 showImages(parseInt(currentlyOnPage))
 setTimeout(addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0]), 1500)
 document.body.addEventListener('click', checkIfBookmarked)
+fixNavbar();
+changeBookMarkStatus(document.getElementById("bookMark"));
 
 window.addEventListener('scroll', function() {
     console.log(document.body.scrollTop)

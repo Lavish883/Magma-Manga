@@ -1,4 +1,3 @@
-
 function getBookMarks() {
   var allBookMarks = JSON.parse(window.localStorage.getItem('bookmarks'));
 
@@ -38,9 +37,9 @@ function genreateBookmarksHTML(allBookMarks) {
 
 function loadLazyImages() {
   const observer = lozad('.lozad', {
-    load: function(el) {
+    load: function (el) {
       el.src = el.dataset.src;
-      el.onload = function() {
+      el.onload = function () {
         el.classList.add('fade')
       }
     }
@@ -48,23 +47,49 @@ function loadLazyImages() {
   observer.observe();
 }
 
-window.addEventListener('storage', getBookMarks);
-getBookMarks()
+window.addEventListener('storage', (event)=> {
+  console.log(event);
+  if(event.key == 'bookmarks') {
+    getBookMarks();
+  }
+});
+getBookMarks();
 
 
+$("#BookMarksContainer").sortable({
+  cursor: "move",
+  scroll: true,
+  containment: "body",
+  stop: doneSorting
+});
 
+function doneSorting() {
+  let ArryToreplace = [];
+  document.querySelectorAll('.BookMark_Container').forEach(function (manga) {
+    let seriesManga = manga.outerHTML.split(`<div class="hot_update_item_name">`)[1].split(`</div>`)[0];
+    let indexManga = manga.outerHTML.split(`data-src="https://temp.compsci88.com/cover/`)[1].split(`.jpg`)[0];
+    ArryToreplace.push({ "Index": indexManga, "Series": seriesManga })
+  })
+  window.localStorage.setItem('bookmarks', JSON.stringify(ArryToreplace));
+  updateBookmarks();
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+async function updateBookmarks() {
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      'accessToken': window.localStorage.getItem('accessToken'),
+      'bookmarks': JSON.parse(window.localStorage.getItem('bookmarks'))
+    })
+  }
+  let req = await fetch(window.location.origin + '/api/manga/updateBookmarks', options);
+  if (req.status == 401) {
+    await getNewAccesToken();
+    return await updateBookmarks();
+  }
+  let resp = await req.text();
+  return resp;
+}

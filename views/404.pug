@@ -1,0 +1,25 @@
+// !{variable name} this for using the passed in data
+doctype html
+html(lang="en")
+    head
+        //| !{p1}
+        title 404 Not Found 
+        meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        meta(charset="UTF-8")
+        meta(name="theme-color" content="#000000")
+        link(rel="manifest" href="/pwa.webmanifest")
+        style 
+            include /css/navbar.css
+        style
+            include /css/style.css
+        style
+            include /css/search.css
+        script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+        script(src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js")
+    body(style="margin:0px")
+        include includes/navbar.pug
+        div(style="background-color:#f2f2f2;border-radius:10px;box-shadow:0px 0px 10px 0px #000000;width:20%;max-width:300px;margin:auto;padding:20px;margin-top:100px;font-size:25px;")
+            h1(style="text-align:center;") 404 Page Not Found
+            p(style="text-align:center;font-size:18px;") The page you are looking for does not exist
+        script
+            include /js/index.js

@@ -87,6 +87,8 @@ app.get('/manga/recentChapters', pathFunctions.recentChaptersHtml)
 app.get('/manga/download/:chapter', async (req, res) => {
   res.send(req.params.chapter)
 })
+// settings for the user
+app.get('/manga/settings', pathFunctions.settingsHtml);
 // forgot password.html
 app.get('/manga/forgotPassword/:token', pathFunctions.forgotPasswordHtml);
 // offline.html
@@ -131,11 +133,19 @@ app.post('/api/login/newAccessToken', loginFunctions.getNewToken);
 // log out 
 app.delete('/api/login/logout', loginFunctions.logOutUser);
 // remove a certain manga from the users bookmarks
-app.delete('/api/login/removeBookmark', loginFunctions.removeBookmark);
+app.delete('/api/login/removeBookmark', loginFunctions.loginCheck , loginFunctions.removeBookmark);
+// add a certain manga to the users bookmarks
+app.post('/api/login/addBookmark', loginFunctions.loginCheck , loginFunctions.addBookmark);
 // amke forgot password linka and send to the email
 app.post('/api/login/forgotPassword', loginFunctions.makeForgotPasswordLink);
 // change the password of the user
 app.post('/api/login/changePassword', loginFunctions.changePassword);
+// get all the user info
+app.post('/api/manga/allUserInfo', loginFunctions.loginCheck, loginFunctions.getAllUserInfo);
+// update the user subscribed manga list
+app.post('/api/manga/updateSubscribedMangaList', loginFunctions.loginCheck , loginFunctions.updateSubscribedMangaList);
+// update the user bookmarks
+app.post('/api/manga/updateBookmarks', loginFunctions.loginCheck , loginFunctions.updateBookmarks);
 
 /* Notifications functions routes are below */
 app.post('/notification/subscribe', notificationFunctions.subscribe);
@@ -156,7 +166,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 //The 404 Route (ALWAYS Keep this as the last route)
 app.get('*', function (req, res) {
-  res.status(404).send('page does not exist 404');
+  return res.render('404.pug');
 });
 
 
@@ -186,6 +196,8 @@ app.use(async (err, req, res, next) => {
 
     await mangaToAdd.save();
     return res.status(500).send("Reload the page. It should work now ?")
+  } else if (err.name == "Page can't be found") {
+    return res.status(404).send('Page you are looking for does not exist');
   }
   // send email to admin
   await mailFunctions.sendMail(process.env.EMAIL, 'An Error has occured', err.stack);

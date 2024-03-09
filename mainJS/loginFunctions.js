@@ -4,6 +4,18 @@ const schemas = require('../schemas/schema'); // schemas
 const mailFunctions = require('./mailFunctions'); // mail functions
 const userNameRegexExpression = "^[A-Za-z][A-Za-z0-9_]{7,29}$"; 
 
+// login Check middleware
+async function loginCheck(req, res, next) {
+    let tokenValid = isTokenValid(req.body.accessToken, process.env.ACCESS_TOKEN_SECERT)
+    if (tokenValid == false) {
+        return res.sendStatus(401);
+    }
+
+    var userCloud = await findUser(tokenValid.name, tokenValid.name);
+    req.user = userCloud[0];
+    next();
+}
+
 // check if an user already exsits with that name or email
 async function findUser(userName, userEmail) {
     console.log(userName, userEmail);
@@ -191,13 +203,7 @@ async function logOutUser(req, res) {
 
 // remove the bookmark from the server
 async function removeBookmark(req, res) {
-    let tokenValid = isTokenValid(req.body.accessToken, process.env.ACCESS_TOKEN_SECERT)
-    if (tokenValid == false) {
-        return res.sendStatus(401);
-    }
-    var userCloud = await findUser(tokenValid.name, tokenValid.name);
-    userCloud = userCloud[0];
-
+    var userCloud = req.user
     var reqBookmark = req.body.bookmark;
 
     // go through all the bookmarks of the user and remove the one that matches the req
@@ -207,7 +213,24 @@ async function removeBookmark(req, res) {
             break;
         }
     }
+    if (user.pref != undefined && user.pref.subscribeToBookmarks == true) {
+        user.subscribed = userCloud.bookmarks;
+    }
     await userCloud.save();
+    return res.send('done');
+}
+
+async function addBookmark(req, res) {
+    var userCloud = req.user
+    var reqBookmark = req.body.bookmark;
+
+    userCloud.bookmarks.push(reqBookmark);
+    if (user.pref != undefined && user.pref.subscribeToBookmarks == true) {
+        user.subscribed.push(reqBookmark);
+    }
+    await userCloud.save();
+
+    return res.send('done');
 }
 
 async function makeForgotPasswordLink(req, res) {
@@ -269,6 +292,36 @@ async function changePassword(req, res) {
     return res.status(200).send('done');
 }
 
+async function getAllUserInfo(req, res){
+    return res.send({
+        'bookmarks': req.user.bookmarks,
+        'recentRead': req.user.recentRead,
+        'subscribed': req.user.subscribed
+    });
+}
+
+async function updateSubscribedMangaList(req, res){
+    let user = req.user;
+    console.log(req.body.subscribed.length);
+    console.log(user.subscribed.length);
+
+    user.subscribed = req.body.subscribed;
+    await user.save();
+
+    return res.sendStatus(200);
+}
+
+async function updateBookmarks(req, res){
+    let user = req.user;
+    user.bookmarks = req.body.bookmarks;
+    if (user.pref != undefined && user.pref.subscribeToBookmarks == true) {
+        user.subscribed = req.body.bookmarks;
+    }
+    await user.save();
+    return res.sendStatus(200);
+}
+
+
 module.exports = {
     allUsers,
     registerUser,
@@ -279,5 +332,10 @@ module.exports = {
     isTokenValid,
     removeBookmark,
     makeForgotPasswordLink,
-    changePassword
+    changePassword,
+    getAllUserInfo,
+    updateSubscribedMangaList,
+    loginCheck,
+    addBookmark,
+    updateBookmarks
 }

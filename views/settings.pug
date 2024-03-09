@@ -1,0 +1,60 @@
+html(lang="en")
+    head
+        //| !{p1}
+        title Settings
+        meta(name="viewport",content="width=device-width, initial-scale=1.0, maximum-scale=1.0")
+        meta(charset="UTF-8")
+        meta(name="theme-color" content="#000000")
+        link(rel="manifest" href="/pwa.webmanifest")
+        style 
+            include /css/navbar.css
+        style
+            include /css/style.css
+        style
+            include /css/settings.css
+        style
+            include /css/search.css
+        script(src="https://kit.fontawesome.com/9c2fbbf0d7.js")
+        script(src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.4/moment.min.js")
+    body(style="margin:0px")
+        include includes/navbar.pug
+        div#main
+            div(style="margin-bottom:100px;")
+                div.admin_top(style="margin-top:25px;")
+                    a(style="font-size:18px; color:white;")
+                        i(class="fa-solid fa-gear")
+                        span &nbsp;Settings
+                div.hot_update.settings
+                    div.setting
+                        span.label Subscribed Managa 
+                        div.cont
+                            div.options
+                                div.option(onclick="toggleAllSelect(this, true)") Select All
+                                div.option(onclick="toggleAllSelect(this, false)") Select None
+                                div.option(onclick="updateSubscribedMangaList(this)" style="background-color:#01b15c;") Update
+                            div#subscribedMangaList
+                    div.setting
+                        span.label Prefences 
+                        div.cont
+                            div#prefences
+                                div
+                                    div.option(onclick="togglePrefence(this, 'darkmode')") Dark Mode
+                                    input(type="checkbox", id="darkmode", checked="checked")
+                                div
+                                    div.option(onclick="togglePrefence(this, 'notifications')") Subscribe to Bookmarks
+                                    input(type="checkbox", id="notifications", checked="checked")
+                                div
+                                    div.option() Default Long Strip Reading
+                                    input(type="checkbox", id="longstrip")
+                                div
+                                    div.option() Keep Reading History
+                                    input(type="checkbox", id="history")
+                                div
+                                    div.option() Achievements and Badges On    
+                                    input(type="checkbox", id="achievements")               
+        script
+            include /js/index.js
+        script 
+            include /js/login.js
+        script 
+            include /js/settings.js

@@ -34,7 +34,17 @@ const userSchema = new Schema({
         type: String,
         required: true,
         default: '/images/favicon.ico'
-    }
+    },
+    "preferences": {
+        type: Object,
+        default: {
+            "darkMode": false,
+            "subscribeToBookmarks": true,
+            "longStrip": false,
+            "recentReadOn": true,
+            "achievements": true,
+        }
+    },
 }, { timestamps: true });
 
 const refreshTokenSchema = new Schema({

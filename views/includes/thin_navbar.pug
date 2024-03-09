@@ -15,12 +15,21 @@ header(style='position:fixed;width:100%;z-index:1;')
       a#Darkmode.small_nav(onclick='handleDarkModeToggle()' style='cursor:pointer;' title='Dark Mode Toggle')
         i.fas.fa-sun
         span &nbsp;Dark Mode off
+      div#thinNavbarChapters(style='margin-left:auto;position:relative;display:none;')
+        a#prev_chap.small_nav(style="cursor:pointer;",title='Previous Chapter', onclick="moveChapter('prev', true)")
+          i.fa-solid.fa-backward-step 
+          span &nbsp;Chapter
+        a.small_nav(title='Next Chapter')
+          span#chapterNum 287
+        a#next_chap.small_nav(style="cursor:pointer",title='Next Chapter', onclick="moveChapter('next', true)")
+          span Chapter&nbsp;
+          i.fa-solid.fa-forward-step 
       div(style='margin-left:auto;position:relative;')
         a#Login_nav.small_nav(onclick="toggleLoginModal()", style='cursor:pointer;height:100%;box-sizing:border-box')
           i.fas.fa-sign-in-alt 
           span &nbsp;Login
         #dropdown_box.dropdown_box
-          a.small_nav(href='settings.html')
+          a.small_nav(href='/manga/settings' title='Settings')
             i.fas.fa-cog 
             span &nbsp;Settings
           a.small_nav(onclick='logOutUser()')

@@ -27,6 +27,9 @@ async function readHtml(req, res) {
     }
     // get the chapter details
     let fetchAllData = await fetch(serverName + 'api/manga/read?chapter=' + req.params.mangaChapter)
+    if (fetchAllData.status == 404) {
+        return res.render('404');
+    }
     let resp = await fetchAllData.json();
 
     // still got do the spefic page 
@@ -102,6 +105,10 @@ async function offlineReadHtml(req, res) {
     return res.render('readOffline')
 }
 
+async function settingsHtml(req, res) {
+    return res.render('settings')
+}
+
 module.exports = {
     indexHtml,
     readHtml,
@@ -112,5 +119,6 @@ module.exports = {
     recentChaptersHtml,
     forgotPasswordHtml,
     offlineHtml,
-    offlineReadHtml
+    offlineReadHtml,
+    settingsHtml
 }

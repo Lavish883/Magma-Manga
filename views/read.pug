@@ -43,11 +43,10 @@ html(lang="en")
                 - i++
         div(style="margin:0px 2.53%;")
             include includes/comments.pug
+        script.
+          var chapters = !{JSON.stringify(chapters).replace(/<\//g, '<\\/')} 
+          var currentChapter = !{JSON.stringify(currentChapter).replace(/<\//g, '<\\/')}    
         script
             include /js/index.js
         script 
             include /js/readHtml.js
-        script.
-          var chapters = !{JSON.stringify(chapters).replace(/<\//g, '<\\/')} 
-          var currentChapter = !{JSON.stringify(currentChapter).replace(/<\//g, '<\\/')}    
-          changeBookMarkStatus(document.getElementById("bookMark"))

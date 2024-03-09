@@ -105,6 +105,10 @@ async function getMangaChapterPage(req, res) {
     let fetchManga = await fetch(fetchUrl, headers)
     let resp = await fetchManga.text();
     
+    if (resp.includes("<title>404 Page Not Found</title>")){
+        return res.status(404).send("Page could not be found");
+    }
+
     var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
     var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
 

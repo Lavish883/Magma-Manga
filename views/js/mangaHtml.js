@@ -44,6 +44,15 @@ async function cacheInfoAboutManga(){
 async function saveChapter(obj) {
     // do it so window doesnt go to the link
     event.preventDefault();
+    // if the chapter is already downloaded then delete it
+    if (obj.children[0].classList.contains("fa-xmark")) {
+        if (confirm('Are you sure you want to delete this chapter?')) {
+            // delete the cache
+            await caches.delete(obj.parentElement.href.split('/').pop().replace('-page-1', ''));
+            obj.innerHTML = `<i class="fas fa-floppy-disk"></i>`;
+            return;
+        }
+    }
     // show the loading icon
     obj.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
     
@@ -75,13 +84,13 @@ async function saveChapter(obj) {
 
     await chapterCache.addAll(cachingURLS);
     // now show the check icon
-    obj.innerHTML = `<i class="fas fa-check"></i>`;
+    obj.innerHTML = `<i style="color:red;" class="fas fa-xmark"></i>`;
 }
 // makes automated html for the cahpters
 function generateMangaChaptersHTML(chapter, chaptersInCache) {
     // if the chapter read then give gre font otherwise let it be normal
     let fontColor = isChapterRead(chapter.ChapterLink) ? 'grey' : 'inherit';
-    let downloadedHTML = isChapterDownloaded(chapter.ChapterLink, chaptersInCache) ? `<i class="fas fa-check"></i>` : `<i class="fas fa-floppy-disk"></i>`;
+    let downloadedHTML = isChapterDownloaded(chapter.ChapterLink, chaptersInCache) ? `<i class="fas fa-xmark" style="color:red;"></i>` : `<i class="fas fa-floppy-disk"></i>`;
     return `
         <li>
            <a href=${window.location.origin + '/manga/read/' + chapter.ChapterLink + '-page-1'} style="color:${fontColor};">${chapter.Type + ' ' + chapter.Chapter}
@@ -126,7 +135,6 @@ if (allChapters.length < 10) {
         // Add show all chapters button
         document.getElementById('Chapters_List').innerHTML += `<li><a onclick="generateMangaChapters(0,allChapters.length, true, true)" style="color:green;cursor:pointer;">Show All Chapters<i style="float:right;marign-top:7px;margin-right:7px;" class="fas fa-chevron-down"><i></a></li>`;
     })()
-
 }
 
 function fixLinksinDescription() {
