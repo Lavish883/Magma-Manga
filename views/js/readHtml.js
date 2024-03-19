@@ -209,7 +209,7 @@ function moveChapter(direction, goToBeginning = false) {
             window.location.href = window.location.origin + '/manga/read/' + chapters[chapterToLookIndx].ChapterLink;
             return;
         } else {
-            let pageToStart = goToBeginning ? 1 : currentChapter.Page;
+            let pageToStart = goToBeginning ? 1 : chapters[chapterToLookIndx].Page;
             let chapterPageToStart = direction == 'next' ? '-page-1' : '-page-' + pageToStart;
             window.location.href = window.location.origin + '/manga/read/' + chapters[chapterToLookIndx].ChapterLink + chapterPageToStart;
             return;
