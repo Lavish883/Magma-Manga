@@ -125,7 +125,7 @@ app.post('/api/login/register', loginFunctions.registerUser);
 app.post('/api/login/login', loginFunctions.loginUser)
 // get user info such as bookmarks and recentread
 // before giving info verify accestoken
-app.post('/api/login/userInfo', loginFunctions.getUserInfo)
+app.post('/api/login/userInfo', loginFunctions.loginCheck, loginFunctions.getUserInfo)
 // all users
 app.get('/api/login/allUsers', loginFunctions.allUsers);
 // get a new accestoken based on the refresh token
@@ -146,6 +146,8 @@ app.post('/api/manga/allUserInfo', loginFunctions.loginCheck, loginFunctions.get
 app.post('/api/manga/updateSubscribedMangaList', loginFunctions.loginCheck , loginFunctions.updateSubscribedMangaList);
 // update the user bookmarks
 app.post('/api/manga/updateBookmarks', loginFunctions.loginCheck , loginFunctions.updateBookmarks);
+// update the users continue reading list
+app.post('/api/login/updateContinueReading', loginFunctions.loginCheck , loginFunctions.updateContinueReading);
 
 /* Notifications functions routes are below */
 app.post('/notification/subscribe', notificationFunctions.subscribe);

@@ -122,53 +122,56 @@ async function loginUser(req, res) {
 }
 // get users info like bookamrks and recentread based on the accestoken
 async function getUserInfo(req, res) {
+    var userCloud = req.user;
 
-    let tokenValid = isTokenValid(req.body.accessToken, process.env.ACCESS_TOKEN_SECERT)
-    
-    if (tokenValid == false) {
-        return res.sendStatus(401);
-    }
-    //console.log(tokenValid)
-    // info about bookmarks and recentRead we have on the server
-    var userCloud = await findUser(tokenValid.name, tokenValid.name);
-    userCloud = userCloud[0];
-    //console.log(userCloud)
     var reqRecentRead = req.body.recentRead;
     var reqBookmarks = req.body.bookmarks;
+    var reqContinueReading = req.body.continueReading;
     // now combine what the user has on their local machine and update that to our server
+    
     // combine recentread
-
     if (reqRecentRead != undefined || reqRecentRead != null) {
-        // deconstruct the arry and push all elements to cloud save
-        // then use the spread and new syntax to get rid of duplciate items in the arry
         userCloud.recentRead.push(...reqRecentRead)
         userCloud.recentRead = [... new Set(userCloud.recentRead)]
     }
-    //console.log(userCloud);
-    //console.log(userCloud.bookmarks);
     // combine bookmarks
-
     if (reqBookmarks != undefined || reqBookmarks != null) {
-        // go through all the bookmarks in the req if it doesn't include in our cloudsave then push it otherwise ignore and move on
         for (var i = 0; i < reqBookmarks.length; i++) {
             var isUnique = true;
-
             for (var k = 0; k < userCloud.bookmarks.length; k++) {
                 if (userCloud.bookmarks[k].Index == reqBookmarks[i].Index) {
                     isUnique = false;
                     break;
                 }
             }
-
             if (isUnique) {
                 userCloud.bookmarks.push(reqBookmarks[i]);
             }
         }
     }
+    // combine continue reading
+    if (reqContinueReading != undefined || reqContinueReading != null) {
+        for (var i = 0; i < reqContinueReading.length; i++) {
+            var isUnique = true;
+            for (var k = 0; k < userCloud.continueReading.length; k++) {
+                if (userCloud.continueReading[k].Index == reqContinueReading[i].Index) {
+                    if (reqContinueReading[i].Chapter > userCloud.continueReading[k].Chapter) {
+                        userCloud.continueReading[k] = reqContinueReading[i];   
+                    }
+                    isUnique = false;
+                    break;
+                }
+            }
+            if (isUnique) {
+                userCloud.continueReading.push(reqContinueReading[i]);
+            }
+        }
+    }
+
     // now save the user on the cloud with updated bookmarks and recentread
     await userCloud.save();
     
-    return res.send({ 'bookmarks': userCloud.bookmarks, 'recentRead': userCloud.recentRead });
+    return res.send({ 'bookmarks': userCloud.bookmarks, 'recentRead': userCloud.recentRead, 'continueReading': userCloud.continueReading });
 }
 // new accestoken with the refresh token
 async function getNewToken(req, res) {
@@ -321,6 +324,21 @@ async function updateBookmarks(req, res){
     return res.sendStatus(200);
 }
 
+async function updateContinueReading(req, res){
+    let user = req.user;
+    let manga = req.body.manga;
+
+    for (var i  = user.continueReading.length - 1; i >= 0; i--) {
+        if (user.continueReading[i].index === manga.index) {
+            user.continueReading.splice(i, 1);
+            break;
+        }
+    }
+
+    user.continueReading.unshift(manga);
+    await user.save();
+    return res.sendStatus(200);
+}
 
 module.exports = {
     allUsers,
@@ -337,5 +355,6 @@ module.exports = {
     updateSubscribedMangaList,
     loginCheck,
     addBookmark,
-    updateBookmarks
+    updateBookmarks,
+    updateContinueReading
 }

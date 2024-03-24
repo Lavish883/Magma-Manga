@@ -1,5 +1,6 @@
 var longStrip = !window.location.href.includes("-page-");
 var currentlyOnPage = window.location.href.split(`-page-`)[1];
+var params = new URLSearchParams(window.location.search);
 
 
 //add to recentread localstorage array
@@ -113,6 +114,7 @@ function changeReadingStyle(obj, userClicked = true) {
     }
     if (userClicked) {
         updateURL();
+        updateContineReading();
     }
 }
 // show Images in single Page mode
@@ -134,20 +136,18 @@ function showImages(page) {
     }
 }
 
-function getOffset(element)
-{
-    if (!element.getClientRects().length)
-    {
-      return { top: 0, left: 0 };
+function getOffset(element) {
+    if (!element.getClientRects().length) {
+        return { top: 0, left: 0 };
     }
 
     let rect = element.getBoundingClientRect();
     let win = element.ownerDocument.defaultView;
     return (
-    {
-      top: rect.top + win.pageYOffset,
-      left: rect.left + win.pageXOffset
-    });   
+        {
+            top: rect.top + win.pageYOffset,
+            left: rect.left + win.pageXOffset
+        });
 }
 
 // listen to page clicks either it is left or right
@@ -197,6 +197,7 @@ function movePage(event) {
         })
     }
     updateURL();
+    updateContineReading();
 }
 
 // go to the next chapter
@@ -221,7 +222,7 @@ function moveChapter(direction, goToBeginning = false) {
 }
 
 // update url accordingly
-function updateURL(){
+function updateURL() {
     if (longStrip) {
         window.history.pushState({}, '', window.location.origin + '/manga/read/' + currentChapter.ChapterLink);
     } else {
@@ -242,18 +243,72 @@ document.body.addEventListener('keyup', movePage);
 // function calls
 changeReadingStyle(document.getElementById("readingStyle"), false)
 showImages(parseInt(currentlyOnPage))
-setTimeout(addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0]), 1500)
+setTimeout(() => {addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0])}, 500)
+setTimeout(() => {addContinueReading()}, 1500)
 document.body.addEventListener('click', checkIfBookmarked)
 fixNavbar();
 changeBookMarkStatus(document.getElementById("bookMark"));
 
-window.addEventListener('scroll', function() {
-    console.log(document.body.scrollTop)
+window.addEventListener('scroll', function () {
     if (longStrip) {
-        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50){
+        if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
             document.querySelector('header').style.display = 'none';
         } else {
             document.querySelector('header').style.display = 'block';
         }
     }
+    if (longStrip) {
+        updateContineReading();
+    }
 })
+
+if (params.has('scrollTo')) {
+    var scrollToYPos = parseFloat(params.get('scrollTo'));
+    if (!isNaN(scrollToYPos)) {
+        window.scrollTo(0, scrollToYPos);
+    }
+}
+
+function findIndxInList(itemToFind, arry, key) {
+    for (var i = 0; i < arry.length; i++) {
+        if (arry[i][key] == itemToFind) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+// add to continue reading
+function addContinueReading() {
+    var continueReading = JSON.parse(window.localStorage.getItem("continueReading"));
+    if (continueReading == null || continueReading.length == 0 || continueReading == undefined) {
+        continueReading = [];
+    }
+    var indx = findIndxInList(currentChapter.indexName, continueReading, 'index');
+    // if the same series is already in the list then update the chapter and so on
+    if (indx != -1) continueReading.splice(indx, 1);
+    
+    continueReading.unshift({
+        'chapterLink': currentChapter.ChapterLink,
+        'series': currentChapter.seriesName,
+        'chapter': currentChapter.Chapter,
+        'index': currentChapter.indexName,
+        'page': currentlyOnPage,
+        'longStrip': longStrip,
+        'scrollPosY': window.scrollY
+    });
+    window.localStorage.setItem("continueReading", JSON.stringify(continueReading));
+    updateCReadingOnServer();
+}
+
+function updateContineReading() {
+    var continueReading = JSON.parse(window.localStorage.getItem("continueReading"));
+    for (var i = 0; i < continueReading.length; i++) {
+        if (continueReading[i].chapterLink == currentChapter.ChapterLink) {
+            continueReading[i].page = currentlyOnPage;
+            continueReading[i].longStrip = longStrip;
+            continueReading[i].scrollPosY = window.scrollY
+            window.localStorage.setItem("continueReading", JSON.stringify(continueReading));
+        }
+    }
+}

@@ -30,6 +30,10 @@ const userSchema = new Schema({
         type: Array,
         default: []
     },
+    "continueReading": {
+        type: Array,
+        default: []
+    },
     "pfp": {
         type: String,
         required: true,

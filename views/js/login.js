@@ -234,7 +234,8 @@ async function getUserInfo() {
         body: JSON.stringify({
             "accessToken": window.localStorage.getItem("accessToken"),
             "recentRead": JSON.parse(window.localStorage.getItem('recentRead')),
-            "bookmarks": JSON.parse(window.localStorage.getItem('bookmarks'))
+            "bookmarks": JSON.parse(window.localStorage.getItem('bookmarks')),
+            "continueReading": JSON.parse(window.localStorage.getItem('continueReading')),
         })
     }
 
@@ -249,6 +250,7 @@ async function getUserInfo() {
 
     window.localStorage.setItem('recentRead', JSON.stringify(resp.recentRead))
     window.localStorage.setItem('bookmarks', JSON.stringify(resp.bookmarks))
+    window.localStorage.setItem('continueReading', JSON.stringify(resp.continueReading))
 
     console.log(resp);
 }
@@ -317,6 +319,33 @@ async function addBookmark(bookmark) {
 
     let resp = await addBookmarkRequest.text();
     console.log(resp);
+}
+
+async function updateCReadingOnServer(){
+    var continueReading = JSON.parse(window.localStorage.getItem("continueReading"));
+    var indx = findIndxInList(currentChapter.indexName, continueReading, 'index');
+    if (indx == -1) return;
+
+    const options = {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            "accessToken": window.localStorage.getItem("accessToken"),
+            "manga": continueReading[indx]
+        })
+    }
+    let updateCRRequest = await fetch('/api/login/updateContinueReading', options);
+    if (updateCRRequest.status == 401) {
+        await getNewAccesToken();
+        return updateCReadingOnServer();
+    }
+    let resp = await updateCRRequest.text();
+    
+    setTimeout(() => {
+        updateCReadingOnServer();
+    }, 15 * 1000);
 }
 
 // get the updated info from the cloud when u go to the bookmarks

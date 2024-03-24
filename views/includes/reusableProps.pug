@@ -6,7 +6,7 @@ mixin adminRecd(recd)
           img#Admin_Img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("temp.compsci88.com/cover/" + recd.IndexName + '.jpg').replaceAll('/', ' '))
         else
           img#Admin_Img(alt="adminImage", src= "//temp.compsci88.com/cover/" + recd.IndexName + ".jpg")
-    div.admin_text
+    div.admin_text(style="max-width:80%")
         a#Admin_Title(href="/manga/manga/" + recd.IndexName, class="admin_hover_text")
             span #{recd.SeriesName}
         div

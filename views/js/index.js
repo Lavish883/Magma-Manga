@@ -37,7 +37,7 @@ function makeLatestChapterHTML(manga, isPopular = false, isCompleted = false) {
 // to chekc if manga is potientally sus
 function isMangaSus(mangaName) {
   if (susManga[mangaName] == undefined) {
-      return false
+    return false
   }
   return true
 }
@@ -112,7 +112,7 @@ if (window.localStorage.getItem('accessToken') != undefined || window.localStora
 }
 
 // Scroll To top
-document.getElementById('scroll_to_top').addEventListener('click', function() {
+document.getElementById('scroll_to_top').addEventListener('click', function () {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 })
 
@@ -147,11 +147,11 @@ async function getRecommendedManga(obj) {
   var userReadManga = [];
   // turn recentRead and bookmarks to param format
   try {
-    JSON.parse(window.localStorage.getItem('recentRead')).forEach(function(e) {
+    JSON.parse(window.localStorage.getItem('recentRead')).forEach(function (e) {
       userReadManga.push(e.split(`-chapter-`)[0])
     })
 
-    JSON.parse(window.localStorage.getItem('bookmarks')).forEach(function(e) {
+    JSON.parse(window.localStorage.getItem('bookmarks')).forEach(function (e) {
       userReadManga.push(e.indexName)
     })
   } catch (err) {
@@ -176,11 +176,11 @@ async function getRecommendedManga(obj) {
   let manga2 = userReadManga[indx2];
 
 
-  if (manga1 == undefined){
+  if (manga1 == undefined) {
     manga1 = hotManga[Math.floor(Math.random() * hotManga.length)].IndexName
   }
 
-  if (manga2 == undefined){
+  if (manga2 == undefined) {
     manga2 = hotManga[Math.floor(Math.random() * hotManga.length)].IndexName
   }
 
@@ -199,7 +199,7 @@ async function getRecommendedManga(obj) {
 }
 
 // show Scroll to top button or not
-window.addEventListener('scroll', function() {
+window.addEventListener('scroll', function () {
   if (document.body.scrollTop > 50 || document.documentElement.scrollTop > 50) {
     document.getElementById('scroll_to_top').style.opacity = "1";
   } else {
@@ -215,4 +215,33 @@ function changeImagesURL() {
       img.setAttribute('src', '//' + img.getAttribute('src').split('sendImage/')[1].replace('%20', '/'));
     }
   })
+}
+
+function displayContinueReading() {
+  var htmlArry = [];
+  var continueReading = JSON.parse(window.localStorage.getItem('continueReading'));
+  if (continueReading == null) return;
+  for (var manga of continueReading) {
+    var link = manga.longStrip == true ? `/manga/read/${manga.chapterLink}?scrollTo=${manga.scrollPosY}` : `/manga/read/${manga.chapterLink}-page-${manga.page}`;
+    htmlArry.push(`
+      <div class="manga">
+        <a href="${link}" title="${manga.series}">
+          <div>
+            <span class="title">${manga.series}&nbsp;</span>
+            <span class="chapter">- Chapter ${manga.chapter}</span>
+          </div>
+        </a>
+      </div>
+    `);
+  }
+  document.getElementById('continueReadingItems').innerHTML = htmlArry.join('');
+}
+
+if (window.location.pathname.includes('/index.html') || window.location.pathname === '/manga/') {
+  displayContinueReading();
+
+  (async function () {
+    await getUserInfo();
+    displayContinueReading();
+  })();
 }

@@ -88,10 +88,6 @@ body {
     border: dashed black 1px
 }
 
-.admin_card {
-    width: 65%;
-}
-
 .admin_top {
     padding: 10px 15px;
     background-color: #247D8F;
@@ -107,7 +103,6 @@ body {
     font-size:20px; 
     font-weight:600; 
     margin-top:0px;
-    width:570px;
 }
 
 .admin_hover_text {
@@ -150,7 +145,8 @@ body {
 .adminCardParent {
     padding: 20px 0px 0px 0px;
     display: flex;
-    justify-content: space-between
+    justify-content: space-between;
+    flex-wrap: wrap;
 }
 
 .admin_back{
@@ -423,6 +419,41 @@ img {
     font-size: 20px;
 }
 
+#continueReadingPanel {
+    max-height: 213px;
+    overflow: auto;
+}
+
+#continueReadingItems {
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#continueReadingItems .manga {
+    margin: 5px 0px;
+}
+
+#continueReadingItems .title {
+    color: #007bff;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+#continueReadingItems .title:hover {
+    color: #0453a8;
+}
+
+#continueReadingItems .chapter {
+    color: #6f6f6f;
+    font-style: italic;
+}
+
+.adminCardParent .admin_card {
+    margin: 10px 0px;
+}
+
 @media only screen and (max-width:1440px) {
     #main {
         padding:0px 150px;
@@ -487,7 +518,7 @@ img {
         padding: 0px 20px;
     }
 
-    .adminCardParent {
+    .adminCardParent .admin_card:first-child {
         display: none;
     }
 
