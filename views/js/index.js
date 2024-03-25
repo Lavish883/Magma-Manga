@@ -241,6 +241,9 @@ if (window.location.pathname.includes('/index.html') || window.location.pathname
   displayContinueReading();
 
   (async function () {
+    var refreshToken = window.localStorage.getItem('refreshToken');
+    if (refreshToken == undefined || refreshToken == null) return;
+
     await getUserInfo();
     displayContinueReading();
   })();
