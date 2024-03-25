@@ -345,7 +345,7 @@ async function updateCReadingOnServer(){
     
     setTimeout(() => {
         updateCReadingOnServer();
-    }, 15 * 1000);
+    }, 10 * 1000);
 }
 
 // get the updated info from the cloud when u go to the bookmarks

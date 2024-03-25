@@ -243,8 +243,7 @@ document.body.addEventListener('keyup', movePage);
 // function calls
 changeReadingStyle(document.getElementById("readingStyle"), false)
 showImages(parseInt(currentlyOnPage))
-setTimeout(() => {addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0])}, 500)
-setTimeout(() => {addContinueReading()}, 1500)
+setTimeout(() => { addContinueReading() }, 500)
 document.body.addEventListener('click', checkIfBookmarked)
 fixNavbar();
 changeBookMarkStatus(document.getElementById("bookMark"));
@@ -262,10 +261,12 @@ window.addEventListener('scroll', function () {
     }
 })
 
-if (params.has('scrollTo')) {
-    var scrollToYPos = parseFloat(params.get('scrollTo'));
-    if (!isNaN(scrollToYPos)) {
-        window.scrollTo(0, scrollToYPos);
+window.onload = function () {
+    if (params.has('scrollTo')) {
+        var scrollToYPos = parseFloat(params.get('scrollTo'));
+        if (!isNaN(scrollToYPos)) {
+            window.scrollTo(0, scrollToYPos);
+        }
     }
 }
 
@@ -279,7 +280,7 @@ function findIndxInList(itemToFind, arry, key) {
 }
 
 // add to continue reading
-function addContinueReading() {
+async function addContinueReading() {
     var continueReading = JSON.parse(window.localStorage.getItem("continueReading"));
     if (continueReading == null || continueReading.length == 0 || continueReading == undefined) {
         continueReading = [];
@@ -287,7 +288,7 @@ function addContinueReading() {
     var indx = findIndxInList(currentChapter.indexName, continueReading, 'index');
     // if the same series is already in the list then update the chapter and so on
     if (indx != -1) continueReading.splice(indx, 1);
-    
+
     continueReading.unshift({
         'chapterLink': currentChapter.ChapterLink,
         'series': currentChapter.seriesName,
@@ -298,7 +299,8 @@ function addContinueReading() {
         'scrollPosY': window.scrollY
     });
     window.localStorage.setItem("continueReading", JSON.stringify(continueReading));
-    updateCReadingOnServer();
+    await updateCReadingOnServer();
+    setTimeout(() => { addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0]) }, 1000)
 }
 
 function updateContineReading() {
