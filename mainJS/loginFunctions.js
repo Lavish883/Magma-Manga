@@ -216,8 +216,8 @@ async function removeBookmark(req, res) {
             break;
         }
     }
-    if (user.pref != undefined && user.pref.subscribeToBookmarks == true) {
-        user.subscribed = userCloud.bookmarks;
+    if (userCloud.pref != undefined && userCloud.pref.subscribeToBookmarks == true) {
+        userCloud.subscribed = userCloud.bookmarks;
     }
     await userCloud.save();
     return res.send('done');
@@ -228,8 +228,9 @@ async function addBookmark(req, res) {
     var reqBookmark = req.body.bookmark;
 
     userCloud.bookmarks.push(reqBookmark);
-    if (user.pref != undefined && user.pref.subscribeToBookmarks == true) {
-        user.subscribed.push(reqBookmark);
+
+    if (userCloud.pref != undefined && userCloud.pref.subscribeToBookmarks == true) {
+        userCloud.subscribed.push(reqBookmark);
     }
     await userCloud.save();
 
