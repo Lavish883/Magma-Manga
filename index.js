@@ -39,7 +39,7 @@ app.set('view engine', 'pug')
 app.locals.basedir = path.join(__dirname, 'views');
 app.use(express.json({ extended: true, limit: "1mb" }));
 
-
+//https://letstrypup-dbalavishkumar.koyeb.app/
 // see if it is time to check for new manga
 app.use(notificationFunctions.isItTime)
 
