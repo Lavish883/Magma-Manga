@@ -299,8 +299,10 @@ async function addContinueReading() {
         'scrollPosY': window.scrollY
     });
     window.localStorage.setItem("continueReading", JSON.stringify(continueReading));
-    await updateCReadingOnServer();
-    setTimeout(() => { addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0]) }, 1000)
+    if (window.localStorage.getItem('accessToken') != undefined && window.localStorage.getItem("accessToken") != null && window.localStorage.getItem('refreshToken') != undefined && window.localStorage.getItem("refreshToken") != null) {
+        await updateCReadingOnServer();
+        setTimeout(() => { addToRecentRead(window.location.pathname.replace(`/manga/read/`, '').split(`-page-`)[0]) }, 1000)
+    }
 }
 
 function updateContineReading() {

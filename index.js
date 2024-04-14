@@ -192,6 +192,13 @@ app.use(async (err, req, res, next) => {
     }
 
     console.log('mangaLink: ' + mangaLink);
+    
+    var manga = await schemas.mangaUsingV2.findOne({ 'mangaLink': mangaLink });
+    
+    if (manga) {
+      return res.status(500).send("Reload the page. It should work now ?")
+    }
+
     var mangaToAdd = new schemas.mangaUsingV2({
       'mangaLink': mangaLink
     });
