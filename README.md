@@ -1,8 +1,8 @@
 <h1>Magma Manga</h1>
 Disclaimer: The developer of this application does not have any affiliation with the content providers available. I am not connected with any of them. I wanted to make a good project, and learn how to make a full stack appilcation. Tht is the sole reason I made this. I don't make any money or want to make any money from this project.
 <p></p>
-<div>Link 1, Hosted with Koyeb: <a target="_blank" href="https://magma-manga-lavish883.koyeb.app/manga/">Magma Manga</a></div>
-<div>Link 2, Hosted with Railway: <a target="_blank" href="https://magma-manga-production.up.railway.app/manga/">Magma Manga</a></div>
+<div>Link 1, Hosted with DigitalOcean (Faster): <a target="_blank" href="https://magma-manga.live/manga/">Magma Manga</a></div>
+<div>Link 2, Hosted with Koyeb: <a target="_blank" href="https://magma-manga-lavish883.koyeb.app/manga/">Magma Manga</a></div>
 <div>Both use the same database for the backend so you will able to use the other one if one of them isn't working.</div>
 <h3>To meet all your needs of reading manga, equipped with features to allow you to read manga on the go and organized.</h3>
 <ul>
@@ -10,6 +10,7 @@ Disclaimer: The developer of this application does not have any affiliation with
   <li>Has over 7000+ manga to read</li>
   <li>A progressive web app, install on your phones for a native experience</li>
   <li>Has the most recent chapters soon as it is ready</li>
+  <li>Continue Reading, read from exactly where you left</li>
   <li>A friendly user interface, for the best experience</li>
   <li>A recommendation feature, uses advanced algorithm to get you the manga you surely will enjoy.</li>
   <li>Account Signup 
