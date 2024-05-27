@@ -154,7 +154,7 @@ async function getMangaChapterPageOffline(req, res) {
 async function getQuickSearchData(req, res) {
     let headers = headersGenerator.getHeaders();
 
-    let fetchQuickSearchPage = await fetch("https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com/_search.php", headers);
+    let fetchQuickSearchPage = await fetch(breakCloudFlare + "/_search.php", headers);
     let resp = await fetchQuickSearchPage.text();
     
     resp = resp.split(`<body>`)[1].split(`</body>`)[0];
@@ -207,9 +207,7 @@ async function getSearchData(req, res) {
     directory = JSON.parse(directory);
     directory = mainFunctions.fixSearchArry(directory);
 
-    return res.send(directory)
-
-
+    return res.send(directory);
 }
 
 async function downloadImage(req, res) {
