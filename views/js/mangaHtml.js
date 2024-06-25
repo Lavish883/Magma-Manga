@@ -26,19 +26,22 @@ async function cacheInfoAboutManga(){
     var mangaInfoInCache = await caches.keys();    
     for (var i = 0; i < mangaInfoInCache.length; i++) {
         if (mangaInfoInCache[i] == IndexName) {
-            console.log('info about manga in cache');
             return true;
         }
     }
-    console.log('info about manga not in cache');
     // save the image of the manga in cache
     // do (￣︶￣) this so we can identify that this is the cache for the manga info
     mangaInfoCache = await caches.open(IndexName + '(￣︶￣) (￣︶￣) -INDEX-（￣︶￣) - (￣︶￣)');
-    await mangaInfoCache.addAll([
+    
+    try {
+        await mangaInfoCache.addAll([
         '/api/offline/manga/downloadImage?url=https://' + `temp.compsci88.com/cover/${IndexName}.jpg`,
         `/api/offline/mangaName?manga=${IndexName}`
-    ]);
-
+        ]);
+    } catch (error) {
+        console.log(error);
+        await caches.delete(IndexName + '(￣︶￣) (￣︶￣) -INDEX-（￣︶￣) - (￣︶￣)');
+    }
 }
 
 async function saveChapter(obj) {
@@ -56,7 +59,14 @@ async function saveChapter(obj) {
     // show the loading icon
     obj.innerHTML = `<i class="fas fa-spinner fa-spin"></i>`;
     
-    await cacheInfoAboutManga();
+    try {
+        await cacheInfoAboutManga();
+    } catch (error) {
+        console.log(error);
+        obj.innerHTML = `<i class="fas fa-floppy-disk"></i>`;
+        alert('Error in downloading the chapter, please try again later.');
+        return;
+    }
     // delete the cache if it exists
     await caches.delete(chapterLink);
 
@@ -69,8 +79,17 @@ async function saveChapter(obj) {
 
     var chapterCache = await caches.open(chapterLink);
     // fetch the chapter, get all the images and cache them
-    var pageFetch = await fetch(window.location.origin + '/manga/read/' + chapterLink + '-page-1');
-    var resp = await pageFetch.text();
+    try {
+        var pageFetch = await fetch(window.location.origin + '/manga/read/' + chapterLink + '-page-1');
+        var resp = await pageFetch.text();
+    }   catch (error) {
+        console.log(error);
+        console.log(chapterLink);
+        await caches.delete(chapterLink);
+        obj.innerHTML = `<i class="fas fa-floppy-disk"></i>`;
+        alert('Error in downloading the chapter, please try again later.');
+        return;
+    }
 
     // get all the images
     var domPraser = new DOMParser();
@@ -82,7 +101,16 @@ async function saveChapter(obj) {
         cachingURLS.push('/api/offline/manga/downloadImage?url=https:' + images[i].getAttribute('src'));
     }
 
-    await chapterCache.addAll(cachingURLS);
+    try {
+        await chapterCache.addAll(cachingURLS);
+    } catch (error) {
+        console.log(error);
+        console.log(chapterLink);
+        await caches.delete(chapterLink);
+        obj.innerHTML = `<i class="fas fa-floppy-disk"></i>`;
+        alert('Error in downloading the chapter, please try again later.');
+        return;
+    }
     // now show the check icon
     obj.innerHTML = `<i style="color:red;" class="fas fa-xmark"></i>`;
 }

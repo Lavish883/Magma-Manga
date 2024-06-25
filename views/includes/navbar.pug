@@ -26,6 +26,9 @@ header
             a#Darkmode.small_nav(href="#",onclick='handleDarkModeToggle()' style='cursor:pointer;')
                 i.fas.fa-sun
                 span &nbsp;Dark Mode off
+            a#OfflineManage.small_nav(href='/manga/offline')
+                i.fas.fa-cloud-download-alt
+                span &nbsp;Offline
             a.small_nav(href='/manga/recentChapters' id="Read_nav" title="See if there any new chapters from manga you have bookmarked" style='cursor:pointer;')
                 i.fas.fa-clock
                 span &nbsp; Recent Chapters
