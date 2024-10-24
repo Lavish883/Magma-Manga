@@ -15,6 +15,7 @@ const loginFunctions = require('./mainJS/loginFunctions') // all fucntions that 
 const notificationFunctions = require('./mainJS/notfications') // functions that handle notifactions
 const commentFunctions = require('./mainJS/commentFunctions') // functions that handle comments
 const mailFunctions = require('./mainJS/mailFunctions'); // mail functions
+const animeFunctions = require('./mainJS/animeFunctionApi'); // anime functions
 
 // Require dotenv for secrets
 require('dotenv').config()
@@ -163,6 +164,13 @@ app.post('/api/comments/dislikeComment', commentFunctions.dislikeComment);
 app.post('/api/comments/replyToComment', commentFunctions.replyToComment);
 app.post('/api/comments/editComment', commentFunctions.editComment);
 app.delete('/api/comments/deleteComment', commentFunctions.deleteComment);
+
+/* Anime Routes are below */
+app.get('/animeApi/typeAll', animeFunctions.getHomePageAnime);
+app.get('/animeApi/category/:category', animeFunctions.getCategoryPage);
+app.get('/animeApi/search/:keyword/:page', animeFunctions.getSearchPage);
+app.get('/animeApi/watch/:link', animeFunctions.getWatchLink);
+app.get('/animeApi/embed/link', animeFunctions.getWatchPage);
 
 app.use(express.static(path.join(__dirname, 'public')));
 

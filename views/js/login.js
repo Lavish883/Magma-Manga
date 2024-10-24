@@ -217,7 +217,7 @@ async function getNewAccesToken() {
     if (newTokenRequest.status == 401) {
         alert('your session has expired');
         await logOutUser();
-        return;
+        return -1;
     }
     let resp = await newTokenRequest.text();
 
@@ -242,7 +242,8 @@ async function getUserInfo() {
     let userInfoRequest = await fetch(url, settings)
 
     if (userInfoRequest.status == 401) {
-        await getNewAccesToken();
+        var status = await getNewAccesToken();
+        if (status == -1) return;
         return getUserInfo();
     }
 
@@ -291,7 +292,8 @@ async function removeBookmark(bookmark) {
     
     let removeBookmarkRequest = await fetch('/api/login/removeBookmark', options);
     if (removeBookmarkRequest.status == 401) {
-        await getNewAccesToken();
+        var status = await getNewAccesToken();
+        if (status == -1) return;
         return removeBookmark(bookmark);
     }
 
@@ -313,7 +315,8 @@ async function addBookmark(bookmark) {
     
     let addBookmarkRequest = await fetch('/api/login/addBookmark', options);
     if (addBookmarkRequest.status == 401) {
-        await getNewAccesToken();
+        var status = await getNewAccesToken();
+        if (status == -1) return;
         return addBookmark(bookmark);
     }
 
@@ -338,7 +341,8 @@ async function updateCReadingOnServer(){
     }
     let updateCRRequest = await fetch('/api/login/updateContinueReading', options);
     if (updateCRRequest.status == 401) {
-        await getNewAccesToken();
+        var status = await getNewAccesToken();
+        if (status == -1) return;
         return updateCReadingOnServer();
     }
     let resp = await updateCRRequest.text();
