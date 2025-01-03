@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+        #pokemonImage {
+            border: 1px solid black;
+            width: 100%;
+        }
+
+        body {
+            background-color: #f0f0f0;
+            font-family: Arial, sans-serif;
+            margin: 5px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+            font-size: 30px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px 20px;
+            margin: 8px 0;
+            border: none;
+            cursor: pointer;
+            max-width: 475px;
+            width: 100%;
+            font-size: 30px;
+        }
+
+        #container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            max-width: 475px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .hideElm {
+            position: absolute;
+            background-color: black;
+            width: 20%;
+            height: 20%;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="hide" style="position: relative;">
+            <img id="pokemonImage" />
+        </div>
+        <div>
+            <input id="pokemonInput" type="text" placeholder="Enter Pokemon Name" />
+            <button id="pokemonButton">Check</button>
+            <button id="revealButton">Reveal</button>
+        </div>
+    </div>
+    <script>
+        var pokemonData = [];
+        var currentPokemon = {};
+
+        async function loadAllPokemonData() {
+            let link = "https://pokeapi.co/api/v2/pokemon/?offset=0&limit=1302";
+            let response = await fetch(link);
+            let data = await response.json();
+
+            console.log(data.results);
+
+            for (var i = 0; i <= 1024; i++) {
+                let imageLink = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/" + (i + 1) + ".png";
+                let pokemon = {
+                    name: data.results[i].name,
+                    image: imageLink
+                }
+                pokemonData.push(pokemon);
+            };
+            await displayPokemonImage();
+        }
+
+        async function displayPokemonImage() {
+            var randomPokemon = Math.floor(Math.random() * pokemonData.length);
+            currentPokemon = pokemonData[randomPokemon];
+            document.getElementById("pokemonImage").src = pokemonData[randomPokemon].image;
+
+            var hide = document.getElementById("hide");
+            hide.querySelectorAll('div').forEach(n => n.remove());
+            var spotsPicked = [];
+            var size = document.body.clientWidth >= 480 ? 95 : document.body.clientWidth / 5;
+            console.log(size + "px");
+            // Now hide the image by making width/5 by width/5 px randomly across the screen
+            for (var i = 0; i < 20; i++) {
+                var div = document.createElement("div");
+                div.classList.add("hideElm");
+
+                var left = Math.floor(Math.random() * 5) * size;
+                var top = Math.floor(Math.random() * 5) * size;
+
+                while (spotsPicked.includes(left + "," + top)) {
+                    left = Math.floor(Math.random() * 5) * size;
+                    top = Math.floor(Math.random() * 5) * size;
+                }
+                console.log(left + "," + top);
+                div.style.left = left + "px";
+                div.style.top = top + "px";
+
+                spotsPicked.push(left + "," + top);
+                div.style.backgroundColor = "black";
+                //div.style.border = "1px solid white";
+                div.style.zIndex = "1";
+                hide.appendChild(div);
+            }
+        }
+
+        function submitPokemonName() {
+            var pokemonName = document.getElementById("pokemonInput").value;
+            // Normalize the input and current pokemon name to lower case for case insensitive comparison
+            pokemonName = pokemonName.toLowerCase();
+            var correctLetters = 0;
+
+            // Compare the input with the current pokemon name and check if more than 80% of the letters are correct
+            for (var i = 0; i < Math.min(currentPokemon.name.length, pokemonName.length); i++) {
+                if (currentPokemon.name[i] === pokemonName[i]) {
+                    correctLetters++;
+                }
+            }
+
+            var percentage = correctLetters / currentPokemon.name.length;
+            console.log(percentage);
+
+            if (percentage >= 0.8) {
+                alert("You got it right!");
+                document.getElementById("pokemonInput").value = "";
+                displayPokemonImage();
+            } else {
+                alert("Try again!");
+            }
+        }
+
+        function revealPokemonName() {
+            alert("The pokemon name is: " + currentPokemon.name);
+            document.getElementById("pokemonInput").value = "";
+            document.getElementById("hide").querySelectorAll('div').forEach(n => n.remove());
+        }
+
+        loadAllPokemonData();
+        document.getElementById("pokemonButton").addEventListener("click", submitPokemonName);
+        document.getElementById("revealButton").addEventListener("click", revealPokemonName);
+        document.getElementById("pokemonInput").addEventListener("keyup", function (event) {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                submitPokemonName();
+            }
+        });
+    </script>
+</body>
+
+</html>

@@ -172,6 +172,11 @@ app.get('/animeApi/search/:keyword/:page', animeFunctions.getSearchPage);
 app.get('/animeApi/watch/:link', animeFunctions.getWatchLink);
 app.get('/animeApi/embed/link', animeFunctions.getWatchPage);
 
+/* Pokemon Routes are below */
+app.get('/pkGuess', (req, res) => {
+  return res.sendFile(path.join(__dirname, 'public', 'misc', 'pkGuess.html')); 
+})
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 //The 404 Route (ALWAYS Keep this as the last route)
