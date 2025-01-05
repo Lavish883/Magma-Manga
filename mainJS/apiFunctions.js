@@ -156,9 +156,6 @@ async function getQuickSearchData(req, res) {
 
     let fetchQuickSearchPage = await fetch(breakCloudFlare + "/_search.php", headers);
     let resp = await fetchQuickSearchPage.text();
-    
-    resp = resp.split(`<body>`)[1].split(`</body>`)[0];
-
     return res.send(resp);
 }
 // directory data
