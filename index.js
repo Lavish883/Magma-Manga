@@ -66,6 +66,10 @@ function setup(req, res, next) {
   next();
 }
 
+app.get('*', (req, res) => {
+  return res.send("Website is currently broken. A fix is on the way. Sorry for the inconvenience.");
+})
+
 app.get('/', (req, res) => {
   return res.redirect('/manga/')
 })
