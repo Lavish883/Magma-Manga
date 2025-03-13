@@ -17,7 +17,7 @@ function showResults(arry) {
     if (window.location.href.includes("mangaapi")) {
       var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('temp.compsci88.com cover ' + arry[i].i + '.jpg')
     } else {
-      var image = 'https://temp.compsci88.com/cover/' + arry[i].i + '.jpg';
+      var image = 'https://temp.compsci88.com/cover/normal/' + arry[i].id + '.webp';
     }
 
     resultsHTML.push(
@@ -33,48 +33,29 @@ function showResults(arry) {
   searchResults.innerHTML = resultsHTML.join('');
 }
 
-function filterResults(event) {
+let typingTimer;
+const typingDelay = 200; // delay in milliseconds
 
-  let filteredResults = [];
-  let userSearch = event.target.value;
+async function filterResults() {
+  var searchValue = searchInput.value.toLowerCase();
+  console.log(searchValue);
 
-  if (userSearch == '') {
-    searchResults.innerHTML = "";
+  if (searchValue.length < 2) {
+    searchResults.innerHTML = '';
     return;
   }
 
-  for (var i = 0; i < mangaDirectory.length; i++) {
-    let manga = mangaDirectory[i];
-    // Check if what the user typed 
-    if (manga.s.toLowerCase().includes(userSearch.toLowerCase())) {
-      filteredResults.push(manga)
-      continue;
-    }
+  let req = await fetch(`/api/manga/quickSearch?search=${searchValue}`);
+  let resp = await req.json();
 
-    for (var k = 0; k < manga.a.length; k++) {
-      if (manga.a[k].toLowerCase().includes(userSearch.toLowerCase())) {
-        filteredResults.push(manga)
-        break;
-      }
-    }
-  }
-
-
-  showResults(filteredResults)
-}
-// fetch data that allows for searching
-async function getQuickSearchData() {
-  let link = window.location.origin + '/api/manga/quickSearch'
-
-  let fetchQuickSearch = await fetch(link);
-  let resp = await fetchQuickSearch.json();
-
-  mangaDirectory = resp;
+  showResults(resp);
 }
 
+searchInput.addEventListener('keyup', () => {
+  clearTimeout(typingTimer);
+  typingTimer = setTimeout(filterResults, typingDelay);
+});
 
-getQuickSearchData()
-
-
-document.getElementById("Search_input").addEventListener('keyup', filterResults)
-document.getElementById("Search_input").addEventListener('click', getQuickSearchData)
+searchInput.addEventListener('keydown', () => {
+  clearTimeout(typingTimer);
+});

@@ -46,7 +46,7 @@ mixin hotUpdate(allMangas)
                 if isBlocked
                   img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("temp.compsci88.com/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' ') , style="max-width:145px;")
                 else  
-                  img(alt=manga.SeriesName,src = "//temp.compsci88.com/cover/" + manga.IndexName + ".jpg", style="max-width:145px;")
+                  img(alt=manga.SeriesName,src = "//temp.compsci88.com/cover/normal/" + manga.mangaId + ".webp", style="max-width:145px;")
         - i++;
 
 mixin hotMangaOfMonth(mangas)
@@ -54,7 +54,7 @@ mixin hotMangaOfMonth(mangas)
     while i < 6
         - var manga = mangas[i]
         a.admin_hover_text(href="#", style="color:black;font-size:20px;margin:0px 5px") /
-        a.admin_hover_text(style="font-size:17px;",href="manga.html?manga=" + manga.IndexName) #{manga.SeriesName}
+        a.admin_hover_text(style="font-size:17px;",href="/manga/manga/" + manga.IndexName) #{manga.SeriesName}
         - i++
 
 mixin LatestChapters(latestChapters, hotChapters)
@@ -62,15 +62,8 @@ mixin LatestChapters(latestChapters, hotChapters)
     - var isBlocked = process.env['SERVERNAME'] ==  'https://mangaapi.lavishkumar1.repl.co/' ? true : false;
     while i < 60
         - var manga = latestChapters[i]
-        - var isCompleted = manga.ScanStatus == 'Complete' ? true : false
-        - var isPopular = false
-        - var h = 0;
-
-        while h < hotChapters.length
-            if hotChapters[h].SeriesID == manga.SeriesID
-                - isPopular = true
-                - h+= 2000
-            - h++
+        - var isCompleted = manga.isCompleted
+        - var isPopular = manga.isPopular
 
         div.latest_chapters_item
             a(href="/manga/manga/" + manga.IndexName, title="" + manga.SeriesName)
@@ -82,8 +75,8 @@ mixin LatestChapters(latestChapters, hotChapters)
                 if isBlocked
                   img(src="//axiostrailbaby.lavishkumar1.repl.co/sendImage/" + ("temp.compsci88.com/cover/" + manga.IndexName + '.jpg').replaceAll('/', ' '), width="90")
                 else
-                  img(alt=manga.SeriesName, src="//temp.compsci88.com/cover/" + manga.IndexName + ".jpg",width="90")
-            a(style="display:contents;", href="/manga/read/" + manga.ChapterLink + '-page-1', title="" + manga.SeriesName + " Chapter " + manga.Chapter)
+                  img(alt=manga.SeriesName, src = "//temp.compsci88.com/cover/normal/" + manga.mangaId + ".webp" ,width="90")
+            a(style="display:contents;", href="/manga/read/" + manga.ChapterLink + '-page-1', title= manga.SeriesName + " " + manga.Chapter)
                 div(style="margin-left:15px; margin-top:8px;")
                     div.latest_chapters_info
                         if isPopular
@@ -93,7 +86,7 @@ mixin LatestChapters(latestChapters, hotChapters)
                         span #{manga.SeriesName}
                     div(style="margin-top:0px;")
                         i(class="far fa-file", style="font-size:15px;color:black;")
-                        span(style="font-size:14px;font-weight:500;color:black;") &nbsp;Chapter #{manga.Chapter}
+                        span(style="font-size:14px;font-weight:500;color:black;") &nbsp; #{manga.Chapter}
                     div(style="margin-top:1px;")
                         i(class="far fa-clock", style="font-size:15px;color:black;")
                         span(style="font-size:14px;font-weight:500;color:black;") &nbsp;#{manga.Date}

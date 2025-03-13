@@ -105,4 +105,4 @@ function displayNewChapters() {
     document.getElementById('loading').classList.add('none');
 }
 
-getSearchDirectory();
+//getSearchDirectory();

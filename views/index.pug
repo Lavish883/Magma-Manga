@@ -42,14 +42,15 @@ html(lang="en")
         div#hotMonth(class="admin_top")
             a.admin_hover_text(href="#",style="font-weight: 600;color:#007bff") Hot Manga This Month
             +hotMangaOfMonth(hotMangaThisMonth)
-        div(style="margin-top:25px;")
-            div.admin_top
-                a(href="#",style="font-size:18px; color:white;")
-                    i(class="fas fa-address-book")
-                    span &nbsp;Recommended for you
-            div#recdForYou(class="hot_update",style="overflow-y:scroll;max-height:200px;overflow-x:hidden;")
-                // item recommned for the reader
-                img#loading(alt="loading", src="/images/loading.svg",width="80",style="margin:auto;")
+        
+        //div(style="margin-top:25px;")
+        //    div.admin_top
+        //        a(href="#",style="font-size:18px; color:white;")
+        //            i(class="fas fa-address-book")
+        //            span &nbsp;Recommended for you
+        //    div#recdForYou(class="hot_update",style="overflow-y:scroll;max-height:200px;overflow-x:hidden;")
+        //        // item recommned for the reader
+        //        img#loading(alt="loading", src="/images/loading.svg",width="80",style="margin:auto;")
         div(style="margin-bottom:100px;")
             div.admin_top(style="margin-top:25px;")
                 a(href="#",style="font-size:18px; color:white;")
@@ -64,9 +65,11 @@ html(lang="en")
         include /js/index.js
     // arrys needed to update 
     script. 
+        var hotManga = !{JSON.stringify(hotMangaUpdated).replace(/<\//g, '<\\/')}
         var latestChapters = !{JSON.stringify(latestManga).replace(/<\//g, '<\\/')}
         var hotManga = !{JSON.stringify(hotMangaUpdated).replace(/<\//g, '<\\/')}
         var susManga = !{JSON.stringify(susManga).replace(/<\//g, '<\\/')}
-        getRecommendedManga(document.getElementById('recdForYou'))
+    //    getRecommendedManga(document.getElementById('recdForYou'))
+    
     script(src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js")
     //h1 !{message}

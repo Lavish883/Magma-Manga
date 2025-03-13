@@ -35,7 +35,7 @@ async function cacheInfoAboutManga(){
     
     try {
         await mangaInfoCache.addAll([
-        '/api/offline/manga/downloadImage?url=https://' + `temp.compsci88.com/cover/${IndexName}.jpg`,
+        '/api/offline/manga/downloadImage?url=https://' + `temp.compsci88.com/cover/normal/${mangaId}.webp`,
         `/api/offline/mangaName?manga=${IndexName}`
         ]);
     } catch (error) {
@@ -74,14 +74,16 @@ async function saveChapter(obj) {
     var chapterLink = obj.parentElement.href.split('/').pop().replace('-page-1', '');
     // now cache the chapter, [0] being CurrentChapterInfo
     var cachingURLS = [
-        `/api/offline/getMangaChapterPageOffline?chapter=${chapterLink}`
+        `/api/offline/getMangaChapterPageOffline?chapter=${chapterLink}&download=true`
     ];
 
     var chapterCache = await caches.open(chapterLink);
-    // fetch the chapter, get all the images and cache them
+    var images = [];
+    // fetch the current chapter, get all the images and cache them
     try {
-        var pageFetch = await fetch(window.location.origin + '/manga/read/' + chapterLink + '-page-1');
-        var resp = await pageFetch.text();
+        var pageFetch = await fetch('/api/offline/getMangaChapterPageOffline?chapter=' + chapterLink + '&download=true');
+        var page = await pageFetch.json();
+        images = page.imageURlS;
     }   catch (error) {
         console.log(error);
         console.log(chapterLink);
@@ -91,14 +93,9 @@ async function saveChapter(obj) {
         return;
     }
 
-    // get all the images
-    var domPraser = new DOMParser();
-    var doc = domPraser.parseFromString(resp, 'text/html');
-    var images = doc.querySelectorAll('.manga_page');
-
     // cache all the images
     for (var i = 0; i < images.length; i++) {
-        cachingURLS.push('/api/offline/manga/downloadImage?url=https:' + images[i].getAttribute('src'));
+        cachingURLS.push('/api/offline/manga/downloadImage?url=' + images[i]);
     }
 
     try {
@@ -121,7 +118,7 @@ function generateMangaChaptersHTML(chapter, chaptersInCache) {
     let downloadedHTML = isChapterDownloaded(chapter.ChapterLink, chaptersInCache) ? `<i class="fas fa-xmark" style="color:red;"></i>` : `<i class="fas fa-floppy-disk"></i>`;
     return `
         <li>
-           <a href=${window.location.origin + '/manga/read/' + chapter.ChapterLink + '-page-1'} style="color:${fontColor};">${chapter.Type + ' ' + chapter.Chapter}
+           <a href=${window.location.origin + '/manga/read/' + chapter.ChapterLink + '-page-1'} style="color:${fontColor};">${chapter.chapterName}
               ${chapter.isNew ? `<span class="newChapter">New</span>` : ''}
               <span>${chapter.Date}</span>     
               <span onClick="saveChapter(this)" class="downloadIcon">${downloadedHTML}</span>
@@ -133,7 +130,13 @@ function generateMangaChaptersHTML(chapter, chaptersInCache) {
 // getRid ofPrev if passed true gets all of previous chapters first
 async function generateMangaChapters(start, end, getRidOfprev = false, firstNeeded = false) {
     var chaptersHtml = [];
-    var chaptersInCache = await caches.keys();
+    var chaptersInCache = [];
+    
+    try {
+        chaptersInCache = await caches.keys();
+    } catch (error) {
+        console.log(error);
+    }
 
     for (var i = start; i < end; i++) {
         if (allChapters[i].Chapter != 1) {

@@ -47,15 +47,10 @@ async function makeChaptersArry() {
     } else {
       // chapter names will be like mangaName-chapter-chapterNumber
       try {
-        var mangaName = keys[i].split('-chapter-')[0];
-        var chapterNumber = keys[i].split('-chapter-')[1];
-
-        if (chapterNumber.includes('-index-')) {
-          chapterNumber = chapterNumber.split('-index-')[0];
-        }
-
+        console.log(keys[i]);
+        var mangaName = keys[i].split('--')[0];
+      
         mangaAvailble[mangaName].push({
-          chapterNumber: chapterNumber,
           chapterKey: keys[i]
         })
       } catch (e) {
@@ -63,13 +58,14 @@ async function makeChaptersArry() {
       }
     }
   }
+  console.log(mangaAvailble);
 
   return mangaAvailble;
 }
 
 async function makeMangaChaptersHTML(mangaAvailble) {
   var htmlArry = [];
-
+  console.log(mangaAvailble);
   for (var i = 0; i < mangaAvailble.length; i++) {
     // Access the cache, to get the chapter type
     var cacheName = mangaAvailble[i].chapterKey;
@@ -79,9 +75,10 @@ async function makeMangaChaptersHTML(mangaAvailble) {
     var req = await fetch(cachedItems[0].url)
     var resp = await req.json();
 
+    console.log(resp);
     htmlArry.push(`
-      <a class="chapterLinkButton" href="/manga/offline/read?${mangaAvailble[i].chapterKey}-page-1" title="Chapter ${mangaAvailble[i].chapterNumber}">
-        <span>${resp.Type} ${mangaAvailble[i].chapterNumber}</span>
+      <a class="chapterLinkButton" href="/manga/offline/read?${mangaAvailble[i].chapterKey}-page-1" title="${resp.currentChapter.chapterName}">
+        <span>${resp.currentChapter.chapterName}</span>
       </a>
     `)
   }
@@ -99,7 +96,7 @@ async function makeAvailableMangaHTML() {
     try {
     var manga = await caches.match(`/api/offline/mangaName?manga=${mangas[i]}`);
     manga = await manga.json();
-
+    console.log(manga);
     htmlArry.push(`
       <div class="mangaInfoCont">
         <div class="hot_update_item">
@@ -107,7 +104,7 @@ async function makeAvailableMangaHTML() {
               <div class="hot_update_item_name">
                   <span>${manga.SeriesName}</span>
               </div>
-              <img alt="${manga.SeriesName} Picture" src="/api/offline/manga/downloadImage?url=https://temp.compsci88.com/cover/${manga.IndexName}.jpg" style="max-width:145px;" />
+              <img alt="${manga.SeriesName} Picture" src="/api/offline/manga/downloadImage?url=https://temp.compsci88.com/cover/normal/${manga.mangaId}.webp" style="max-width:145px;" />
           </a>
         </div>
         <div class="AllChapterCont">

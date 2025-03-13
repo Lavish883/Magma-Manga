@@ -298,6 +298,7 @@ img {
   margin-top: 5px;
   overflow-wrap: break-word;
   white-space: pre-wrap;
+  font-weight: 400;
 }
 
 .manga_info_ul li a{
@@ -589,4 +590,8 @@ img {
     #main {
         padding: 0px 20px;
     }
+}
+
+.manga_info_ul li a{
+    font-weight: 400;
 }

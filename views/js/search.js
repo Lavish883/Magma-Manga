@@ -555,4 +555,4 @@ function loadMoreManga() {
 }
 
 //jQuery(document).ready(function (n) { window.history && window.history.pushState && n(window).on("popstate", function () { location.reload() }) });
-getDirectoryFromStorage();
+//getDirectoryFromStorage();

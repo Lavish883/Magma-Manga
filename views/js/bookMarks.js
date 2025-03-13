@@ -14,7 +14,7 @@ function genreateBookmarksHTML(allBookMarks) {
       if (window.location.href.includes("mangaapi")) {
         var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('temp.compsci88.com cover ' + manga.Index + '.jpg')
       } else {
-        var image = 'https://temp.compsci88.com/cover/' + manga.Index + '.jpg';
+        var image = 'https://temp.compsci88.com/cover/normal/' + manga.id + '.webp';
       }
       bookmarksHTML.push(
         `
@@ -68,7 +68,8 @@ function doneSorting() {
   document.querySelectorAll('.BookMark_Container').forEach(function (manga) {
     let seriesManga = manga.outerHTML.split(`<div class="hot_update_item_name">`)[1].split(`</div>`)[0];
     let indexManga = manga.outerHTML.split(`data-src="https://temp.compsci88.com/cover/`)[1].split(`.jpg`)[0];
-    ArryToreplace.push({ "Index": indexManga, "Series": seriesManga })
+    let idManga = manga.outerHTML.split(`data-src="https://temp.compsci88.com/cover/normal/`)[1].split(`.webp`)[0];
+    ArryToreplace.push({ "Index": indexManga, "Series": seriesManga, "id": idManga })
   })
   window.localStorage.setItem('bookmarks', JSON.stringify(ArryToreplace));
   updateBookmarks();

@@ -1,10 +1,10 @@
 doctype html
 html(lang="en")
     head
-    title !{title}
+    title !{seriesName + ' | ' + currentChapter.chapterName}
     meta(name="viewport",content="width=device-width, initial-scale=1")
     meta(charset="UTF-8")
-    meta(name="description",content="Read Chapter" + title)
+    meta(name="description",content="Read Chapter " + seriesName + ' | ' + currentChapter.chapterName)
     meta(name="theme-color" content="#000000")
     link(rel="manifest" href="/pwa.webmanifest")
     style
@@ -17,12 +17,12 @@ html(lang="en")
     body(style="margin:0px")
         include includes/thin_navbar.pug
         div#read_options
-            a.option(href='/manga/manga/' + currentChapter.indexName ,style="flex:0 0 33.333333%;max-width:33.333333%;")
+            a.option(href='/manga/manga/' + indexName ,style="flex:0 0 33.333333%;max-width:33.333333%;")
                 i(class="fas fa-book") &nbsp;
                 span !{seriesName}
             a.option
                 i(class="fas fa-stream") &nbsp;
-                span !{currentChapter.Type + ' ' + currentChapter.Chapter}
+                span !{currentChapter.chapterName}
             a.option    
                 i(class="far fa-file") &nbsp;
                 span#pageNumber Page 1

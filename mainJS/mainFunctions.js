@@ -2,9 +2,13 @@ const cheerio = require('cheerio')
 const moment = require('moment')
 const fetch = require('node-fetch');
 const fs = require('fs')
+const schemas = require('../schemas/schema');
 
 const breakCloudFlare = process.env.BREAK_CLOUDFLARE_V1 || 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com'
 const susManga = JSON.parse(fs.readFileSync('./json/susManga.json'));
+const domainIdToIndex = JSON.parse(fs.readFileSync('./json/domainIdToIndex.json'));
+
+const mailFunctions = require('../mainJS/mailFunctions');
 
 
 // to chekc if manga is potientally sus
@@ -70,35 +74,65 @@ function calcChapterUrl(ChapterString) {
     return "-chapter-" + Chapter + Odd + Index;
 }
 
-function scrapeLatestManga(page) {
+function scrapeLatestManga(page, arryRef) {
     //  console.log(page);
-    let latestChapterJSONSplit = page.split(`vm.LatestJSON = `)[1].split(`vm.NewSeriesJSON =`)[0];
-    let LatestChapterJSON = JSON.parse(latestChapterJSONSplit.split(`;`)[0]);
+    const $ = cheerio.load(page);
+    let allManaga = $("abbr");
+    
+    for (var i = 0; i < allManaga.length; i++) {
+        let manga = allManaga[i];
+        let mangaId = $(manga).find("article").find("img").attr("src").split("/")[5].split(".jpg")[0];
+        let seriesName = $(manga).attr("title");
+        let indexName = getDomainIdToIndex(mangaId);
+        let chapter = $(manga).find("article").find("span").html();
 
-    for (i = 0; i < LatestChapterJSON.length; i++) {
-        let manga = LatestChapterJSON[i];
-        manga.Date = calcDate(manga.Date);
-        manga.isSus = isMangaSus(manga.IndexName);
-        manga.ChapterLink = manga.IndexName + calcChapterUrl(manga.Chapter);
-        manga.Chapter = calcChapter(manga.Chapter);
+        arryRef.push({
+            "SeriesName": seriesName,
+            "IndexName": indexName,
+            "isSus": isMangaSus(indexName),
+            "mangaId": mangaId,
+            "isPopular": $(manga).find("article").html().includes("#f87171") ? true : false,
+            "isCompleted": $(manga).find("article").html().includes("#86efac") ? true : false,
+            "Chapter": chapter,
+            "ChapterLink": encodeURIComponent(indexName + `--${chapter.replaceAll(" ", "-").replaceAll(/-+/g,"-").toLowerCase()}`),
+            "Date": calcDate($(manga).find("article").find("time").html()),
+        });
     }
+}
 
-    return LatestChapterJSON;
+function getDomainIdToIndex(mangaId) {
+    const name = domainIdToIndex[mangaId.toUpperCase()];
+    if (name == undefined) {
+        // Send email to me
+        console.log('mangaId not found in domainIdToIndex.json');
+       // mailFunctions.sendMail(process.env.ADMIN_EMAIL, 'mangaId not found in domainIdToIndex.json', 'mangaId not found in domainIdToIndex.json fucking update it dude');
+    }
+    return domainIdToIndex[mangaId.toUpperCase()];
 }
 
 function scrapeHotManga(page) {
     // Arry with manga that contains manga 
-    let HotUpdateJSON = JSON.parse(page.split(`vm.HotUpdateJSON = `)[1].split(`;`)[0]);
+    const $ = cheerio.load(page);
+    let HotUpdateJSON = [];
+    let allManaga = $("article")
 
-    for (i = 0; i < HotUpdateJSON.length; i++) {
-        let manga = HotUpdateJSON[i];
-        manga.Date = calcDate(manga.Date);
-        manga.isSus = isMangaSus(manga.IndexName);
-        if (manga.IndexName == 'Yofukashi-no-Uta') {
-            manga.isSus = true;
-        }
-        manga.ChapterLink = manga.IndexName + calcChapterUrl(manga.Chapter);
-        manga.Chapter = calcChapter(manga.Chapter);
+    for (var i = 0; i < allManaga.length; i+=2) {
+        let manga = allManaga[i];
+        let mangaId = $(manga).find("img").attr("src").split("/")[5].split(".jpg")[0];
+        let seriesName = $(manga).find(".absolute").children("div").html();
+        let chapter = $(manga).find(".absolute").children("div")[1].children[0].data;
+        
+        let indexName = getDomainIdToIndex(mangaId);
+                
+        HotUpdateJSON.push({
+            "img": $(manga).find("img").attr("src"),
+            "mangaId": mangaId,
+            "SeriesName": seriesName,
+            "IndexName": indexName,
+            "isSus": isMangaSus(indexName),
+            "Chapter": chapter, 
+            "ChapterLink": encodeURIComponent(indexName + `--${chapter.replaceAll(" ", "-").replaceAll(/-+/g,"-").toLowerCase()}`),
+        });
     }
 
     return HotUpdateJSON;
@@ -245,11 +279,24 @@ function scrapeAdminRecd(html) {
 }
 
 function scrapeHotMangaThisMonth(html) {
-    let hotMonth = html.split(`vm.TopTenJSON = `);
-    let hotMonth1 = hotMonth[1].split(`;`)
-    let hotMonth2 = JSON.parse(hotMonth1[0]);
+    const $ = cheerio.load(html);
+    let HotUpdateJSON = [];
+    let allManaga = $("a");
 
-    return hotMonth2
+    for (var i = 0; i < allManaga.length; i++) {
+        let manga = allManaga[i];
+        let mangaId = $(manga).attr("href").split("/")[4];
+        let seriesName = $(manga).html();
+        let indexName = getDomainIdToIndex(mangaId);
+
+        HotUpdateJSON.push({
+            "SeriesName": seriesName,
+            "IndexName": indexName,
+            "isSus": isMangaSus(indexName),
+            "mangaId": mangaId
+        });
+    }
+    return HotUpdateJSON;
 }
 
 function fixChaptersArry(chapters, indexName, mangaPage = false) {
@@ -382,5 +429,7 @@ module.exports = {
     getSimilarManga,
     fixRecdArry,
     isMangaSus,
-    fixSearchArry
+    fixSearchArry,
+    getDomainIdToIndex,
+    calcDate
 }

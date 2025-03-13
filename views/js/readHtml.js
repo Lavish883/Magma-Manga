@@ -1,5 +1,5 @@
 var longStrip = !window.location.href.includes("-page-");
-var currentlyOnPage = window.location.href.split(`-page-`)[1];
+var currentlyOnPage = window.location.href.split(`-page-`)[1] == 'end' ? currentChapter.Page : parseInt(window.location.href.split(`-page-`)[1]);
 var params = new URLSearchParams(window.location.search);
 
 
@@ -99,7 +99,7 @@ function changeReadingStyle(obj, userClicked = true) {
         obj.children[1].innerText = "Single Page";
         showImages('F');
         console.log(currentlyOnPage);
-        if (currentlyOnPage != undefined) {
+        if (currentlyOnPage != undefined && currentlyOnPage != 'null' && !isNaN(currentlyOnPage)) {
             document.getElementById('imgs').children[currentlyOnPage - 1].scrollIntoView();
         }
         currentlyOnPage = 'F';
@@ -210,7 +210,7 @@ function moveChapter(direction, goToBeginning = false) {
             window.location.href = window.location.origin + '/manga/read/' + chapters[chapterToLookIndx].ChapterLink;
             return;
         } else {
-            let pageToStart = goToBeginning ? 1 : chapters[chapterToLookIndx].Page;
+            let pageToStart = goToBeginning ? 1 : 'end';
             let chapterPageToStart = direction == 'next' ? '-page-1' : '-page-' + pageToStart;
             window.location.href = window.location.origin + '/manga/read/' + chapters[chapterToLookIndx].ChapterLink + chapterPageToStart;
             return;
@@ -232,7 +232,7 @@ function updateURL() {
 // fixes thin navbar
 function fixNavbar() {
     document.querySelector('#thinNavbarChapters').style.display = 'block';
-    document.querySelector('#thinNavbarChapters #chapterNum').innerText = currentChapter.Chapter;
+    document.querySelector('#thinNavbarChapters #chapterNum').innerText = currentChapter.chapterName;
 }
 // event listeners 
 // listen for page clicks
@@ -243,6 +243,7 @@ document.body.addEventListener('keyup', movePage);
 // function calls
 changeReadingStyle(document.getElementById("readingStyle"), false)
 showImages(parseInt(currentlyOnPage))
+updateURL();
 setTimeout(() => { addContinueReading() }, 500)
 document.body.addEventListener('click', checkIfBookmarked)
 fixNavbar();
@@ -292,7 +293,7 @@ async function addContinueReading() {
     continueReading.unshift({
         'chapterLink': currentChapter.ChapterLink,
         'series': currentChapter.seriesName,
-        'chapter': currentChapter.Chapter,
+        'chapter': currentChapter.chapterName,
         'index': currentChapter.indexName,
         'page': currentlyOnPage,
         'longStrip': longStrip,

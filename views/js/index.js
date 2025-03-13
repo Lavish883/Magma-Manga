@@ -4,7 +4,7 @@ function makeLatestChapterHTML(manga, isPopular = false, isCompleted = false) {
   if (window.location.href.includes("mangaapi")) {
     var image = '//axiostrailbaby.lavishkumar1.repl.co/sendImage/' + ('temp.compsci88.com/cover/' + manga.IndexName + '.jpg').replaceAll('/', ' ')
   } else {
-    var image = '//temp.compsci88.com/cover/' + manga.IndexName + '.jpg';
+    var image = "//temp.compsci88.com/cover/normal/" + manga.mangaId + ".webp";
   }
 
   return `
@@ -13,7 +13,7 @@ function makeLatestChapterHTML(manga, isPopular = false, isCompleted = false) {
             ${isMangaSus(manga.IndexName) ? `<div class="red_overlay"><i class="fa-solid fa-circle-question" title="This manga might be Hentai (manga porn)"></i></div>` : ''}
             <img src="${image}" width="90" />
         </a>
-        <a style="display:contents;" href="${"/manga/read/" + manga.ChapterLink + '-page-1'}" title="${manga.SeriesName + "&nbsp;Chapter&nbsp;" + manga.Chapter}">
+        <a style="display:contents;" href="${"/manga/read/" + manga.ChapterLink + '-page-1'}" title="${manga.SeriesName + "&nbsp;" + manga.Chapter}">
             <div style="margin-left:15px; margin-top:8px;">
                 <div class="latest_chapters_info">
                     ${isPopular ? `<i style="color:red" class="fas fa-fire-alt"></i>` : ''}
@@ -22,7 +22,7 @@ function makeLatestChapterHTML(manga, isPopular = false, isCompleted = false) {
                 </div>
                 <div style="margin-top:0px;">
                     <i style="font-size:15px;color:black;" class="far fa-file"></i>
-                <span style="font-size:14px;font-weight:500;color:black;">Chapter ${manga.Chapter}</span>
+                <span style="font-size:14px;font-weight:500;color:black;">${manga.Chapter}</span>
             </div>
             <div style="margin-top:1px;">
                 <i style="font-size:15px;color:black;" class="far fa-clock"></i>
@@ -48,16 +48,8 @@ function viewMoreChapters() {
   var chaptersHTMLArry = [];
 
   for (var i = chaptersShown; i < chaptersShown + 18; i++) {
-    let isPopular = false;
     try {
-      var isCompleted = latestChapters[i].ScanStatus == 'Complete' ? true : false
-      for (var h = 0; h < hotManga.length; h++) {
-        if (hotManga[h].SeriesID === latestChapters[i].SeriesID) {
-          isPopular = true;
-          break;
-        }
-      }
-      chaptersHTMLArry.push(makeLatestChapterHTML(latestChapters[i], isPopular, isCompleted))
+      chaptersHTMLArry.push(makeLatestChapterHTML(latestChapters[i], latestChapters[i].isPopular, latestChapters[i].isCompleted));
       // Get rid of view more chapters button
       if (latestChapters.length - 1 === i) {
         document.getElementById('viewMoreChapters').classList.add('none');
@@ -228,7 +220,7 @@ function displayContinueReading() {
         <a href="${link}" title="${manga.series}">
           <div>
             <span class="title">${manga.series}&nbsp;</span>
-            <span class="chapter">- Chapter ${manga.chapter}</span>
+            <span class="chapter">${manga.chapter}</span>
           </div>
         </a>
       </div>

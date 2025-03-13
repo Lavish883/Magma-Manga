@@ -65,11 +65,11 @@ function setup(req, res, next) {
   }
   next();
 }
-
+/*
 app.get('*', (req, res) => {
   return res.send("Website is currently broken. A fix is on the way. Sorry for the inconvenience.");
 })
-
+*/
 app.get('/', (req, res) => {
   return res.redirect('/manga/')
 })
@@ -104,7 +104,7 @@ app.get('/manga/offline/read', pathFunctions.offlineReadHtml);
 app.get('/api/offline/manga/downloadImage', apiFunctions.downloadImage)
 app.get('/api/offline/mangaName?', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaPage)
 //req.query.chapter ==> needed
-app.get('/api/offline/getMangaChapterPageOffline', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaChapterPageOffline)
+app.get('/api/offline/getMangaChapterPageOffline', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaChapterPage)
 /* Api Routes are below */
 
 // quick search data
@@ -196,7 +196,7 @@ app.use(async (err, req, res, next) => {
   }
   //console.log(req)
   console.log(err.stack);
-
+  /*
   // meaning we aren't using the right cloudflare break version with that manga, so add it to the v2 list
   if (err.name == "FetchError" && err.message.includes("invalid json response body at")) {
     await mailFunctions.sendMail(process.env.EMAIL, 'Added this manga to V2 check if this works later', req.url);
@@ -225,8 +225,9 @@ app.use(async (err, req, res, next) => {
   } else if (err.name == "Page can't be found") {
     return res.status(404).send('Page you are looking for does not exist');
   }
+    */
   // send email to admin
-  await mailFunctions.sendMail(process.env.EMAIL, 'An Error has occured', err.stack);
+  //await mailFunctions.sendMail(process.env.EMAIL, 'An Error has occured', err.stack);
   return res.status(500).send('Something broke! Please try again later. An Email has been sent to the admin. Thank you for your patience.')
 })
 

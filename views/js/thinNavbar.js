@@ -23,7 +23,7 @@ async function getSearchDirectory() {
     var fetchData = await fetch('/api/searchPage');
     var data = await fetchData.json();
     window.localStorage.setItem('directory', JSON.stringify(data));
-    getDirectoryFromStorage();
+    //getDirectoryFromStorage();
 }
 
-getDirectoryFromStorage();
+//getDirectoryFromStorage();

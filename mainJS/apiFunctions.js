@@ -5,6 +5,7 @@ const mainFunctions = require('./mainFunctions') // functions needed for importa
 const HeaderGenerator = require('header-generator');
 const fs = require('fs');
 const schemas = require('../schemas/schema');
+const cheerio = require('cheerio');
 
 const realAdminRecd = JSON.parse(fs.readFileSync('./json/adminRecd.json', 'utf8'));
 const listOfMangaV2 = JSON.parse(fs.readFileSync('./json/listOfMangaV2.json', 'utf8'));
@@ -27,17 +28,31 @@ const headersGenerator = new HeaderGenerator({
 async function getMainPageStuff(req, res) {
     let headers = headersGenerator.getHeaders();
 
-    let fetchAll = await fetch(breakCloudFlare, headers);
-    let resp = await fetchAll.text();
+    let fetchHot = await fetch(breakCloudFlare + "hot-updates", headers);
+    let respHot = await fetchHot.text();
 
-    //console.log(resp)
+    let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", headers);
+    let respHotMonth = await fetchHotMonth.text();
+
+    let latestArry = [];
+
+    // Latest added manga
+    for (var i = 1; i <= 5; i++) {
+        let fetchLatest = await fetch(breakCloudFlare + "latest-updates/" + i, headers);
+        let respLatest = await fetchLatest.text();
+
+        mainFunctions.scrapeLatestManga(respLatest, latestArry);
+    }
+
 
     var allData = {
         'adminRecd': realAdminRecd[Math.floor(Math.random() * ( realAdminRecd.length - 1))],
-        'hotMangaUpdated': mainFunctions.scrapeHotManga(resp),
-        'hotMangaThisMonth': mainFunctions.scrapeHotMangaThisMonth(resp),
-        'latestManga': mainFunctions.scrapeLatestManga(resp),
+        'hotMangaUpdated': mainFunctions.scrapeHotManga(respHot),
+        'hotMangaThisMonth': mainFunctions.scrapeHotMangaThisMonth(respHotMonth),
+        'latestManga': latestArry
     }
+
+    return res.send(allData)
 
     console.log(allData.adminRecd)
 
@@ -69,94 +84,205 @@ async function cloudFlareV2CheckMiddleware(req, res, next) {
     next();
 }
 
+async function getAllChapters(mangaId, mangaName) {
+    let headers = headersGenerator.getHeaders();
+    // Get the chapters
+    var chapters = [];
+    let chaptersFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/full-chapter-list', headers);
+    let chaptersResp = await chaptersFetch.text();
+
+    $ = cheerio.load(chaptersResp);
+    
+    $('div').each((i, div) => {
+        var chapter = {
+            'chapterId': $(div).find('a').attr('href').split('/chapters/')[1],
+            'chapterName': $(div).find('span.grow.flex.items-center.gap-2').find('span').html(),
+            'Date': mainFunctions.calcDate($(div).find('time').text()),
+        };
+    
+        chapter['ChapterLink'] = encodeURIComponent(mangaName + '--' + chapter.chapterName.replaceAll(" ", "-").replaceAll(/-+/g,"-").toLowerCase());
+        chapters.push(chapter);
+    });
+    return chapters;
+}
+
 // manga info
 async function getMangaPage(req, res) {
     let headers = headersGenerator.getHeaders();
     let mangaName = req.query.manga;
+    // gets manga id from the name
+    let mangaId = mainFunctions.getDomainIdToIndex(mangaName);
 
-    if (typeof mangaName === 'undefined') {
-        return res.send('manga name not given or given incorrectly')
-    }
+    let mangaFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, headers);
+    let mangaResp = await mangaFetch.text();
+    var $ = cheerio.load(mangaResp);
+
+    var info = {};
+    info['IndexName'] = mangaName;
+    info['SeriesName'] = $('title').text().split(' | Weeb Central')[0];
+    info['mangaId'] = mangaId;
+
+    // Get info from the page
+    $('main ul li').each((i, li) => {
+        var items = [];
+        $(li).children().each((i, liChild) => {
+            items.push($(liChild).text().replaceAll('\n', ''));
+        });
+        
+        if (items[0] == 'Associated Name(s)'){
+            var moreItems = items[1].split(/\s{2,}/).slice(1, -1);
+            items[1] = moreItems;
+        }
+
+        if (items[0] == 'Author(s): ' || items[0] == 'Tags(s): '){
+            for (var i = 1; i < items.length - 1; i++) {
+                items[i] = items[i].slice(0, -1);
+            }
+        }
+
+        if (items.length > 2 || items[0] == 'Author(s): '){
+            info[items[0]] = items.slice(1);
+        } else {
+            info[items[0]] = items[1];
+        }
+    }); 
+
+    // Get the chapters
     
-    let link = req.query.useV2 ? breakCloudFlareV2 + '/manga/' + mangaName: breakCloudFlare + '/manga/' + mangaName;
-    let fetchManga = await fetch(link, headers);
-    let resp = await fetchManga.text();
+    info['AlternateNames'] = info['Associated Name(s)'];
+    delete info['Associated Name(s)'];
 
-    var allData = mainFunctions.scrapeMangaInfo(resp)
-    try {
-        var chapters = resp.split(`vm.Chapters = `)[1].split(`;`)[0];
-    } catch (err) {
-        console.log(link);
-        console.log(err);
-        return res.status(500).send('Page is not valid');
-    }
-    allData.IndexName = req.query.manga;
-    allData.Chapters = mainFunctions.fixChaptersArry(chapters, allData.IndexName, true);
-    allData.Chapters = allData.Chapters.reverse();
+    info['Authors'] = info['Author(s): '];
+    delete info['Author(s): '];
 
-    return res.send(allData)
+    info['Genres'] = info['Tags(s): '];
+    delete info['Tags(s): '];
+
+    info['Type'] = info['Type: '];
+    delete info['Type: '];
+
+    info['Official_Translation'] = info['Official Translation: '];
+    delete info['Official Translation: '];
+
+    info['Released'] = info['Released: '];
+    delete info['Released: '];
+
+    info['Status'] = info['Status: '];
+    delete info['Status: '];
+
+    info['Anime_Adaptation'] = info['Anime Adaptation: '];
+    delete info['Anime Adaptation: '];
+
+    info['Adult_Content'] = info['Adult Content: '];
+    delete info['Adult Content: '];
+
+    info['Chapters'] = await getAllChapters(mangaId, mangaName);
+    return res.send(info);
 }
 // reading a chapter info
 async function getMangaChapterPage(req, res) {
     let headers = headersGenerator.getHeaders();
     // Fetch page that we need to scrape
-    let fetchUrl = req.query.useV2 ? breakCloudFlareV2 + '/read-online/' + req.query.chapter : breakCloudFlare + '/read-online/' + req.query.chapter;
-    console.log('fetch thi shit ' + fetchUrl);
-    let fetchManga = await fetch(fetchUrl, headers)
-    let resp = await fetchManga.text();
-    
-    if (resp.includes("<title>404 Page Not Found</title>")){
-        return res.status(404).send("Page could not be found");
+    const mangaName = req.query.chapter.split('--')[0];
+    const mangaId = mainFunctions.getDomainIdToIndex(mangaName);
+
+    var seriesNameFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, headers);
+    var seriesNameResp = await seriesNameFetch.text();
+    var $ = cheerio.load(seriesNameResp);
+
+    var seriesName = $('title').text().split(' | Weeb Central')[0];
+
+    var allChapters = await getAllChapters(mangaId, mangaName);
+    var currentChapter = allChapters.find(chapter => chapter.ChapterLink == encodeURIComponent(req.query.chapter.split('-page-')[0]));
+
+    if (currentChapter == undefined) {
+        console.log('Chapter not found');
     }
 
-    var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
-    var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
+    var imageURlS = [];
+    let imageFetch = await fetch(breakCloudFlare + 'chapters/' + currentChapter.chapterId + '/images?is_prev=False&current_page=1&reading_style=long_strip', headers);
+    let imageResp = await imageFetch.text();
 
-    var chapters = mainFunctions.fixChaptersArry(resp.split(`vm.CHAPTERS = `)[1].split(`;`)[0], indexName);
-    var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0], indexName);
+    var $ = cheerio.load(imageResp);
 
-    var imageDirectoryURL = resp.split(`vm.CurPathName = "`)[1].split(`";`)[0];
-    var imageURlS = mainFunctions.chapterImgURLS(currentChapter, imageDirectoryURL, indexName);
-
+    $('img').each((i, img) => {
+        //imageURlS.push(process.env.IMG_SERVER + encodeURIComponent($(img).attr('src')));
+        let addToUrl = req.query.download ? '' : '/api/offline/manga/downloadImage?url=';
+        imageURlS.push(addToUrl + encodeURIComponent($(img).attr('src')));
+    });
+    
+    currentChapter.Page = imageURlS.length;
+    currentChapter.indexName = mangaName;
     currentChapter.seriesName = seriesName;
-    currentChapter.indexName = indexName;
 
     var allData = {
-        'chapters': chapters,
+        'chapters': allChapters,
         'currentChapter': currentChapter,
         'imageURlS': imageURlS,
         'seriesName': seriesName,
-        'indexName': indexName,
-        'chapterLink': req.query.chapter
+        'indexName': mangaName,
+        'chapterLink': encodeURIComponent(req.query.chapter),
+        'id': mangaId
     }
 
-    return res.send(allData)
+    return res.send(allData);
 }
 // get current chapter info for offline reading
 async function getMangaChapterPageOffline(req, res) {
+    console.log(req.query.chapter);
     // Fetch page that we need to scrape
-    let fetchUrl = req.query.useV2 ? breakCloudFlareV2 + '/read-online/' + req.query.chapter: breakCloudFlare + '/read-online/' + req.query.chapter;
-    let fetchManga = await fetch(fetchUrl);
-    let resp = await fetchManga.text();
- 
-    var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0], req.query.chapter.split('-chapter-')[0]);
+    //let fetchUrl = req.query.useV2 ? breakCloudFlareV2 + '/read-online/' + req.query.chapter: breakCloudFlare + '/read-online/' + req.query.chapter;
+    //let fetchManga = await fetch(fetchUrl);
+    //let resp = await fetchManga.text();
+ //
+    //var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0], req.query.chapter.split('-chapter-')[0]);
+//
+    //var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
+    //var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
+//
+    //currentChapter.seriesName = seriesName;
+    //currentChapter.indexName = indexName;
 
-    var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
-    var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
-
-    currentChapter.seriesName = seriesName;
-    currentChapter.indexName = indexName;
-
-    return res.send(currentChapter)
+    //return res.send(currentChapter)
 }
 
 // quick search Data
 async function getQuickSearchData(req, res) {
+    let search = req.query.search;
     let headers = headersGenerator.getHeaders();
 
-    let fetchQuickSearchPage = await fetch(breakCloudFlare + "/_search.php", headers);
+    let fetchQuickSearchPage = await fetch(breakCloudFlare + "search/simple?location=main", {
+        "headers": {
+            "content-type": "application/x-www-form-urlencoded",
+            "hx-current-url": "https://weebcentral.com/",
+            "hx-request": "true",
+            "hx-target": "quick-search-result",
+            "hx-trigger": "quick-search-input",
+            "hx-trigger-name": "text",
+            "sec-ch-ua": "\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "Referer": "https://weebcentral.com/",
+            "Referrer-Policy": "strict-origin-when-cross-origin"
+        },
+        "body": "text=" + search,
+        "method": "POST"
+    });
+    
     let resp = await fetchQuickSearchPage.text();
-    return res.send(resp);
+
+    var $ = cheerio.load(resp);
+    var results = [];
+
+    $('a').each((i, a) => {
+        results.push({
+            'i': a.attribs.href.split('/series/')[1].split('/')[1],
+            's': $(a).find('div.flex-1.overflow-hidden').text().replaceAll('\n', '').replaceAll(/\s\s+/g, ' ').slice(1, -1),
+            'id': a.attribs.href.split('/series/')[1].split('/')[0]
+        });
+    });
+
+    return res.send(results);
 }
 // directory data
 async function getDirectoryData(req, res) {
@@ -208,12 +334,36 @@ async function getSearchData(req, res) {
 }
 
 async function downloadImage(req, res) {
-    const url = req.query.url;
+    const url = decodeURIComponent(req.query.url);
+    console.log(url);
+    const headers = {};
+    
     if (url == undefined || url == "") {
         return res.send('url not given');
     }
-    const image = await fetch(url);
+
+    const image = await fetch(url, {
+        "headers": {
+            "content-type": "application/x-www-form-urlencoded",
+            "hx-current-url": "https://weebcentral.com/",
+            "hx-request": "true",
+            "hx-target": "quick-search-result",
+            "hx-trigger": "quick-search-input",
+            "hx-trigger-name": "text",
+            "sec-ch-ua": "\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"",
+            "sec-ch-ua-mobile": "?0",
+            "sec-ch-ua-platform": "\"Windows\"",
+            "Referer": "https://weebcentral.com/",
+            "Referrer-Policy": "strict-origin-when-cross-origin"
+        },
+        "body": null,
+        "method": "GET",
+        "mode": "cors",
+        "credentials": "omit"
+    });
+
     const buffer = await image.buffer();
+
     res.set('Content-Type', 'image/png');
     return res.send(buffer);
 }

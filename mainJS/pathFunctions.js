@@ -26,7 +26,7 @@ async function readHtml(req, res) {
         return res.render('loading')
     }
     // get the chapter details
-    let fetchAllData = await fetch(serverName + 'api/manga/read?chapter=' + req.params.mangaChapter)
+    let fetchAllData = await fetch(serverName + 'api/manga/read?chapter=' + encodeURIComponent(req.params.mangaChapter));
     if (fetchAllData.status == 404) {
         return res.render('404');
     }

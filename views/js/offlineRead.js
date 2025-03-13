@@ -176,7 +176,7 @@ function intialize() {
     changeReadingStyle(document.getElementById("readingStyle"), false);
     showImages(parseInt(currentlyOnPage))
     document.querySelector("#read_options span").innerText = currentChapter.seriesName;
-    document.querySelectorAll("#read_options span")[1].innerText = currentChapter.Type != null ? currentChapter.Type + ' ' + currentChapter.Chapter : 'Chapter ' + currentChapter.Chapter;
+    document.querySelectorAll("#read_options span")[1].innerText = currentChapter.currentChapter.chapterName;
 
     window.addEventListener('scroll', function () {
         if (longStrip) {
@@ -191,7 +191,7 @@ function intialize() {
     document.getElementById('imgs').addEventListener("click", movePage);
     document.body.addEventListener('keyup', movePage);
     changeBookMarkStatus(document.getElementById('bookMark'));
-    setTimeout(addToRecentRead(currentChapter.ChapterLink), 1500)
+    setTimeout(addToRecentRead(currentChapter.currentChapter.ChapterLink), 1500)
 }
 
 // listen to page clicks either it is left or right
@@ -223,9 +223,9 @@ function movePage(event) {
     }
 
     if (longStrip == false) { // see if we need to go on the next chapter or not
-        if (currentlyOnPage > currentChapter.Page) {
+        if (currentlyOnPage > currentChapter.currentChapter.Page) {
             alert('Chapter Ended')
-            currentlyOnPage = currentChapter.Page;
+            currentlyOnPage = currentChapter.currentChapter.Page;
             return;
         } else if (currentlyOnPage < 1) {
             alert('First Page');
