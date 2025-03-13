@@ -19,7 +19,7 @@ function genreateBookmarksHTML(allBookMarks) {
       bookmarksHTML.push(
         `
           <div draggable="true" class="BookMark_Container">
-            <a draggable="false" href="${'/manga/manga/' + manga.Index}">
+            <a mangaId="${manga.id}" Index="${manga.Index}" Series="${manga.Series}" draggable="false" href="${'/manga/manga/' + manga.Index}">
               <div class="hot_update_item_name">${manga.Series}</div>
               <img class="lozad" data-src="${image}">
             </a>
@@ -66,10 +66,11 @@ $("#BookMarksContainer").sortable({
 function doneSorting() {
   let ArryToreplace = [];
   document.querySelectorAll('.BookMark_Container').forEach(function (manga) {
-    let seriesManga = manga.outerHTML.split(`<div class="hot_update_item_name">`)[1].split(`</div>`)[0];
-    let indexManga = manga.outerHTML.split(`data-src="https://temp.compsci88.com/cover/`)[1].split(`.jpg`)[0];
-    let idManga = manga.outerHTML.split(`data-src="https://temp.compsci88.com/cover/normal/`)[1].split(`.webp`)[0];
-    ArryToreplace.push({ "Index": indexManga, "Series": seriesManga, "id": idManga })
+    let seriesManga = manga.querySelector('a').getAttribute('Series');
+    let indexManga = manga.querySelector('a').getAttribute('Index');
+    let mangaId = manga.querySelector('a').getAttribute('mangaId');
+  
+    ArryToreplace.push({ "Index": indexManga, "Series": seriesManga, "id": mangaId });
   })
   window.localStorage.setItem('bookmarks', JSON.stringify(ArryToreplace));
   updateBookmarks();
