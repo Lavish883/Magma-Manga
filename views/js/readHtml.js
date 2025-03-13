@@ -73,8 +73,8 @@ function bookMark(obj) {
     }
 
     if (!bookMarked) {
-        bookMarks.push({ 'Series': currentChapter.seriesName, 'Index': currentChapter.indexName });
-        addBookmark({ 'Series': currentChapter.seriesName, 'Index': currentChapter.indexName });
+        bookMarks.push({ 'Series': currentChapter.seriesName, 'Index': currentChapter.indexName, 'id': currentChapter.mangaId });
+        addBookmark({ 'Series': currentChapter.seriesName, 'Index': currentChapter.indexName, 'id': currentChapter.mangaId });
     } else {
         // remove the manga
         for (var i = bookMarks.length - 1; i >= 0; i--) {

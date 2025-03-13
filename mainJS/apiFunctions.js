@@ -214,6 +214,7 @@ async function getMangaChapterPage(req, res) {
     currentChapter.Page = imageURlS.length;
     currentChapter.indexName = mangaName;
     currentChapter.seriesName = seriesName;
+    currentChapter.mangaId = mangaId;
 
     var allData = {
         'chapters': allChapters,
