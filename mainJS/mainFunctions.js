@@ -75,27 +75,26 @@ function calcChapterUrl(ChapterString) {
 }
 
 function scrapeLatestManga(page, arryRef) {
-    //  console.log(page);
     const $ = cheerio.load(page);
-    let allManaga = $("abbr");
+    let allManaga = $("article");
     
     for (var i = 0; i < allManaga.length; i++) {
         let manga = allManaga[i];
-        let mangaId = $(manga).find("article").find("img").attr("src").split("/")[5].split(".jpg")[0];
-        let seriesName = $(manga).attr("title");
+        let mangaId = $(manga).find("img").attr("src").split("/")[5].split(".jpg")[0];
+        let seriesName = $(manga).attr("data-tip");
         let indexName = getDomainIdToIndex(mangaId);
-        let chapter = $(manga).find("article").find("span").html();
+        let chapter = $(manga).find("span").html();
 
         arryRef.push({
             "SeriesName": seriesName,
             "IndexName": indexName,
             "isSus": isMangaSus(indexName),
             "mangaId": mangaId,
-            "isPopular": $(manga).find("article").html().includes("#f87171") ? true : false,
-            "isCompleted": $(manga).find("article").html().includes("#86efac") ? true : false,
+            "isPopular": $(manga).html().includes("#f87171") ? true : false,
+            "isCompleted": $(manga).html().includes("#86efac") ? true : false,
             "Chapter": chapter,
             "ChapterLink": encodeURIComponent(indexName + `--${chapter.replaceAll(" ", "-").replaceAll(/-+/g,"-").toLowerCase()}`),
-            "Date": calcDate($(manga).find("article").find("time").html()),
+            "Date": calcDate($(manga).find("time").html()),
         });
     }
 }
