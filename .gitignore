@@ -3,3 +3,4 @@ node_modules/
 package_lock.json
 uploadSeriesId.js
 .env
+update.js
