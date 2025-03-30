@@ -6,10 +6,33 @@ const schemas = require('../schemas/schema');
 
 const breakCloudFlare = process.env.BREAK_CLOUDFLARE_V1 || 'https://letstrypup-dbalavishkumar.koyeb.app/?url=https://mangasee123.com'
 const susManga = JSON.parse(fs.readFileSync('./json/susManga.json'));
-const domainIdToIndex = JSON.parse(fs.readFileSync('./json/domainIdToIndex.json'));
+var domainIdToIndex = JSON.parse(fs.readFileSync('./json/domainIdToIndex.json'));
 
 const mailFunctions = require('../mainJS/mailFunctions');
 
+var requestedUpdateToSeriesData = false;
+async function getAllSeriesData(){
+    if (requestedUpdateToSeriesData) return;
+    requestedUpdateToSeriesData = true;
+
+    const seriesNameToIdFetch = await fetch('https://weebcentral.com/sitemap.xml');
+    const seriesNameToIdResponse = await seriesNameToIdFetch.text();
+
+    const seriesNameToId = seriesNameToIdResponse.match(/(?<=<loc>https:\/\/weebcentral.com\/series\/).*(?=<\/loc>)/g);
+    const jsonOutput = {};
+
+    for (var i = 0; i < seriesNameToId.length; i++) {
+        jsonOutput[seriesNameToId[i].split("/")[0]] = seriesNameToId[i].split("/")[1].toUpperCase();
+        jsonOutput[seriesNameToId[i].split("/")[1].toUpperCase()] = seriesNameToId[i].split("/")[0];
+    }
+
+    console.log(seriesNameToId.length);
+    //console.log(jsonOutput);
+    fs.writeFileSync('./json/domainIdToIndex.json', JSON.stringify(jsonOutput));
+    domainIdToIndex = JSON.parse(fs.readFileSync('./json/domainIdToIndex.json'));
+    mailFunctions.sendMail(process.env.ADMIN_EMAIL, 'Updated MangaIdIndex bro', '');
+    requestedUpdateToSeriesData = false;
+}
 
 // to chekc if manga is potientally sus
 function isMangaSus(mangaName) {
@@ -104,6 +127,7 @@ function getDomainIdToIndex(mangaId) {
     if (name == undefined) {
         // Send email to me
         console.log('mangaId not found in domainIdToIndex.json');
+        getAllSeriesData();
        // mailFunctions.sendMail(process.env.ADMIN_EMAIL, 'mangaId not found in domainIdToIndex.json', 'mangaId not found in domainIdToIndex.json fucking update it dude');
     }
     return domainIdToIndex[mangaId.toUpperCase()];
