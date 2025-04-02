@@ -11,6 +11,8 @@ var domainIdToIndex = JSON.parse(fs.readFileSync('./json/domainIdToIndex.json'))
 const mailFunctions = require('../mainJS/mailFunctions');
 
 var requestedUpdateToSeriesData = false;
+var timeSinceLastEmail = 0;
+
 async function getAllSeriesData(){
     if (requestedUpdateToSeriesData) return;
     requestedUpdateToSeriesData = true;
@@ -127,8 +129,11 @@ function getDomainIdToIndex(mangaId) {
     if (name == undefined) {
         // Send email to me
         console.log('mangaId not found in domainIdToIndex.json');
-        getAllSeriesData();
-       // mailFunctions.sendMail(process.env.ADMIN_EMAIL, 'mangaId not found in domainIdToIndex.json', 'mangaId not found in domainIdToIndex.json fucking update it dude');
+        //getAllSeriesData();
+        if (new Date().getTime() - timeSinceLastEmail > 1000 * 60 * 60) {
+            timeSinceLastEmail = new Date().getTime();
+            mailFunctions.sendMail(process.env.ADMIN_EMAIL, 'mangaId not found in domainIdToIndex.json', 'mangaId not found in domainIdToIndex.json fucking update it dude');
+        }
     }
     return domainIdToIndex[mangaId.toUpperCase()];
 }

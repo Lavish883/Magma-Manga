@@ -54,3 +54,10 @@ script
 script 
   include /js/subscribe.js
 script(src="//cdn.rawgit.com/mozilla/localForage/master/dist/localforage.js")
+// Google tag (gtag.js)
+script(async='' src='https://www.googletagmanager.com/gtag/js?id=G-VKP2Y6E2RX')
+script.
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-VKP2Y6E2RX');

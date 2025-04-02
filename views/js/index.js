@@ -240,3 +240,7 @@ if (window.location.pathname.includes('/index.html') || window.location.pathname
     displayContinueReading();
   })();
 }
+
+if (window.location.search.includes("?redirect=true")){
+  alert("We are transferring to a new domain. Please use this new domain and bookmark it: https://magma-manga.me");
+}
