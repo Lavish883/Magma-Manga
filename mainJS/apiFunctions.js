@@ -7,6 +7,10 @@ const fs = require('fs');
 const schemas = require('../schemas/schema');
 const cheerio = require('cheerio');
 
+// Cache scraping for faster loading
+const NodeCache = require("node-cache");
+const mangaCache = new NodeCache({ stdTTL: 60 * 60, checkperiod: 12 * 60 }); // 1 hour default cache
+
 const realAdminRecd = JSON.parse(fs.readFileSync('./json/adminRecd.json', 'utf8'));
 const listOfMangaV2 = JSON.parse(fs.readFileSync('./json/listOfMangaV2.json', 'utf8'));
 
@@ -24,13 +28,18 @@ const headersGenerator = new HeaderGenerator({
         "windows"
     ]
 });
-// home page data
-async function getMainPageStuff(req, res) {
-    let headers = headersGenerator.getHeaders();
+// home page data, cache it for 1 hour
+async function getMainPageStuff(req, res) {    
+    // Scrape the main page data only if it is not cached
+    if (mangaCache.has('mainPageData')) {
+        return res.send(mangaCache.get('mainPageData'));   
+    }
 
+    let headers = headersGenerator.getHeaders();
     let fetchHot = await fetch(breakCloudFlare + "hot-updates", headers);
     let respHot = await fetchHot.text();
 
+    
     let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", headers);
     let respHotMonth = await fetchHotMonth.text();
 
@@ -52,42 +61,21 @@ async function getMainPageStuff(req, res) {
         'latestManga': latestArry
     }
 
+    // Cache the main page data for 1 hour
+    var success = mangaCache.set('mainPageData', allData, 60 * 60);
+    if (!success) {
+        console.error("Failed to cache main page data");
+    }
+
     return res.send(allData)
-
-    console.log(allData.adminRecd)
-
-    res.send(allData)
 }
 
-function checkIfUseBreakCloudFlareV2(mangaName) {
-    return listOfMangaV2["data"].includes(mangaName);
-}
-
-/* Implent v2check automatically and add that for getMangaPage, getMangaChapterPage and getMangaChapterPageOffline */
-
-// check if we need to use v2 or not for that url
-async function cloudFlareV2CheckMiddleware(req, res, next) {
-    var mangaLink;
-    // find the url of the manga
-    if (req.url.includes("/read?chapter=")) {
-        mangaLink = req.query.chapter.split("-chapter-")[0];
-    } else {
-        mangaLink = req.query.manga;
-    }
-    // check from the database if we need to use v2 or not
-    const manga = await schemas.mangaUsingV2.findOne({'mangaLink': mangaLink});
-    console.log(req.url);
-    if (manga != null && manga != undefined) {
-        req.query.useV2 = true;
-    }
-
-    next();
-}
-
+// Get all chapters for a manga, helper function for getMangaPage so cached in getMangaPage
 async function getAllChapters(mangaId, mangaName) {
     let headers = headersGenerator.getHeaders();
     // Get the chapters
     var chapters = [];
+
     let chaptersFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/full-chapter-list', headers);
     let chaptersResp = await chaptersFetch.text();
 
@@ -103,16 +91,48 @@ async function getAllChapters(mangaId, mangaName) {
         chapter['ChapterLink'] = encodeURIComponent(mangaName + '--' + chapter.chapterName.replaceAll(" ", "-").replaceAll(/-+/g,"-").toLowerCase());
         chapters.push(chapter);
     });
+
     return chapters;
+}
+
+async function getLatestChapters(req, res) {
+    // Check if the latest chapters are cached
+    if (mangaCache.has('latestChapters')) {
+        return res.send(mangaCache.get('latestChapters'));
+    }
+    // If not cached, scrape the latest chapters
+    let headers = headersGenerator.getHeaders();
+    let latestChapters = [];
+    for (var i = 1; i <= 8; i++) {
+        let fetchLatest = await fetch(breakCloudFlare + "latest-updates/" + i, headers);
+        let respLatest = await fetchLatest.text();
+
+        mainFunctions.scrapeLatestManga(respLatest, latestChapters);
+    }
+
+    // Cache the latest chapters for 1 hour
+    var success = mangaCache.set('latestChapters', latestChapters, 60 * 60);
+    if (!success) {
+        console.error("Failed to cache latest chapters");
+    }
+
+    return res.send(latestChapters);
 }
 
 // manga info
 async function getMangaPage(req, res) {
-    let headers = headersGenerator.getHeaders();
+    // Check if the manga info is cached
     let mangaName = req.query.manga;
-    // gets manga id from the name
     let mangaId = mainFunctions.getDomainIdToIndex(mangaName);
 
+    // If the manga info is cached, return it
+    if (mangaCache.has(breakCloudFlare + 'series/' + mangaId + '/' + mangaName)) {
+        return res.send(mangaCache.get(breakCloudFlare + 'series/' + mangaId + '/' + mangaName));
+    }
+
+    // gets manga id from the name
+
+    let headers = headersGenerator.getHeaders();
     let mangaFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, headers);
     let mangaResp = await mangaFetch.text();
     var $ = cheerio.load(mangaResp);
@@ -177,15 +197,26 @@ async function getMangaPage(req, res) {
     delete info['Adult Content: '];
 
     info['Chapters'] = await getAllChapters(mangaId, mangaName);
+
+    // Cache the manga info for 1 hour
+    var success = mangaCache.set(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, info, 60 * 60);
+    if (!success) {
+        console.error("Failed to cache manga info for " + mangaName);
+    }
     return res.send(info);
 }
 // reading a chapter info
 async function getMangaChapterPage(req, res) {
-    let headers = headersGenerator.getHeaders();
     // Fetch page that we need to scrape
     const mangaName = req.query.chapter.split('--')[0];
     const mangaId = mainFunctions.getDomainIdToIndex(mangaName);
 
+    // Check if the chapter info is cached
+    if (mangaCache.has(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter))) {
+        return res.send(mangaCache.get(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter)));
+    }
+
+    let headers = headersGenerator.getHeaders();
     var seriesNameFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, headers);
     var seriesNameResp = await seriesNameFetch.text();
     var $ = cheerio.load(seriesNameResp);
@@ -226,25 +257,12 @@ async function getMangaChapterPage(req, res) {
         'id': mangaId
     }
 
+    // Cache the chapter info for 12 hour
+    var success = mangaCache.set(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter), allData, 12 * 60 * 60);
+    if (!success) {
+        console.error("Failed to cache chapter page for " + mangaName);
+    }
     return res.send(allData);
-}
-// get current chapter info for offline reading
-async function getMangaChapterPageOffline(req, res) {
-    console.log(req.query.chapter);
-    // Fetch page that we need to scrape
-    //let fetchUrl = req.query.useV2 ? breakCloudFlareV2 + '/read-online/' + req.query.chapter: breakCloudFlare + '/read-online/' + req.query.chapter;
-    //let fetchManga = await fetch(fetchUrl);
-    //let resp = await fetchManga.text();
- //
-    //var currentChapter = mainFunctions.fixCurrentChapter(resp.split(`vm.CurChapter = `)[1].split(`;`)[0], req.query.chapter.split('-chapter-')[0]);
-//
-    //var seriesName = resp.split(`vm.SeriesName = "`)[1].split(`";`)[0];
-    //var indexName = resp.split(`vm.IndexName = "`)[1].split(`";`)[0];
-//
-    //currentChapter.seriesName = seriesName;
-    //currentChapter.indexName = indexName;
-
-    //return res.send(currentChapter)
 }
 
 // quick search Data
@@ -377,7 +395,6 @@ module.exports = {
     getDirectoryData,
     getRecommendedManga,
     getSearchData,
+    getLatestChapters,
     downloadImage,
-    getMangaChapterPageOffline,
-    cloudFlareV2CheckMiddleware
 }

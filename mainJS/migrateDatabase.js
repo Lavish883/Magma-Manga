@@ -2,8 +2,8 @@ const schemas = require('../schemas/schema'); // schemas
 const mongoose = require('mongoose') // for accesing databse;
 const moment = require('moment')
 // Connect to mongodb database
-const dbURI = "mongodb+srv://lavishRoot:qq2nMOUee49oEjOr@lavish-anime-manga-logi.nclfo.mongodb.net/manga-anime-hold?retryWrites=true&w=majority";
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
+require('dotenv').config();
+mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function stuffToChange(user) {
     for (var i = 0; i < user.recentRead.length; i++) {

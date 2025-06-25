@@ -102,9 +102,9 @@ app.get('/manga/offline/read', pathFunctions.offlineReadHtml);
 
 // given a image url return the image so it can be downloaded
 app.get('/api/offline/manga/downloadImage', apiFunctions.downloadImage)
-app.get('/api/offline/mangaName?', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaPage)
+app.get('/api/offline/mangaName?',  apiFunctions.getMangaPage)
 //req.query.chapter ==> needed
-app.get('/api/offline/getMangaChapterPageOffline', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaChapterPage)
+app.get('/api/offline/getMangaChapterPageOffline',  apiFunctions.getMangaChapterPage)
 /* Api Routes are below */
 
 // quick search data
@@ -112,13 +112,15 @@ app.get('/api/manga/quickSearch', apiFunctions.getQuickSearchData)
 // get all the stuff needed for the main page of the site
 app.get('/api/manga/all', apiFunctions.getMainPageStuff)
 // given => mangaName?One-Piece
-app.get('/api/mangaName?', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaPage)
+app.get('/api/mangaName?',  apiFunctions.getMangaPage)
+// gets latest chapters 
+app.get('/api/manga/latestChapters', apiFunctions.getLatestChapters)
 // directory  
-app.get('/api/manga/directory', apiFunctions.getDirectoryData)
+//app.get('/api/manga/directory', apiFunctions.getDirectoryData)
 // given 2 manga get there genres and then recommned a manga based on those genres
-app.get('/api/manga/recommend', apiFunctions.getRecommendedManga)
+//app.get('/api/manga/recommend', apiFunctions.getRecommendedManga)
 // given a chapter of a manga return all the pages adn info of that manga
-app.get('/api/manga/read', apiFunctions.cloudFlareV2CheckMiddleware, apiFunctions.getMangaChapterPage)
+app.get('/api/manga/read',  apiFunctions.getMangaChapterPage)
 
 // get the directory for search page
 app.get('/api/searchPage', apiFunctions.getSearchData)

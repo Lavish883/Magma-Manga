@@ -4,12 +4,11 @@ const mongoose = require('mongoose') // for accesing databse;
 const serverName = process.env['SERVERNAME'] || 'http://localhost:8080/';
 const moment = require('moment');
 
-// Connect to mongodb database
-const dbURI = "mongodb+srv://lavishRoot:qq2nMOUee49oEjOr@lavish-anime-manga-logi.nclfo.mongodb.net/manga-anime-hold?retryWrites=true&w=majority";
-mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true });
-
 // to use .env files
 require('dotenv').config();
+
+// Connect to mongodb database
+mongoose.connect(process.env.DB_URL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // for notifications setup
 const webpush = require('web-push');
