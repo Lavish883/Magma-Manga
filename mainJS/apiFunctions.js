@@ -9,10 +9,42 @@ const cheerio = require('cheerio');
 
 // Cache scraping for faster loading
 const NodeCache = require("node-cache");
+const { get } = require('http');
 const mangaCache = new NodeCache({ stdTTL: 60 * 60, checkperiod: 12 * 60 }); // 1 hour default cache
 
 const realAdminRecd = JSON.parse(fs.readFileSync('./json/adminRecd.json', 'utf8'));
-const listOfMangaV2 = JSON.parse(fs.readFileSync('./json/listOfMangaV2.json', 'utf8'));
+
+// Function to fetch link for renewing cache, fetches our own link to avoid CORS issues
+async function fetchLinkForCache(url) {
+    const response = await fetch(url);
+    const data = await response.text();
+    return response.ok;
+}
+
+// Cache expiration event
+mangaCache.on('expired', async (key, value) => {
+    console.log(`Cache key "${key}" has expired and was removed.`);
+    switch (key) {
+        case 'mainPageData': {
+            const success = await fetchLinkForCache(SERVER_LINK + '/api/mainPageStuff');
+            if (!success) {
+                console.error("Failed to renew cache for mainPageData");
+            }
+            break;
+        }
+        case 'latestChapters': {
+            const success = await fetchLinkForCache(SERVER_LINK + '/api/latestChapters');
+            if (!success) {
+                console.error("Failed to renew cache for latestChapters");
+            }
+            break;
+        }
+        default: {
+            mangaCache.del(key);
+            break;
+        }
+    }
+});
 
 // Generate human like headers so site doesn't detect us
 const headersGenerator = new HeaderGenerator({
@@ -29,17 +61,17 @@ const headersGenerator = new HeaderGenerator({
     ]
 });
 // home page data, cache it for 1 hour
-async function getMainPageStuff(req, res) {    
+async function getMainPageStuff(req, res) {
     // Scrape the main page data only if it is not cached
     if (mangaCache.has('mainPageData')) {
-        return res.send(mangaCache.get('mainPageData'));   
+        return res.send(mangaCache.get('mainPageData'));
     }
 
     let headers = headersGenerator.getHeaders();
     let fetchHot = await fetch(breakCloudFlare + "hot-updates", headers);
     let respHot = await fetchHot.text();
 
-    
+
     let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", headers);
     let respHotMonth = await fetchHotMonth.text();
 
@@ -55,7 +87,7 @@ async function getMainPageStuff(req, res) {
 
 
     var allData = {
-        'adminRecd': realAdminRecd[Math.floor(Math.random() * ( realAdminRecd.length - 1))],
+        'adminRecd': realAdminRecd[Math.floor(Math.random() * (realAdminRecd.length - 1))],
         'hotMangaUpdated': mainFunctions.scrapeHotManga(respHot),
         'hotMangaThisMonth': mainFunctions.scrapeHotMangaThisMonth(respHotMonth),
         'latestManga': latestArry
@@ -80,15 +112,15 @@ async function getAllChapters(mangaId, mangaName) {
     let chaptersResp = await chaptersFetch.text();
 
     $ = cheerio.load(chaptersResp);
-    
+
     $('div').each((i, div) => {
         var chapter = {
             'chapterId': $(div).find('a').attr('href').split('/chapters/')[1],
             'chapterName': $(div).find('span.grow.flex.items-center.gap-2').find('span').html(),
             'Date': mainFunctions.calcDate($(div).find('time').text()),
         };
-    
-        chapter['ChapterLink'] = encodeURIComponent(mangaName + '--' + chapter.chapterName.replaceAll(" ", "-").replaceAll(/-+/g,"-").toLowerCase());
+
+        chapter['ChapterLink'] = encodeURIComponent(mangaName + '--' + chapter.chapterName.replaceAll(" ", "-").replaceAll(/-+/g, "-").toLowerCase());
         chapters.push(chapter);
     });
 
@@ -110,8 +142,8 @@ async function getLatestChapters(req, res) {
         mainFunctions.scrapeLatestManga(respLatest, latestChapters);
     }
 
-    // Cache the latest chapters for 1 hour
-    var success = mangaCache.set('latestChapters', latestChapters, 60 * 60);
+    // Cache the latest chapters for 1 hour 1 minute
+    var success = mangaCache.set('latestChapters', latestChapters, 61 * 60);
     if (!success) {
         console.error("Failed to cache latest chapters");
     }
@@ -148,27 +180,27 @@ async function getMangaPage(req, res) {
         $(li).children().each((i, liChild) => {
             items.push($(liChild).text().replaceAll('\n', ''));
         });
-        
-        if (items[0] == 'Associated Name(s)'){
+
+        if (items[0] == 'Associated Name(s)') {
             var moreItems = items[1].split(/\s{2,}/).slice(1, -1);
             items[1] = moreItems;
         }
 
-        if (items[0] == 'Author(s): ' || items[0] == 'Tags(s): '){
+        if (items[0] == 'Author(s): ' || items[0] == 'Tags(s): ') {
             for (var i = 1; i < items.length - 1; i++) {
                 items[i] = items[i].slice(0, -1);
             }
         }
 
-        if (items.length > 2 || items[0] == 'Author(s): '){
+        if (items.length > 2 || items[0] == 'Author(s): ') {
             info[items[0]] = items.slice(1);
         } else {
             info[items[0]] = items[1];
         }
-    }); 
+    });
 
     // Get the chapters
-    
+
     info['AlternateNames'] = info['Associated Name(s)'];
     delete info['Associated Name(s)'];
 
@@ -198,8 +230,8 @@ async function getMangaPage(req, res) {
 
     info['Chapters'] = await getAllChapters(mangaId, mangaName);
 
-    // Cache the manga info for 1 hour
-    var success = mangaCache.set(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, info, 60 * 60);
+    // Cache the manga info for 1 hour 2 minutes
+    var success = mangaCache.set(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, info, 62 * 60);
     if (!success) {
         console.error("Failed to cache manga info for " + mangaName);
     }
@@ -241,7 +273,7 @@ async function getMangaChapterPage(req, res) {
         let addToUrl = req.query.download ? '' : '/api/offline/manga/downloadImage?url=';
         imageURlS.push(addToUrl + encodeURIComponent($(img).attr('src')));
     });
-    
+
     currentChapter.Page = imageURlS.length;
     currentChapter.indexName = mangaName;
     currentChapter.seriesName = seriesName;
@@ -256,9 +288,8 @@ async function getMangaChapterPage(req, res) {
         'chapterLink': encodeURIComponent(req.query.chapter),
         'id': mangaId
     }
-
-    // Cache the chapter info for 12 hour
-    var success = mangaCache.set(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter), allData, 12 * 60 * 60);
+    // Cache the chapter info for 1 hour 3 minutes
+    var success = mangaCache.set(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter), allData, 63 * 60);
     if (!success) {
         console.error("Failed to cache chapter page for " + mangaName);
     }
@@ -287,7 +318,7 @@ async function getQuickSearchData(req, res) {
         "body": "text=" + search,
         "method": "POST"
     });
-    
+
     let resp = await fetchQuickSearchPage.text();
 
     var $ = cheerio.load(resp);
@@ -320,7 +351,7 @@ async function getRecommendedManga(req, res) {
     let manga2 = req.query.manga2;
 
     let similarManga = await mainFunctions.getSimilarManga(manga1, manga2)
-    
+
     // get rid of duplicates
     for (var i = similarManga.length - 1; i >= 0; i--) {
         for (var j = i - 1; j >= 0; j--) {
@@ -354,9 +385,8 @@ async function getSearchData(req, res) {
 
 async function downloadImage(req, res) {
     const url = decodeURIComponent(req.query.url);
-    console.log(url);
     const headers = {};
-    
+
     if (url == undefined || url == "") {
         return res.send('url not given');
     }
