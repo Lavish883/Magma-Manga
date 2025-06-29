@@ -128,11 +128,11 @@ function getDomainIdToIndex(mangaId) {
     const name = domainIdToIndex[mangaId.toUpperCase()];
     if (name == undefined) {
         // Send email to me
-        console.log('mangaId not found in domainIdToIndex.json');
+        console.log('mangaId not found in domainIdToIndex.json' + name);
         //getAllSeriesData();
         if (new Date().getTime() - timeSinceLastEmail > 1000 * 60 * 60) {
             timeSinceLastEmail = new Date().getTime();
-            mailFunctions.sendMail(process.env.ADMIN_EMAIL, 'mangaId not found in domainIdToIndex.json', 'mangaId not found in domainIdToIndex.json fucking update it dude');
+            mailFunctions.sendMail(process.env.ADMIN_EMAIL, 'mangaId not found in domainIdToIndex.json ' + name, 'mangaId not found in domainIdToIndex.json fucking update it dude');
         }
     }
     return domainIdToIndex[mangaId.toUpperCase()];

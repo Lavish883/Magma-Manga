@@ -10,15 +10,18 @@ const cheerio = require('cheerio');
 // Cache scraping for faster loading
 const NodeCache = require("node-cache");
 const { get } = require('http');
-const mangaCache = new NodeCache({ stdTTL: 60 * 60, checkperiod: 12 * 60 }); // 1 hour default cache
+const mangaCache = new NodeCache({ stdTTL: 60 * 60, checkperiod: 30 * 60 }); // 1 hour default cache
 
 const realAdminRecd = JSON.parse(fs.readFileSync('./json/adminRecd.json', 'utf8'));
 
 // Function to fetch link for renewing cache, fetches our own link to avoid CORS issues
-async function fetchLinkForCache(url) {
+async function fetchLinkForCache(cacheName, url, time = 60 * 60) {
     const response = await fetch(url);
     const data = await response.text();
-    return response.ok;
+
+    const success = mangaCache.set(cacheName, data, time);
+    console.log(`Cache for ${cacheName} set with success: ${success}`);
+    return success;
 }
 
 // Cache expiration event
@@ -26,14 +29,14 @@ mangaCache.on('expired', async (key, value) => {
     console.log(`Cache key "${key}" has expired and was removed.`);
     switch (key) {
         case 'mainPageData': {
-            const success = await fetchLinkForCache(SERVER_LINK + '/api/mainPageStuff');
+            const success = await fetchLinkForCache('mainPageData' , process.env.SERVER_LINK + 'api/manga/all', 60 * 60);
             if (!success) {
                 console.error("Failed to renew cache for mainPageData");
             }
             break;
         }
         case 'latestChapters': {
-            const success = await fetchLinkForCache(SERVER_LINK + '/api/latestChapters');
+            const success = await fetchLinkForCache('latestChapters', process.env.SERVER_LINK + 'api/manga/latestChapters', 61 * 60);
             if (!success) {
                 console.error("Failed to renew cache for latestChapters");
             }
@@ -240,9 +243,10 @@ async function getMangaPage(req, res) {
 // reading a chapter info
 async function getMangaChapterPage(req, res) {
     // Fetch page that we need to scrape
-    const mangaName = req.query.chapter.split('--')[0];
+    const mangaName = req.query.chapter.split('--').slice(0, req.query.chapter.split('--').length - 1).join('--');
     const mangaId = mainFunctions.getDomainIdToIndex(mangaName);
 
+    
     // Check if the chapter info is cached
     if (mangaCache.has(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter))) {
         return res.send(mangaCache.get(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter)));
