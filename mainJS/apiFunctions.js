@@ -74,9 +74,13 @@ async function getMainPageStuff(req, res) {
     let fetchHot = await fetch(breakCloudFlare + "hot-updates", headers);
     let respHot = await fetchHot.text();
 
+    console.log("respHot \n" + respHot);
 
     let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", headers);
     let respHotMonth = await fetchHotMonth.text();
+
+
+    console.log("respHotMonth \n" + respHotMonth);
 
     let latestArry = [];
 
