@@ -79,9 +79,6 @@ async function getMainPageStuff(req, res) {
     let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", headers);
     let respHotMonth = await fetchHotMonth.text();
 
-
-    console.log("respHotMonth \n" + respHotMonth);
-
     let latestArry = [];
 
     // Latest added manga
@@ -271,7 +268,8 @@ async function getMangaChapterPage(req, res) {
     }
 
     var imageURlS = [];
-    let imageFetch = await fetch(breakCloudFlare + 'chapters/' + currentChapter.chapterId + '/images?is_prev=False&current_page=1&reading_style=long_strip', headers);
+    //https://weebcentral.com/chapters/01K0SAXPHSCQRYK3YN487K8N3B/images?reading_style=long_strip
+    let imageFetch = await fetch(breakCloudFlare + 'chapters/' + currentChapter.chapterId + '/images?reading_style=long_strip', headers);
     let imageResp = await imageFetch.text();
 
     var $ = cheerio.load(imageResp);
@@ -309,26 +307,14 @@ async function getQuickSearchData(req, res) {
     let search = req.query.search;
     let headers = headersGenerator.getHeaders();
 
-    let fetchQuickSearchPage = await fetch(breakCloudFlare + "search/simple?location=main", {
+    console.log(breakCloudFlareV2 + search);
+    let fetchQuickSearchPage = await fetch(breakCloudFlareV2 + search, {
+        "method": "GET",
         "headers": {
-            "content-type": "application/x-www-form-urlencoded",
-            "hx-current-url": "https://weebcentral.com/",
-            "hx-request": "true",
-            "hx-target": "quick-search-result",
-            "hx-trigger": "quick-search-input",
-            "hx-trigger-name": "text",
-            "sec-ch-ua": "\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"",
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"Windows\"",
-            "Referer": "https://weebcentral.com/",
-            "Referrer-Policy": "strict-origin-when-cross-origin"
-        },
-        "body": "text=" + search,
-        "method": "POST"
+            "content-type": "application/json"
+        }
     });
-
     let resp = await fetchQuickSearchPage.text();
-
     var $ = cheerio.load(resp);
     var results = [];
 
