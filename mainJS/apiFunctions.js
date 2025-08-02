@@ -24,12 +24,32 @@ async function fetchLinkForCache(cacheName, url, time = 60 * 60) {
     return success;
 }
 
+const options = {
+    "headers": {
+        "content-type": "application/x-www-form-urlencoded",
+        "hx-current-url": "https://weebcentral.com/",
+        "hx-request": "true",
+        "hx-target": "quick-search-result",
+        "hx-trigger": "quick-search-input",
+        "hx-trigger-name": "text",
+        "sec-ch-ua": "\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"",
+        "sec-ch-ua-mobile": "?0",
+        "sec-ch-ua-platform": "\"Windows\"",
+        "Referer": "https://weebcentral.com/",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+    },
+    "body": null,
+    "method": "GET",
+    "mode": "cors",
+    "credentials": "omit"
+}
+
 // Cache expiration event
 mangaCache.on('expired', async (key, value) => {
     console.log(`Cache key "${key}" has expired and was removed.`);
     switch (key) {
         case 'mainPageData': {
-            const success = await fetchLinkForCache('mainPageData' , process.env.SERVER_LINK + 'api/manga/all', 60 * 60);
+            const success = await fetchLinkForCache('mainPageData', process.env.SERVER_LINK + 'api/manga/all', 60 * 60);
             if (!success) {
                 console.error("Failed to renew cache for mainPageData");
             }
@@ -70,20 +90,20 @@ async function getMainPageStuff(req, res) {
         return res.send(mangaCache.get('mainPageData'));
     }
 
-    let headers = headersGenerator.getHeaders();
-    let fetchHot = await fetch(breakCloudFlare + "hot-updates", headers);
+
+    let fetchHot = await fetch(breakCloudFlare + "hot-updates", options);
     let respHot = await fetchHot.text();
 
     console.log("respHot \n" + respHot);
 
-    let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", headers);
+    let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", options);
     let respHotMonth = await fetchHotMonth.text();
 
     let latestArry = [];
 
     // Latest added manga
     for (var i = 1; i <= 5; i++) {
-        let fetchLatest = await fetch(breakCloudFlare + "latest-updates/" + i, headers);
+        let fetchLatest = await fetch(breakCloudFlare + "latest-updates/" + i, options);
         let respLatest = await fetchLatest.text();
 
         mainFunctions.scrapeLatestManga(respLatest, latestArry);
@@ -108,11 +128,11 @@ async function getMainPageStuff(req, res) {
 
 // Get all chapters for a manga, helper function for getMangaPage so cached in getMangaPage
 async function getAllChapters(mangaId, mangaName) {
-    let headers = headersGenerator.getHeaders();
+
     // Get the chapters
     var chapters = [];
 
-    let chaptersFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/full-chapter-list', headers);
+    let chaptersFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/full-chapter-list', options);
     let chaptersResp = await chaptersFetch.text();
 
     $ = cheerio.load(chaptersResp);
@@ -137,10 +157,10 @@ async function getLatestChapters(req, res) {
         return res.send(mangaCache.get('latestChapters'));
     }
     // If not cached, scrape the latest chapters
-    let headers = headersGenerator.getHeaders();
+
     let latestChapters = [];
     for (var i = 1; i <= 8; i++) {
-        let fetchLatest = await fetch(breakCloudFlare + "latest-updates/" + i, headers);
+        let fetchLatest = await fetch(breakCloudFlare + "latest-updates/" + i, options);
         let respLatest = await fetchLatest.text();
 
         mainFunctions.scrapeLatestManga(respLatest, latestChapters);
@@ -168,8 +188,8 @@ async function getMangaPage(req, res) {
 
     // gets manga id from the name
 
-    let headers = headersGenerator.getHeaders();
-    let mangaFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, headers);
+
+    let mangaFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, options);
     let mangaResp = await mangaFetch.text();
     var $ = cheerio.load(mangaResp);
 
@@ -247,14 +267,14 @@ async function getMangaChapterPage(req, res) {
     const mangaName = req.query.chapter.split('--').slice(0, req.query.chapter.split('--').length - 1).join('--');
     const mangaId = mainFunctions.getDomainIdToIndex(mangaName);
 
-    
+
     // Check if the chapter info is cached
     if (mangaCache.has(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter))) {
         return res.send(mangaCache.get(breakCloudFlare + 'chapters/' + mangaId + '/' + mangaName + encodeURIComponent(req.query.chapter)));
     }
 
-    let headers = headersGenerator.getHeaders();
-    var seriesNameFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, headers);
+
+    var seriesNameFetch = await fetch(breakCloudFlare + 'series/' + mangaId + '/' + mangaName, options);
     var seriesNameResp = await seriesNameFetch.text();
     var $ = cheerio.load(seriesNameResp);
 
@@ -269,7 +289,7 @@ async function getMangaChapterPage(req, res) {
 
     var imageURlS = [];
     //https://weebcentral.com/chapters/01K0SAXPHSCQRYK3YN487K8N3B/images?reading_style=long_strip
-    let imageFetch = await fetch(breakCloudFlare + 'chapters/' + currentChapter.chapterId + '/images?reading_style=long_strip', headers);
+    let imageFetch = await fetch(breakCloudFlare + 'chapters/' + currentChapter.chapterId + '/images?reading_style=long_strip', options);
     let imageResp = await imageFetch.text();
 
     var $ = cheerio.load(imageResp);
@@ -305,7 +325,7 @@ async function getMangaChapterPage(req, res) {
 // quick search Data
 async function getQuickSearchData(req, res) {
     let search = req.query.search;
-    let headers = headersGenerator.getHeaders();
+
 
     console.log(breakCloudFlareV2 + search);
     let fetchQuickSearchPage = await fetch(breakCloudFlareV2 + search, {
@@ -330,9 +350,9 @@ async function getQuickSearchData(req, res) {
 }
 // directory data
 async function getDirectoryData(req, res) {
-    let headers = headersGenerator.getHeaders();
 
-    let fetchDirectoryData = await fetch(breakCloudFlare + "/directory/", headers);
+
+    let fetchDirectoryData = await fetch(breakCloudFlare + "/directory/", options);
     let resp = await fetchDirectoryData.text();
 
     let directoryData = JSON.parse(resp.split(`vm.FullDirectory = `)[1].split(';').splice(0, 8).join(''))
@@ -364,9 +384,9 @@ async function getRecommendedManga(req, res) {
 }
 // get search data
 async function getSearchData(req, res) {
-    let headers = headersGenerator.getHeaders();
+
     // fetch search page
-    let fetchSearchPage = await fetch(breakCloudFlare + '/search/', headers);
+    let fetchSearchPage = await fetch(breakCloudFlare + '/search/', options);
     let resp = await fetchSearchPage.text();
     // extract directory from that
     var directory = resp.split(`vm.Directory = `)[1].split(`;`);
@@ -385,25 +405,7 @@ async function downloadImage(req, res) {
         return res.send('url not given');
     }
 
-    const image = await fetch(url, {
-        "headers": {
-            "content-type": "application/x-www-form-urlencoded",
-            "hx-current-url": "https://weebcentral.com/",
-            "hx-request": "true",
-            "hx-target": "quick-search-result",
-            "hx-trigger": "quick-search-input",
-            "hx-trigger-name": "text",
-            "sec-ch-ua": "\"Chromium\";v=\"134\", \"Not:A-Brand\";v=\"24\", \"Microsoft Edge\";v=\"134\"",
-            "sec-ch-ua-mobile": "?0",
-            "sec-ch-ua-platform": "\"Windows\"",
-            "Referer": "https://weebcentral.com/",
-            "Referrer-Policy": "strict-origin-when-cross-origin"
-        },
-        "body": null,
-        "method": "GET",
-        "mode": "cors",
-        "credentials": "omit"
-    });
+    const image = await fetch(url, options);
 
     const buffer = await image.buffer();
 
