@@ -12,7 +12,7 @@ async function indexHtml(req, res) {
         return res.render('loading')
     }
 
-    let fetchAllData = await fetch(serverName + 'api/manga/all')
+    let fetchAllData = await fetch(serverName + 'api/manga/all');
     let resp = await fetchAllData.json();
     resp.susManga = susManga;
 

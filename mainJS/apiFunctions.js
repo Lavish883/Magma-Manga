@@ -94,8 +94,6 @@ async function getMainPageStuff(req, res) {
     let fetchHot = await fetch(breakCloudFlare + "hot-updates", options);
     let respHot = await fetchHot.text();
 
-    console.log("respHot \n" + respHot);
-
     let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", options);
     let respHotMonth = await fetchHotMonth.text();
 
@@ -325,15 +323,14 @@ async function getMangaChapterPage(req, res) {
 // quick search Data
 async function getQuickSearchData(req, res) {
     let search = req.query.search;
-
-
-    console.log(breakCloudFlareV2 + search);
-    let fetchQuickSearchPage = await fetch(breakCloudFlareV2 + search, {
-        "method": "GET",
+    let fetchQuickSearchPage = await fetch(breakCloudFlare + "search/simple?location=main", {
+        "method": "POST",
+        "body": "text=one%20punch",
         "headers": {
-            "content-type": "application/json"
+            "content-type": "application/x-www-form-urlencoded"
         }
     });
+
     let resp = await fetchQuickSearchPage.text();
     var $ = cheerio.load(resp);
     var results = [];

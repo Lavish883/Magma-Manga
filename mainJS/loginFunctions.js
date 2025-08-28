@@ -18,7 +18,7 @@ async function loginCheck(req, res, next) {
 
 // check if an user already exsits with that name or email
 async function findUser(userName, userEmail) {
-    console.log(userName, userEmail);
+    //console.log(userName, userEmail);
     var user = await schemas.USERS.find({ 'name': userName }); // Get user from the database
     if (user.length == 0) { // Meaning user doesn't exist with name
         user =  await schemas.USERS.find({ 'email': userEmail }); // see with the email
