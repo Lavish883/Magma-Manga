@@ -325,7 +325,7 @@ async function getQuickSearchData(req, res) {
     let search = req.query.search;
     let fetchQuickSearchPage = await fetch(breakCloudFlare + "search/simple?location=main", {
         "method": "POST",
-        "body": "text=one%20punch",
+        "body": "text=" + encodeURIComponent(search),
         "headers": {
             "content-type": "application/x-www-form-urlencoded"
         }
