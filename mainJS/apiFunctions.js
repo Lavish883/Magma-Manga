@@ -93,7 +93,7 @@ async function getMainPageStuff(req, res) {
 
     let fetchHot = await fetch(breakCloudFlare + "hot-updates", options);
     let respHot = await fetchHot.text();
-    
+
     let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", options);
     let respHotMonth = await fetchHotMonth.text();
 
@@ -404,6 +404,13 @@ async function downloadImage(req, res) {
 
     try {
         const image = await fetch(url, options);
+        console.log('Downloading image from URL:', url);
+        console.log('Response status:', image.status);
+
+        if (!image.ok) {
+            console.log(image);
+            return res.status(500).send('Error downloading image, status code: ' + image.status);
+        }
         const buffer = await image.buffer();
         res.set('Content-Type', 'image/png');
         return res.send(buffer);
