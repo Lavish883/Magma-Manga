@@ -93,7 +93,7 @@ async function getMainPageStuff(req, res) {
 
     let fetchHot = await fetch(breakCloudFlare + "hot-updates", options);
     let respHot = await fetchHot.text();
-
+    
     let fetchHotMonth = await fetch(breakCloudFlare + "hot-series?sort=monthly_views", options);
     let respHotMonth = await fetchHotMonth.text();
 
@@ -402,12 +402,14 @@ async function downloadImage(req, res) {
         return res.send('url not given');
     }
 
-    const image = await fetch(url, options);
-
-    const buffer = await image.buffer();
-
-    res.set('Content-Type', 'image/png');
-    return res.send(buffer);
+    try {
+        const image = await fetch(url, options);
+        const buffer = await image.buffer();
+        res.set('Content-Type', 'image/png');
+        return res.send(buffer);
+    } catch (error) {
+        return res.status(500).send('Error downloading image' + error);
+    }
 }
 
 module.exports = {
