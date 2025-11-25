@@ -295,7 +295,8 @@ async function getMangaChapterPage(req, res) {
     $('img').each((i, img) => {
         //imageURlS.push(process.env.IMG_SERVER + encodeURIComponent($(img).attr('src')));
         let addToUrl = req.query.download ? '' : '/api/offline/manga/downloadImage?url=';
-        imageURlS.push(addToUrl + encodeURIComponent($(img).attr('src')));
+        //imageURlS.push(addToUrl + encodeURIComponent($(img).attr('src')));
+        imageURlS.push($(img).attr('src'));
     });
 
     currentChapter.Page = imageURlS.length;
@@ -404,22 +405,16 @@ async function downloadImage(req, res) {
 
     try {
         const image = await fetch(url, {
-            "headers": {
-                "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-                "accept-language": "en-US,en;q=0.9,fr;q=0.8",
-                "priority": "i",
-                "sec-ch-ua": "\"Chromium\";v=\"142\", \"Microsoft Edge\";v=\"142\", \"Not_A Brand\";v=\"99\"",
-                "sec-ch-ua-mobile": "?0",
-                "sec-ch-ua-platform": "\"Windows\"",
-                "sec-fetch-dest": "empty",
-                "sec-fetch-mode": "no-cors",
-                "sec-fetch-site": "cross-site",
-                "sec-fetch-storage-access": "active",
-                "Referer": "https://weebcentral.com/"
+            headers: {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36",
+                "Accept": "image/avif,image/webp,image/apng,image/*,*/*;q=0.8",
+            "Referer": "https://weebcentral.com/"
             },
             "body": null,
             "method": "GET"
         });
+
+
         console.log('Downloading image from URL:', url);
         console.log('Response status:', image.status);
 
