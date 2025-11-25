@@ -403,7 +403,23 @@ async function downloadImage(req, res) {
     }
 
     try {
-        const image = await fetch(url, options);
+        const image = await fetch(url, {
+            "headers": {
+                "accept": "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+                "accept-language": "en-US,en;q=0.9,fr;q=0.8",
+                "priority": "i",
+                "sec-ch-ua": "\"Chromium\";v=\"142\", \"Microsoft Edge\";v=\"142\", \"Not_A Brand\";v=\"99\"",
+                "sec-ch-ua-mobile": "?0",
+                "sec-ch-ua-platform": "\"Windows\"",
+                "sec-fetch-dest": "empty",
+                "sec-fetch-mode": "no-cors",
+                "sec-fetch-site": "cross-site",
+                "sec-fetch-storage-access": "active",
+                "Referer": "https://weebcentral.com/"
+            },
+            "body": null,
+            "method": "GET"
+        });
         console.log('Downloading image from URL:', url);
         console.log('Response status:', image.status);
 
