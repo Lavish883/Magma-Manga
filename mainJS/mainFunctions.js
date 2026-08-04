@@ -313,7 +313,7 @@ function scrapeHotMangaThisMonth(html) {
 
     for (var i = 0; i < allManaga.length; i++) {
         let manga = allManaga[i];
-        let mangaId = $(manga).attr("href").split("/")[4];
+        let mangaId = $(manga).attr("href").split("/series/")[0];
         let seriesName = $(manga).html();
         let indexName = getDomainIdToIndex(mangaId);
 
