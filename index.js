@@ -6,9 +6,6 @@ const path = require('path');
 const mongoose = require('mongoose'); // database acessor
 const schemas = require('./schemas/schema'); // all the schemas for the database
 
-const dns = require("node:dns");
-dns.setServers(["8.8.8.8", "1.1.1.1"]);
-
 mongoose.set('strictQuery', false);
 require('express-async-errors');
 
